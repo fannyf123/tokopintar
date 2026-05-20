@@ -1,58 +1,97 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TOKOPINTAR
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem manajemen toko UMKM pintar — POS, inventory, FEFO, AI insight lokal, laporan laba.
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **POS Kasir** dengan scan barcode pakai kamera HP (html5-qrcode), hotkey F2/F4/ESC, struk 80mm
+- **Inventory FEFO** — first-expired-first-out otomatis saat penjualan, audit trail tiap mutasi
+- **Pembelian** dengan batch tracking + tanggal kadaluarsa
+- **Mutasi stok** — adjustment, retur, rusak, hilang, expired (semua via service + audit)
+- **Manajemen kadaluarsa** — highlight merah/kuning/hijau, buang otomatis ke mutasi expired
+- **AI Insight Lokal Deterministik (no LLM, no API):**
+  - Velocity score per barang (window 30 hari)
+  - Days-of-supply
+  - Klasifikasi FAST/NORMAL/SLOW/DEAD/NEW
+  - ABC analysis (kontribusi omzet 90 hari)
+  - Forecast 7 hari (Simple Exponential Smoothing α=0.3)
+  - **Subsidi silang / cross-subsidization:** klasifikasi LOSS_LEADER / BALANCED / PROFIT_DRIVER + basket co-occurrence untuk rekomendasi bundling
+- **Laporan laba** — harian/mingguan/bulanan/tahunan, chart, ekspor PDF & CSV
+- **Dashboard** — kartu omzet, stok rendah, near-expiry, top produk, fast/dead mover
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Role
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Role | Akses |
+|---|---|
+| admin | semua modul |
+| kasir | POS, riwayat penjualan, pelanggan |
+| gudang | barang, supplier, pembelian, mutasi, expiry |
 
-## Learning Laravel
+## Akun Demo (setelah seed)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Username | Password |
+|---|---|
+| admin | admin123 |
+| kasir | kasir123 |
+| gudang | gudang123 |
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Tech Stack
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- PHP 8.3 + Laravel 13
+- SQLite (lokal) / PostgreSQL (production)
+- Tailwind CSS v4 + Vite 8
+- Chart.js (CDN)
+- html5-qrcode (CDN, untuk barcode scanner HP)
+- DomPDF + Sanctum + DataTables paket terinstall
+- PHPUnit 12 — 25 tests, 119 assertions
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Setup Lokal
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate:fresh --seed
+npm install && npm run build
+php artisan serve --port=8080
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Buka `http://127.0.0.1:8080`.
 
-## Contributing
+## Subsidi Silang — Cara Kerja
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Konsep di retail bernama **loss leader pricing** atau cross-subsidization. TOKOPINTAR mengklasifikasi barang berdasarkan margin:
 
-## Code of Conduct
+- **LOSS_LEADER** (margin ≤ 5%) — barang pemikat, dijual mendekati modal untuk narik traffic
+- **PROFIT_DRIVER** (margin ≥ 25%) — penyumbang profit utama
+- **BALANCED** (di antaranya)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Lalu menghitung *basket co-occurrence* (mana yang sering dibeli bareng dalam transaksi yang sama) selama 90 hari. Setiap loss-leader dipasangkan dengan profit-driver yang paling sering muncul di basket-nya — keluar sebagai rekomendasi bundling.
 
-## Security Vulnerabilities
+Hasilnya di `/insight`: kolom strategy + saran spesifik (misal: "Loss leader 3.5%. Sering dibeli bareng: Aqua 600ml, Roti Sari Roti. Tampilkan dekat barang ini & buat bundling.").
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Semua perhitungan deterministik, no random, no LLM.
 
-## License
+## Scheduled Commands
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan tokopintar:recompute-insight   # daily 02:00
+php artisan tokopintar:check-expiry        # daily 07:00
+```
+
+## Deploy ke Render
+
+Project sudah berisi `Dockerfile` + `render.yaml`. Setting:
+- Free tier, region Singapore
+- Shared postgres dengan project lain via `DB_SCHEMA=tokopintar` (Postgres schema isolation)
+- Auto migrate + seed saat startup
+
+## Test
+
+```bash
+php artisan test
+# 25 tests, 119 assertions, all passing
+```
+
+Termasuk smoke test yang mengetes setiap halaman GET, POS full-flow + FEFO, pembelian → terima → batch, mutasi audit trail, insight regeneration, laporan PDF & CSV, role-based access.
