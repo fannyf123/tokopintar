@@ -31,34 +31,19 @@ services:
         value: database
       - key: DB_CONNECTION
         value: pgsql
+      - key: DB_SCHEMA
+        value: tokopintar
       - key: FILESYSTEM_DISK
         value: public
       - key: PORT
         value: 8080
       - key: DB_HOST
-        fromDatabase:
-          name: tokopintar-db
-          property: host
+        sync: false
       - key: DB_PORT
-        fromDatabase:
-          name: tokopintar-db
-          property: port
+        sync: false
       - key: DB_DATABASE
-        fromDatabase:
-          name: tokopintar-db
-          property: database
+        sync: false
       - key: DB_USERNAME
-        fromDatabase:
-          name: tokopintar-db
-          property: user
+        sync: false
       - key: DB_PASSWORD
-        fromDatabase:
-          name: tokopintar-db
-          property: password
-
-databases:
-  - name: tokopintar-db
-    plan: free
-    region: singapore
-    databaseName: tokopintar
-    user: tokopintar
+        sync: false
