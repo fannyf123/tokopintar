@@ -294,18 +294,24 @@ async function handleScan(code) {
     else if (data.length > 1) { $g('searchInput').value = code; $g('searchInput').dispatchEvent(new Event('input')); }
     else { alert('Barcode tidak ditemukan: ' + code); }
 }
-async function forceReleaseCamera() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
-        stream.getTracks().forEach(t => t.stop());
-    } catch (e) {}
+function killVideoTracks() {
+    const wrap = $g('scanner');
+    if (!wrap) return;
+    wrap.querySelectorAll('video').forEach(v => {
+        const stream = v.srcObject;
+        if (stream && stream.getTracks) {
+            stream.getTracks().forEach(t => { try { t.stop(); } catch(e) {} });
+        }
+        v.srcObject = null;
+        try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e) {}
+    });
 }
 async function closeScanner() {
     if (scanState === 'idle') return;
     scanState = 'stopping';
     try { if (scanner?.isScanning) await scanner.stop(); } catch (e) {}
+    killVideoTracks();
     try { scanner?.clear?.(); } catch (e) {}
-    await forceReleaseCamera();
     $g('scannerWrap').classList.add('d-none');
     scanner = null;
     scanState = 'idle';
