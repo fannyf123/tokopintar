@@ -2,6 +2,28 @@
 @section('title', 'Dashboard - TOKOPINTAR')
 @section('page_title', 'Dashboard')
 @section('content')
+<div class="card mb-3" style="background:linear-gradient(135deg,#4361ee,#3f37c9); color:#fff; border:none;">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h5 class="fw-bold mb-1">👋 Halo, {{ auth()->user()->name }}!</h5>
+                <p class="mb-0 opacity-75 small">Mau melakukan apa hari ini?</p>
+            </div>
+            <div class="col-md-5">
+                <div class="d-flex flex-wrap gap-2 justify-content-md-end mt-3 mt-md-0">
+                    @if (auth()->user()->isAdmin() || auth()->user()->isKasir())
+                        <a href="{{ route('pos.index') }}" class="btn btn-light btn-sm fw-semibold"><i class="fas fa-cash-register me-1"></i> Mulai Jualan</a>
+                    @endif
+                    @if (auth()->user()->isAdmin() || auth()->user()->isGudang())
+                        <a href="{{ route('barang.create') }}" class="btn btn-light btn-sm fw-semibold"><i class="fas fa-box me-1"></i> Tambah Barang</a>
+                    @endif
+                    <a href="{{ route('panduan.index') }}" class="btn btn-outline-light btn-sm fw-semibold"><i class="fas fa-book-open me-1"></i> Panduan</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-3 mb-3">
     <div class="col-md">
         <div class="card stat-card" style="background:linear-gradient(135deg,#4361ee,#3f37c9);">

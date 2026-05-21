@@ -27,6 +27,7 @@ Route::middleware(['auth', 'aktif'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('panduan', [\App\Http\Controllers\PanduanController::class, 'index'])->name('panduan.index');
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');

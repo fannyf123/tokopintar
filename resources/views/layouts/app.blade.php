@@ -128,6 +128,9 @@
         <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <i class="fas fa-border-all"></i> Dashboard
         </a>
+        <a href="{{ route('panduan.index') }}" class="{{ request()->routeIs('panduan.*') ? 'active' : '' }}">
+            <i class="fas fa-book-open"></i> Panduan
+        </a>
 
         @if ($isAdmin || $isKasir)
             <p class="menu-label text-uppercase mt-3">Penjualan</p>
