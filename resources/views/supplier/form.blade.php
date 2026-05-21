@@ -1,25 +1,26 @@
 @extends('layouts.app')
-@section('title', $supplier->exists ? 'Edit Supplier' : 'Supplier Baru')
-@section('breadcrumb', 'Master / Supplier / Form')
+@section('title', $supplier->exists ? 'Edit Supplier - TOKOPINTAR' : 'Supplier Baru - TOKOPINTAR')
+@section('page_title', $supplier->exists ? 'Edit Supplier' : 'Supplier Baru')
 @section('content')
-<div class="bg-white rounded-lg shadow p-6 max-w-xl">
-    <h1 class="text-xl font-bold mb-4">{{ $supplier->exists ? 'Edit Supplier' : 'Supplier Baru' }}</h1>
-    @if ($errors->any())
-        <div class="mb-4 p-3 rounded bg-red-100 text-red-800">@foreach ($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div>
-    @endif
-    <form method="POST" action="{{ $supplier->exists ? route('supplier.update', $supplier) : route('supplier.store') }}" class="space-y-4">
-        @csrf
-        @if ($supplier->exists) @method('PUT') @endif
-        @foreach (['nama' => 'Nama', 'kontak' => 'Nama Kontak', 'no_hp' => 'No HP', 'email' => 'Email', 'alamat' => 'Alamat'] as $field => $label)
-            <div>
-                <label class="block text-sm font-medium mb-1">{{ $label }}</label>
-                <input name="{{ $field }}" value="{{ old($field, $supplier->{$field}) }}" class="w-full border rounded px-3 py-2" {{ $field === 'nama' ? 'required' : '' }}>
+<div class="card">
+    <div class="card-body">
+        @if ($errors->any())
+            <div class="alert alert-danger small">@foreach ($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div>
+        @endif
+        <form method="POST" action="{{ $supplier->exists ? route('supplier.update', $supplier) : route('supplier.store') }}" class="row g-3">
+            @csrf
+            @if ($supplier->exists) @method('PUT') @endif
+            @foreach (['nama' => ['Nama', true, 6], 'kontak' => ['Nama Kontak', false, 6], 'no_hp' => ['No HP', false, 6], 'email' => ['Email', false, 6], 'alamat' => ['Alamat', false, 12]] as $field => $cfg)
+                <div class="col-12 col-md-{{ $cfg[2] }}">
+                    <label class="form-label fw-semibold">{{ $cfg[0] }}</label>
+                    <input name="{{ $field }}" value="{{ old($field, $supplier->{$field}) }}" class="form-control" {{ $cfg[1] ? 'required' : '' }}>
+                </div>
+            @endforeach
+            <div class="col-12 d-flex gap-2">
+                <button class="btn btn-primary"><i class="fas fa-save me-1"></i> Simpan</button>
+                <a href="{{ route('supplier.index') }}" class="btn btn-light">Batal</a>
             </div>
-        @endforeach
-        <div class="flex gap-2">
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded">Simpan</button>
-            <a href="{{ route('supplier.index') }}" class="px-4 py-2 border rounded">Batal</a>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 @endsection

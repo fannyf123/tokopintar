@@ -1,89 +1,112 @@
 @extends('layouts.app')
-@section('title', 'Laporan Laba')
-@section('breadcrumb', 'Admin / Laporan Laba')
+@section('title', 'Laporan Laba - TOKOPINTAR')
+@section('page_title', 'Laporan Laba')
 @section('content')
-<h1 class="text-2xl font-bold mb-4">Laporan Laba</h1>
-
-<form method="GET" class="bg-white rounded shadow p-4 mb-4 flex flex-wrap gap-2 items-end">
-    <div>
-        <label class="block text-xs uppercase text-gray-500">Mulai</label>
-        <input type="date" name="start" value="{{ $start->toDateString() }}" class="border rounded px-3 py-2">
-    </div>
-    <div>
-        <label class="block text-xs uppercase text-gray-500">Sampai</label>
-        <input type="date" name="end" value="{{ $end->toDateString() }}" class="border rounded px-3 py-2">
-    </div>
-    <div>
-        <label class="block text-xs uppercase text-gray-500">Granularity</label>
-        <select name="g" class="border rounded px-3 py-2">
-            @foreach (['daily' => 'Harian', 'weekly' => 'Mingguan', 'monthly' => 'Bulanan', 'yearly' => 'Tahunan'] as $v => $l)
-                <option value="{{ $v }}" @selected($g === $v)>{{ $l }}</option>
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold mb-1">Mulai</label>
+                <input type="date" name="start" value="{{ $start->toDateString() }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold mb-1">Sampai</label>
+                <input type="date" name="end" value="{{ $end->toDateString() }}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold mb-1">Granularity</label>
+                <select name="g" class="form-select form-select-sm">
+                    @foreach (['daily' => 'Harian', 'weekly' => 'Mingguan', 'monthly' => 'Bulanan', 'yearly' => 'Tahunan'] as $v => $l)
+                        <option value="{{ $v }}" @selected($g === $v)>{{ $l }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-sm btn-primary"><i class="fas fa-check me-1"></i> Terapkan</button>
+            </div>
+        </form>
+        <div class="d-flex flex-wrap gap-1 mt-3">
+            @foreach (['today' => 'Hari Ini', 'yesterday' => 'Kemarin', '7d' => '7 Hari', '30d' => '30 Hari', 'this_month' => 'Bulan Ini', 'this_year' => 'Tahun Ini'] as $p => $l)
+                <a href="?preset={{ $p }}&g={{ $g }}" class="btn btn-sm btn-outline-secondary">{{ $l }}</a>
             @endforeach
-        </select>
+        </div>
     </div>
-    <button class="bg-indigo-600 text-white px-4 py-2 rounded">Terapkan</button>
-    <div class="ml-auto flex gap-2">
-        @foreach (['today' => 'Hari Ini', 'yesterday' => 'Kemarin', '7d' => '7 Hari', '30d' => '30 Hari', 'this_month' => 'Bulan Ini', 'this_year' => 'Tahun Ini'] as $p => $l)
-            <a href="?preset={{ $p }}&g={{ $g }}" class="text-xs px-3 py-2 border rounded hover:bg-gray-50">{{ $l }}</a>
-        @endforeach
-    </div>
-</form>
+</div>
 
-<div class="grid md:grid-cols-5 gap-3 mb-4">
-    @foreach ([
-        ['Omzet', $data['totals']['omzet'], 'text-blue-600'],
-        ['HPP', $data['totals']['hpp'], 'text-gray-600'],
-        ['Laba Kotor', $data['totals']['laba_kotor'], 'text-green-600'],
-        ['Biaya', $data['totals']['biaya'], 'text-red-600'],
-        ['Laba Bersih', $data['totals']['laba_bersih'], 'text-indigo-600'],
-    ] as [$lbl, $val, $cls])
-        <div class="bg-white rounded shadow p-4">
-            <div class="text-xs uppercase text-gray-500">{{ $lbl }}</div>
-            <div class="text-xl font-bold {{ $cls }}">{{ format_rupiah($val) }}</div>
+<div class="row g-3 mb-3">
+    @php $cards = [
+        ['Omzet', $data['totals']['omzet'], 'primary', 'fa-cash-register'],
+        ['HPP', $data['totals']['hpp'], 'secondary', 'fa-warehouse'],
+        ['Laba Kotor', $data['totals']['laba_kotor'], 'success', 'fa-coins'],
+        ['Biaya', $data['totals']['biaya'], 'danger', 'fa-money-bill-wave'],
+        ['Laba Bersih', $data['totals']['laba_bersih'], 'info', 'fa-chart-line'],
+    ]; @endphp
+    @foreach ($cards as [$lbl, $val, $color, $icon])
+        <div class="col-6 col-md">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted text-uppercase small">{{ $lbl }}</div>
+                            <div class="fs-5 fw-bold text-{{ $color }}">{{ format_rupiah($val) }}</div>
+                        </div>
+                        <div class="text-{{ $color }}"><i class="fas {{ $icon }} fs-4 opacity-50"></i></div>
+                    </div>
+                </div>
+            </div>
         </div>
     @endforeach
 </div>
 
-<div class="bg-white rounded shadow p-4 mb-4">
-    <canvas id="chartLaba" height="80"></canvas>
+<div class="card mb-3">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3">Tren Omzet vs Laba Bersih</h6>
+        <canvas id="chartLaba" height="80"></canvas>
+    </div>
 </div>
 
-<div class="bg-white rounded shadow overflow-x-auto mb-4">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-xs uppercase">
-            <tr>
-                <th class="text-left px-3 py-3">Periode</th>
-                <th class="text-right px-3 py-3">Omzet</th>
-                <th class="text-right px-3 py-3">HPP</th>
-                <th class="text-right px-3 py-3">Laba Kotor</th>
-                <th class="text-right px-3 py-3">Biaya</th>
-                <th class="text-right px-3 py-3">Laba Bersih</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($data['rows'] as $r)
-                <tr class="border-t">
-                    <td class="px-3 py-2 font-mono text-xs">{{ $r['bucket'] }}</td>
-                    <td class="px-3 py-2 text-right">{{ format_rupiah($r['omzet']) }}</td>
-                    <td class="px-3 py-2 text-right">{{ format_rupiah($r['hpp']) }}</td>
-                    <td class="px-3 py-2 text-right">{{ format_rupiah($r['laba_kotor']) }}</td>
-                    <td class="px-3 py-2 text-right">{{ format_rupiah($r['biaya']) }}</td>
-                    <td class="px-3 py-2 text-right font-semibold {{ $r['laba_bersih'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                        {{ format_rupiah($r['laba_bersih']) }}
-                    </td>
-                </tr>
-            @empty
-                <tr><td colspan="6" class="px-4 py-6 text-center text-gray-400">Tidak ada data di rentang ini.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h6 class="fw-bold mb-0">Rincian Per Periode</h6>
+            <div class="d-flex gap-2">
+                <a href="{{ route('laporan.laba.pdf', request()->all()) }}" class="btn btn-sm btn-danger"><i class="fas fa-file-pdf me-1"></i> PDF</a>
+                <a href="{{ route('laporan.laba.csv', request()->all()) }}" class="btn btn-sm btn-success"><i class="fas fa-file-csv me-1"></i> CSV</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Periode</th>
+                        <th class="text-end">Omzet</th>
+                        <th class="text-end">HPP</th>
+                        <th class="text-end">Laba Kotor</th>
+                        <th class="text-end">Biaya</th>
+                        <th class="text-end">Laba Bersih</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($data['rows'] as $r)
+                        <tr>
+                            <td><code>{{ $r['bucket'] }}</code></td>
+                            <td class="text-end">{{ format_rupiah($r['omzet']) }}</td>
+                            <td class="text-end">{{ format_rupiah($r['hpp']) }}</td>
+                            <td class="text-end">{{ format_rupiah($r['laba_kotor']) }}</td>
+                            <td class="text-end">{{ format_rupiah($r['biaya']) }}</td>
+                            <td class="text-end fw-bold {{ $r['laba_bersih'] >= 0 ? 'text-success' : 'text-danger' }}">{{ format_rupiah($r['laba_bersih']) }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="6" class="text-center text-muted py-4">Tidak ada data di rentang ini.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+@endsection
 
-<div class="flex gap-2">
-    <a href="{{ route('laporan.laba.pdf', request()->all()) }}" class="bg-red-600 text-white px-4 py-2 rounded">Ekspor PDF</a>
-    <a href="{{ route('laporan.laba.csv', request()->all()) }}" class="bg-green-600 text-white px-4 py-2 rounded">Ekspor CSV</a>
-</div>
-
+@push('scripts')
 <script>
 const ROWS = @json($data['rows']);
 window.addEventListener('load', () => {
@@ -95,12 +118,12 @@ window.addEventListener('load', () => {
         data: {
             labels: ROWS.map(r => r.bucket),
             datasets: [
-                {label: 'Omzet', data: ROWS.map(r => r.omzet), borderColor: '#2563eb', tension: 0.3},
+                {label: 'Omzet', data: ROWS.map(r => r.omzet), borderColor: '#4361ee', backgroundColor:'rgba(67,97,238,.1)', tension: 0.3, fill:true},
                 {label: 'Laba Bersih', data: ROWS.map(r => r.laba_bersih), borderColor: '#16a34a', tension: 0.3},
             ],
         },
-        options: { plugins: { legend: { position: 'bottom' } } }
+        options: { plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true } } }
     });
 });
 </script>
-@endsection
+@endpush

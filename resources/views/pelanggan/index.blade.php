@@ -1,42 +1,48 @@
 @extends('layouts.app')
-@section('title', 'Pelanggan')
-@section('breadcrumb', 'Master / Pelanggan')
+@section('title', 'Pelanggan - TOKOPINTAR')
+@section('page_title', 'Pelanggan')
 @section('content')
-<div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold">Pelanggan</h1>
-    <a href="{{ route('pelanggan.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded">+ Pelanggan</a>
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h6 class="fw-bold mb-0">Daftar Pelanggan</h6>
+            <a href="{{ route('pelanggan.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Tambah Pelanggan</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:60px;">#</th>
+                        <th>Nama</th>
+                        <th>No HP</th>
+                        <th>Tipe</th>
+                        <th class="text-end">Total Belanja</th>
+                        <th style="width:140px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($items as $i => $row)
+                        <tr>
+                            <td>{{ $items->firstItem() + $i }}</td>
+                            <td class="fw-semibold">{{ $row->nama }}</td>
+                            <td>{{ $row->no_hp ?? '-' }}</td>
+                            <td><span class="badge bg-{{ $row->tipe === 'member' ? 'primary' : 'secondary' }}">{{ ucfirst($row->tipe) }}</span></td>
+                            <td class="text-end">{{ format_rupiah($row->total_belanja) }}</td>
+                            <td>
+                                <a href="{{ route('pelanggan.edit', $row) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
+                                <form method="POST" action="{{ route('pelanggan.destroy', $row) }}" class="d-inline" onsubmit="return confirm('Hapus?')">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        {{ $items->links() }}
+    </div>
 </div>
-<div class="bg-white rounded-lg shadow overflow-hidden">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-xs uppercase text-gray-600">
-            <tr>
-                <th class="text-left px-4 py-3">Nama</th>
-                <th class="text-left px-4 py-3">No HP</th>
-                <th class="text-left px-4 py-3">Tipe</th>
-                <th class="text-right px-4 py-3">Total Belanja</th>
-                <th class="px-4 py-3 w-32">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($items as $row)
-                <tr class="border-t">
-                    <td class="px-4 py-2 font-medium">{{ $row->nama }}</td>
-                    <td class="px-4 py-2">{{ $row->no_hp ?? '-' }}</td>
-                    <td class="px-4 py-2">{{ ucfirst($row->tipe) }}</td>
-                    <td class="px-4 py-2 text-right">{{ format_rupiah($row->total_belanja) }}</td>
-                    <td class="px-4 py-2 text-right">
-                        <a href="{{ route('pelanggan.edit', $row) }}" class="text-indigo-600 hover:underline">Edit</a>
-                        <form method="POST" action="{{ route('pelanggan.destroy', $row) }}" class="inline" onsubmit="return confirm('Hapus?')">
-                            @csrf @method('DELETE')
-                            <button class="text-red-600 hover:underline ml-2">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr><td colspan="5" class="px-4 py-6 text-center text-gray-400">Belum ada.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
-<div class="mt-3">{{ $items->links() }}</div>
 @endsection

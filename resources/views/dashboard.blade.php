@@ -1,70 +1,110 @@
 @extends('layouts.app')
-@section('title', 'Dashboard')
-@section('breadcrumb', 'Dashboard')
+@section('title', 'Dashboard - TOKOPINTAR')
+@section('page_title', 'Dashboard')
 @section('content')
-<h1 class="text-2xl font-bold mb-4">Dashboard</h1>
-
-<div class="grid md:grid-cols-5 gap-3 mb-4">
-    <div class="bg-white rounded shadow p-4">
-        <div class="text-xs uppercase text-gray-500">Omzet Hari Ini</div>
-        <div class="text-xl font-bold text-blue-600">{{ format_rupiah($omzetToday) }}</div>
+<div class="row g-3 mb-3">
+    <div class="col-md">
+        <div class="card stat-card" style="background:linear-gradient(135deg,#4361ee,#3f37c9);">
+            <div class="card-body">
+                <div class="stat-label"><i class="fas fa-cash-register me-1"></i> Omzet Hari Ini</div>
+                <div class="stat-value">{{ format_rupiah($omzetToday) }}</div>
+            </div>
+        </div>
     </div>
-    <div class="bg-white rounded shadow p-4">
-        <div class="text-xs uppercase text-gray-500">Laba Kotor Hari Ini</div>
-        <div class="text-xl font-bold text-green-600">{{ format_rupiah($omzetToday - $hppToday) }}</div>
+    <div class="col-md">
+        <div class="card stat-card" style="background:linear-gradient(135deg,#16a34a,#059669);">
+            <div class="card-body">
+                <div class="stat-label"><i class="fas fa-coins me-1"></i> Laba Kotor</div>
+                <div class="stat-value">{{ format_rupiah($omzetToday - $hppToday) }}</div>
+            </div>
+        </div>
     </div>
-    <div class="bg-white rounded shadow p-4">
-        <div class="text-xs uppercase text-gray-500">Transaksi</div>
-        <div class="text-xl font-bold">{{ $trxToday }}</div>
+    <div class="col-md">
+        <div class="card stat-card" style="background:linear-gradient(135deg,#0891b2,#0e7490);">
+            <div class="card-body">
+                <div class="stat-label"><i class="fas fa-receipt me-1"></i> Transaksi</div>
+                <div class="stat-value">{{ $trxToday }}</div>
+            </div>
+        </div>
     </div>
-    <div class="bg-white rounded shadow p-4">
-        <div class="text-xs uppercase text-gray-500">Stok Rendah</div>
-        <div class="text-xl font-bold text-red-600">{{ $stokRendah }}</div>
+    <div class="col-md">
+        <div class="card stat-card" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
+            <div class="card-body">
+                <div class="stat-label"><i class="fas fa-exclamation-triangle me-1"></i> Stok Rendah</div>
+                <div class="stat-value">{{ $stokRendah }}</div>
+            </div>
+        </div>
     </div>
-    <div class="bg-white rounded shadow p-4">
-        <div class="text-xs uppercase text-gray-500">Akan Kadaluarsa</div>
-        <div class="text-xl font-bold text-yellow-600">{{ $nearExpiry }}</div>
-    </div>
-</div>
-
-<div class="grid md:grid-cols-3 gap-4 mb-4">
-    <div class="md:col-span-2 bg-white rounded shadow p-4">
-        <h2 class="font-semibold mb-2">Omzet 30 Hari</h2>
-        <canvas id="chartOmzet" height="80"></canvas>
-    </div>
-    <div class="bg-white rounded shadow p-4">
-        <h2 class="font-semibold mb-2">Top 5 Produk Terlaris</h2>
-        <canvas id="chartTop" height="160"></canvas>
-    </div>
-</div>
-
-<div class="grid md:grid-cols-3 gap-4">
-    <div class="bg-white rounded shadow p-4">
-        <h2 class="font-semibold mb-2">Transaksi Terakhir</h2>
-        <table class="w-full text-sm">
-            @forelse ($lastTrx as $t)
-                <tr class="border-t"><td class="py-1 font-mono text-xs">{{ $t->nomor }}</td><td class="text-right">{{ format_rupiah($t->grand_total) }}</td></tr>
-            @empty <tr><td class="py-2 text-gray-400">Belum ada.</td></tr> @endforelse
-        </table>
-    </div>
-    <div class="bg-white rounded shadow p-4">
-        <h2 class="font-semibold mb-2">Fast Mover</h2>
-        <table class="w-full text-sm">
-            @forelse ($fastMovers as $i)
-                <tr class="border-t"><td class="py-1">{{ $i->barang?->nama }}</td><td class="text-right text-xs text-gray-500">{{ number_format($i->velocity_30, 2) }}/hari</td></tr>
-            @empty <tr><td class="py-2 text-gray-400">Belum ada insight.</td></tr> @endforelse
-        </table>
-    </div>
-    <div class="bg-white rounded shadow p-4">
-        <h2 class="font-semibold mb-2">Dead Stock</h2>
-        <table class="w-full text-sm">
-            @forelse ($deadStocks as $i)
-                <tr class="border-t"><td class="py-1">{{ $i->barang?->nama }}</td><td class="text-right text-xs text-gray-500">dos {{ number_format($i->days_of_supply, 0) }}</td></tr>
-            @empty <tr><td class="py-2 text-gray-400">Belum ada.</td></tr> @endforelse
-        </table>
+    <div class="col-md">
+        <div class="card stat-card" style="background:linear-gradient(135deg,#ea580c,#c2410c);">
+            <div class="card-body">
+                <div class="stat-label"><i class="fas fa-clock me-1"></i> Akan Kadaluarsa</div>
+                <div class="stat-value">{{ $nearExpiry }}</div>
+            </div>
+        </div>
     </div>
 </div>
 
+<div class="row g-3 mb-3">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Omzet 30 Hari Terakhir</h6>
+                <canvas id="chartOmzet" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Top 5 Produk Terlaris</h6>
+                <canvas id="chartTop" height="160"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="fas fa-history text-primary me-2"></i>Transaksi Terakhir</h6>
+                <table class="table table-sm mb-0">
+                    @forelse ($lastTrx as $t)
+                        <tr><td><code class="small">{{ $t->nomor }}</code></td><td class="text-end fw-semibold">{{ format_rupiah($t->grand_total) }}</td></tr>
+                    @empty <tr><td class="text-muted">Belum ada.</td></tr> @endforelse
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="fas fa-rocket text-success me-2"></i>Fast Mover</h6>
+                <table class="table table-sm mb-0">
+                    @forelse ($fastMovers as $i)
+                        <tr><td>{{ $i->barang?->nama }}</td><td class="text-end small text-muted">{{ number_format($i->velocity_30, 2) }}/hari</td></tr>
+                    @empty <tr><td class="text-muted">Belum ada insight.</td></tr> @endforelse
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="fas fa-ban text-danger me-2"></i>Dead Stock</h6>
+                <table class="table table-sm mb-0">
+                    @forelse ($deadStocks as $i)
+                        <tr><td>{{ $i->barang?->nama }}</td><td class="text-end small text-muted">dos {{ number_format($i->days_of_supply, 0) }}</td></tr>
+                    @empty <tr><td class="text-muted">Belum ada.</td></tr> @endforelse
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
 <script>
 const OMZET = @json($omzetSeries);
 const TOP = @json($topBarang->map(fn($t) => ['nama' => $t->barang?->nama, 'qty' => (int) $t->total_qty]));
@@ -72,14 +112,14 @@ window.addEventListener('load', () => {
     if (!window.Chart) return;
     const c1 = document.getElementById('chartOmzet');
     if (c1) new Chart(c1, { type: 'line',
-        data: { labels: OMZET.labels, datasets: [{ label: 'Omzet', data: OMZET.data, borderColor: '#2563eb', tension: 0.3, fill: false }] },
-        options: { plugins: { legend: { display: false } } }
+        data: { labels: OMZET.labels, datasets: [{ label: 'Omzet', data: OMZET.data, borderColor: '#4361ee', backgroundColor: 'rgba(67,97,238,.1)', tension: 0.3, fill: true }] },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
     });
     const c2 = document.getElementById('chartTop');
     if (c2) new Chart(c2, { type: 'bar',
-        data: { labels: TOP.map(t => t.nama), datasets: [{ data: TOP.map(t => t.qty), backgroundColor: '#6366f1' }] },
+        data: { labels: TOP.map(t => t.nama), datasets: [{ data: TOP.map(t => t.qty), backgroundColor: '#4361ee' }] },
         options: { plugins: { legend: { display: false } }, indexAxis: 'y' }
     });
 });
 </script>
-@endsection
+@endpush

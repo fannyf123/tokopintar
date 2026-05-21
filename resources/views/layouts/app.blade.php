@@ -4,61 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') - {{ config('app.name') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+    <title>@yield('title', config('app.name', 'TOKOPINTAR'))</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <style>
+        body { background:#f4f7f9; font-family:'Inter',sans-serif; font-size:13.5px; color:#4a5568; overflow-x:hidden; }
+        .sidebar { height:100vh; background:#1e222d; color:#fff; padding-top:20px; position:fixed; top:0; left:0; width:260px; box-shadow:2px 0 10px rgba(0,0,0,.05); z-index:1040; transition:transform .3s; overflow-y:auto; }
+        .sidebar .brand { font-size:1.2rem; font-weight:700; letter-spacing:1.5px; }
+        .sidebar .menu-label { font-size:.7rem; padding-left:20px; color:#6b7280; font-weight:600; letter-spacing:1px; margin-bottom:10px; }
+        .sidebar a { color:#a0aec0; text-decoration:none; display:flex; align-items:center; padding:12px 20px; margin-bottom:4px; border-radius:8px; transition:.3s; font-weight:500; }
+        .sidebar a:hover { background:rgba(255,255,255,.05); color:#fff; transform:translateX(4px); }
+        .sidebar a.active { background:#4361ee; color:#fff; box-shadow:0 4px 12px rgba(67,97,238,.3); font-weight:600; }
+        .sidebar a i { width:25px; font-size:16px; }
+        .main-content { margin-left:260px; padding:25px 35px; min-height:100vh; transition:margin .3s; }
+        .navbar { border-radius:12px; background:#fff !important; box-shadow:0 2px 10px rgba(0,0,0,.02) !important; margin-bottom:30px !important; }
+        .card { border:none; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.03); }
+        .card-body { padding:25px; }
+        .btn { font-size:13px; font-weight:500; border-radius:8px; padding:8px 16px; }
+        .btn-sm { padding:5px 10px; font-size:12px; border-radius:6px; }
+        .btn-primary { background:#4361ee; border-color:#4361ee; }
+        .btn-primary:hover { background:#3f37c9; border-color:#3f37c9; }
+        table.dataTable thead th { border:none !important; border-bottom:2px solid #e2e8f0 !important; background:#fff !important; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:.5px; padding:15px 10px !important; }
+        table.dataTable tbody td { border:none !important; border-bottom:1px solid #f1f5f9 !important; padding:15px 10px !important; vertical-align:middle; color:#475569; }
+        .table thead th { border-bottom:2px solid #e2e8f0; background:#fff; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:.5px; padding:15px 10px; }
+        .table tbody td { border-bottom:1px solid #f1f5f9; padding:14px 10px; vertical-align:middle; color:#475569; }
+        .stat-card { border-radius:12px; padding:20px; color:#fff; }
+        .stat-card .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; opacity:.85; }
+        .stat-card .stat-value { font-size:1.5rem; font-weight:700; margin-top:6px; }
+        .sidebar-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:1030; display:none; opacity:0; transition:opacity .3s; }
+        @media (max-width:991.98px) { .sidebar { transform:translateX(-100%); } .sidebar.show { transform:translateX(0); } .main-content { margin-left:0; padding:15px; } .sidebar-overlay.show { display:block; opacity:1; } }
+        .alert { border-radius:10px; }
+    </style>
+    @stack('styles')
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body>
 @php
     $u = auth()->user();
     $isAdmin = $u?->isAdmin();
     $isKasir = $u?->isKasir();
     $isGudang = $u?->isGudang();
 @endphp
-<div class="flex min-h-screen">
-    <aside class="w-60 bg-indigo-700 text-white p-4 hidden md:block">
-        <a href="{{ route('dashboard') }}" class="text-xl font-bold block mb-6">TOKOPINTAR</a>
-        <nav class="space-y-1 text-sm">
-            <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Dashboard</a>
-            @if ($isAdmin || $isKasir)
-                <div class="text-xs uppercase text-indigo-300 mt-3 px-3">Penjualan</div>
-                <a href="{{ route('pos.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">POS / Kasir</a>
-                <a href="{{ route('penjualan.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Riwayat Penjualan</a>
-                <a href="{{ route('pelanggan.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Pelanggan</a>
-            @endif
-            @if ($isAdmin || $isGudang)
-                <div class="text-xs uppercase text-indigo-300 mt-3 px-3">Inventory</div>
-                <a href="{{ route('barang.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Barang</a>
-                <a href="{{ route('supplier.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Supplier</a>
-                <a href="{{ route('pembelian.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Pembelian</a>
-                <a href="{{ route('mutasi.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Mutasi Stok</a>
-                <a href="{{ route('expiry.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Kadaluarsa</a>
-            @endif
-            @if ($isAdmin)
-                <div class="text-xs uppercase text-indigo-300 mt-3 px-3">Admin</div>
-                <a href="{{ route('kategori.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Kategori</a>
-                <a href="{{ route('pengeluaran.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Pengeluaran</a>
-                <a href="{{ route('insight.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Insight AI</a>
-                <a href="{{ route('laporan.laba.index') }}" class="block px-3 py-2 rounded hover:bg-indigo-600">Laporan Laba</a>
-            @endif
-        </nav>
-    </aside>
-    <div class="flex-1 flex flex-col">
-        <header class="bg-white shadow px-4 py-3 flex items-center justify-between">
-            <div class="text-sm text-gray-500">@yield('breadcrumb', 'Dashboard')</div>
-            <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-700">{{ $u->name }} <span class="text-xs text-gray-500">({{ $u->role }})</span></span>
-                <a href="{{ route('profile.edit') }}" class="text-sm text-gray-600 hover:text-indigo-600">Profil</a>
-                <form method="POST" action="{{ route('logout') }}" class="inline">@csrf
-                    <button type="submit" class="text-sm text-red-600 hover:text-red-800">Logout</button>
-                </form>
+<div class="d-flex">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar px-3" id="sidebar">
+        <div class="text-center mb-5 mt-4 d-flex justify-content-between align-items-center px-2">
+            <span class="brand text-white mx-auto"><i class="fas fa-store text-primary me-2"></i> TOKOPINTAR</span>
+            <i class="fas fa-times d-lg-none text-secondary" id="closeSidebar" style="cursor:pointer;font-size:1.2rem;"></i>
+        </div>
+
+        <p class="menu-label text-uppercase">Main</p>
+        <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <i class="fas fa-border-all"></i> Dashboard
+        </a>
+
+        @if ($isAdmin || $isKasir)
+            <p class="menu-label text-uppercase mt-3">Penjualan</p>
+            <a href="{{ route('pos.index') }}" class="{{ request()->routeIs('pos.*') ? 'active' : '' }}">
+                <i class="fas fa-cash-register"></i> POS / Kasir
+            </a>
+            <a href="{{ route('penjualan.index') }}" class="{{ request()->routeIs('penjualan.*') ? 'active' : '' }}">
+                <i class="fas fa-receipt"></i> Riwayat Penjualan
+            </a>
+            <a href="{{ route('pelanggan.index') }}" class="{{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
+                <i class="fas fa-users"></i> Pelanggan
+            </a>
+        @endif
+
+        @if ($isAdmin || $isGudang)
+            <p class="menu-label text-uppercase mt-3">Inventory</p>
+            <a href="{{ route('barang.index') }}" class="{{ request()->routeIs('barang.*') ? 'active' : '' }}">
+                <i class="fas fa-box"></i> Barang
+            </a>
+            <a href="{{ route('supplier.index') }}" class="{{ request()->routeIs('supplier.*') ? 'active' : '' }}">
+                <i class="fas fa-truck"></i> Supplier
+            </a>
+            <a href="{{ route('pembelian.index') }}" class="{{ request()->routeIs('pembelian.*') ? 'active' : '' }}">
+                <i class="fas fa-truck-loading"></i> Pembelian
+            </a>
+            <a href="{{ route('mutasi.index') }}" class="{{ request()->routeIs('mutasi.*') ? 'active' : '' }}">
+                <i class="fas fa-exchange-alt"></i> Mutasi Stok
+            </a>
+            <a href="{{ route('expiry.index') }}" class="{{ request()->routeIs('expiry.*') ? 'active' : '' }}">
+                <i class="fas fa-clock"></i> Kadaluarsa
+            </a>
+        @endif
+
+        @if ($isAdmin)
+            <p class="menu-label text-uppercase mt-3">Admin</p>
+            <a href="{{ route('kategori.index') }}" class="{{ request()->routeIs('kategori.*') ? 'active' : '' }}">
+                <i class="fas fa-tags"></i> Kategori
+            </a>
+            <a href="{{ route('pengeluaran.index') }}" class="{{ request()->routeIs('pengeluaran.*') ? 'active' : '' }}">
+                <i class="fas fa-money-bill-wave"></i> Pengeluaran
+            </a>
+            <a href="{{ route('insight.index') }}" class="{{ request()->routeIs('insight.*') ? 'active' : '' }}">
+                <i class="fas fa-brain"></i> Insight AI
+            </a>
+            <a href="{{ route('laporan.laba.index') }}" class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
+                <i class="fas fa-chart-line"></i> Laporan Laba
+            </a>
+        @endif
+
+        <hr class="text-secondary mt-5 mx-3" style="opacity:.2;">
+
+        <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <i class="fas fa-user"></i> Profil
+        </a>
+        <a href="#" class="text-danger mt-1" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+    </div>
+
+    <div class="main-content flex-grow-1">
+        <nav class="navbar navbar-expand-lg px-4 py-3 d-flex justify-content-between">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-light d-lg-none me-3 shadow-sm border-0" id="sidebarToggle" aria-label="Toggle menu" style="border-radius:8px;">
+                    <i class="fas fa-bars text-dark"></i>
+                </button>
+                <span class="navbar-brand mb-0 fw-bold d-none d-sm-block">@yield('page_title', 'Dashboard')</span>
             </div>
-        </header>
-        <main class="p-6">
-            <x-flash />
-            @yield('content')
-        </main>
+            <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center text-end">
+                    <div class="me-2 d-none d-md-block">
+                        <span class="d-block fw-bold text-dark" style="font-size:13px;line-height:1;">{{ $u->name }}</span>
+                        <span class="text-muted text-capitalize" style="font-size:11px;">{{ $u->role }}</span>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($u->name) }}&background=4361ee&color=fff" class="rounded-circle shadow-sm" width="38" alt="Avatar {{ $u->name }}">
+                </div>
+            </div>
+        </nav>
+
+        <x-flash />
+
+        @yield('content')
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+    $(function () {
+        $('#sidebarToggle').on('click', () => { $('#sidebar').addClass('show'); $('#sidebarOverlay').addClass('show'); });
+        $('#closeSidebar, #sidebarOverlay').on('click', () => { $('#sidebar').removeClass('show'); $('#sidebarOverlay').removeClass('show'); });
+        $('#logoutBtn').on('click', function (e) {
+            e.preventDefault();
+            if (confirm('Yakin keluar dari TOKOPINTAR?')) document.getElementById('logout-form').submit();
+        });
+    });
+</script>
+@stack('scripts')
 </body>
 </html>

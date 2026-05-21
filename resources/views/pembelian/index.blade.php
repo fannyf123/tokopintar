@@ -1,41 +1,45 @@
 @extends('layouts.app')
-@section('title', 'Pembelian')
-@section('breadcrumb', 'Inventory / Pembelian')
+@section('title', 'Pembelian - TOKOPINTAR')
+@section('page_title', 'Pembelian')
 @section('content')
-<div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold">Pembelian</h1>
-    <a href="{{ route('pembelian.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded">+ Pembelian</a>
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h6 class="fw-bold mb-0">Daftar Pembelian</h6>
+            <a href="{{ route('pembelian.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Pembelian Baru</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:60px;">#</th>
+                        <th>Nomor</th>
+                        <th>Tanggal</th>
+                        <th>Supplier</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-center">Status</th>
+                        <th style="width:100px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $badge = ['draft' => 'secondary', 'diterima' => 'success', 'batal' => 'danger']; @endphp
+                    @forelse ($items as $i => $p)
+                        <tr>
+                            <td>{{ $items->firstItem() + $i }}</td>
+                            <td><code>{{ $p->nomor }}</code></td>
+                            <td>{{ format_tanggal_id($p->tanggal) }}</td>
+                            <td>{{ $p->supplier?->nama }}</td>
+                            <td class="text-end">{{ format_rupiah($p->total) }}</td>
+                            <td class="text-center"><span class="badge bg-{{ $badge[$p->status] ?? 'secondary' }}">{{ $p->status }}</span></td>
+                            <td><a href="{{ route('pembelian.show', $p) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="7" class="text-center text-muted py-4">Belum ada.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        {{ $items->links() }}
+    </div>
 </div>
-<div class="bg-white rounded-lg shadow overflow-x-auto">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-xs uppercase text-gray-600">
-            <tr>
-                <th class="text-left px-3 py-3">Nomor</th>
-                <th class="text-left px-3 py-3">Tanggal</th>
-                <th class="text-left px-3 py-3">Supplier</th>
-                <th class="text-right px-3 py-3">Total</th>
-                <th class="text-center px-3 py-3">Status</th>
-                <th class="px-3 py-3 w-20">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($items as $p)
-                <tr class="border-t">
-                    <td class="px-3 py-2 font-mono text-xs">{{ $p->nomor }}</td>
-                    <td class="px-3 py-2">{{ format_tanggal_id($p->tanggal) }}</td>
-                    <td class="px-3 py-2">{{ $p->supplier?->nama }}</td>
-                    <td class="px-3 py-2 text-right">{{ format_rupiah($p->total) }}</td>
-                    <td class="px-3 py-2 text-center">
-                        @php $cls = ['draft' => 'bg-gray-200', 'diterima' => 'bg-green-200 text-green-800', 'batal' => 'bg-red-200 text-red-800']; @endphp
-                        <span class="px-2 py-1 rounded text-xs {{ $cls[$p->status] ?? '' }}">{{ $p->status }}</span>
-                    </td>
-                    <td class="px-3 py-2 text-right"><a href="{{ route('pembelian.show', $p) }}" class="text-indigo-600">Detail</a></td>
-                </tr>
-            @empty
-                <tr><td colspan="6" class="px-4 py-6 text-center text-gray-400">Belum ada.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
-<div class="mt-3">{{ $items->links() }}</div>
 @endsection

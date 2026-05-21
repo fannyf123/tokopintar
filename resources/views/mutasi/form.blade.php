@@ -1,47 +1,50 @@
 @extends('layouts.app')
-@section('title', 'Mutasi Stok Baru')
-@section('breadcrumb', 'Inventory / Mutasi / Form')
+@section('title', 'Mutasi Stok Baru - TOKOPINTAR')
+@section('page_title', 'Mutasi Stok Baru')
 @section('content')
-<div class="bg-white rounded-lg shadow p-6 max-w-xl">
-    <h1 class="text-xl font-bold mb-4">Mutasi Stok</h1>
-    @if ($errors->any())
-        <div class="mb-4 p-3 rounded bg-red-100 text-red-800">@foreach ($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div>
-    @endif
-    <form method="POST" action="{{ route('mutasi.store') }}" class="space-y-4">
-        @csrf
-        <div>
-            <label class="block text-sm mb-1">Barang</label>
-            <select name="barang_id" required id="barang" class="w-full border rounded px-3 py-2">
-                <option value="">— pilih —</option>
-                @foreach ($barangs as $b)<option value="{{ $b->id }}" @selected(old('barang_id') == $b->id)>{{ $b->nama }} (stok: {{ $b->stok_current }})</option>@endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm mb-1">Jenis</label>
-            <select name="jenis" required class="w-full border rounded px-3 py-2">
-                @foreach ($jenisList as $j)<option value="{{ $j }}" @selected(old('jenis') === $j)>{{ $j }}</option>@endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm mb-1">Qty</label>
-            <input type="number" min="1" name="qty" value="{{ old('qty', 1) }}" required class="w-full border rounded px-3 py-2">
-        </div>
-        <div>
-            <label class="block text-sm mb-1">Batch (opsional)</label>
-            <select name="batch_id" id="batch" class="w-full border rounded px-3 py-2">
-                <option value="">— tanpa batch —</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm mb-1">Alasan</label>
-            <textarea name="alasan" required rows="2" class="w-full border rounded px-3 py-2">{{ old('alasan') }}</textarea>
-        </div>
-        <div class="flex gap-2">
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded">Simpan</button>
-            <a href="{{ route('mutasi.index') }}" class="px-4 py-2 border rounded">Batal</a>
-        </div>
-    </form>
+<div class="card">
+    <div class="card-body">
+        @if ($errors->any())
+            <div class="alert alert-danger small">@foreach ($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div>
+        @endif
+        <form method="POST" action="{{ route('mutasi.store') }}" class="row g-3">
+            @csrf
+            <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Barang</label>
+                <select name="barang_id" required id="barang" class="form-select">
+                    <option value="">— pilih —</option>
+                    @foreach ($barangs as $b)<option value="{{ $b->id }}" @selected(old('barang_id') == $b->id)>{{ $b->nama }} (stok: {{ $b->stok_current }})</option>@endforeach
+                </select>
+            </div>
+            <div class="col-12 col-md-3">
+                <label class="form-label fw-semibold">Jenis</label>
+                <select name="jenis" required class="form-select">
+                    @foreach ($jenisList as $j)<option value="{{ $j }}" @selected(old('jenis') === $j)>{{ $j }}</option>@endforeach
+                </select>
+            </div>
+            <div class="col-12 col-md-3">
+                <label class="form-label fw-semibold">Qty</label>
+                <input type="number" min="1" name="qty" value="{{ old('qty', 1) }}" required class="form-control">
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label fw-semibold">Batch <small class="text-muted">(opsional)</small></label>
+                <select name="batch_id" id="batch" class="form-select">
+                    <option value="">— tanpa batch —</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <label class="form-label fw-semibold">Alasan</label>
+                <textarea name="alasan" required rows="2" class="form-control">{{ old('alasan') }}</textarea>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button class="btn btn-primary"><i class="fas fa-save me-1"></i> Simpan</button>
+                <a href="{{ route('mutasi.index') }}" class="btn btn-light">Batal</a>
+            </div>
+        </form>
+    </div>
 </div>
+@endsection
+@push('scripts')
 <script>
 document.getElementById('barang').addEventListener('change', async (e) => {
     const id = e.target.value;
@@ -58,4 +61,4 @@ document.getElementById('barang').addEventListener('change', async (e) => {
     });
 });
 </script>
-@endsection
+@endpush

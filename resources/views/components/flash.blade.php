@@ -1,15 +1,18 @@
 @if (session('success'))
-    <div class="mb-4 px-4 py-3 rounded bg-green-100 border border-green-300 text-green-800" role="alert">
-        {{ session('success') }}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 @endif
 @if (session('error'))
-    <div class="mb-4 px-4 py-3 rounded bg-red-100 border border-red-300 text-red-800" role="alert">
-        {{ session('error') }}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 @endif
 @if (session('info'))
-    <div class="mb-4 px-4 py-3 rounded bg-blue-100 border border-blue-300 text-blue-800" role="alert">
-        {{ session('info') }}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="fas fa-info-circle me-2"></i>{{ session('info') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 @endif

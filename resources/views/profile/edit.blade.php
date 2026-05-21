@@ -1,80 +1,64 @@
 @extends('layouts.app')
-
-@section('title', 'Profil')
-
+@section('title', 'Profil - TOKOPINTAR')
+@section('page_title', 'Profil Saya')
 @section('content')
-<h1 class="text-2xl font-bold text-gray-800 mb-4">Profil Saya</h1>
-
-<div class="grid md:grid-cols-2 gap-6">
-    <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">Informasi Akun</h2>
-        @if ($errors->updateProfile->any())
-            <div class="mb-4 px-4 py-3 rounded bg-red-100 border border-red-300 text-red-800">
-                @foreach ($errors->updateProfile->all() as $err)
-                    <div>{{ $err }}</div>
-                @endforeach
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="fas fa-user-circle me-2"></i>Informasi Akun</h6>
+                @if ($errors->updateProfile->any())
+                    <div class="alert alert-danger small">@foreach ($errors->updateProfile->all() as $e)<div>{{ $e }}</div>@endforeach</div>
+                @endif
+                <form method="POST" action="{{ route('profile.update') }}" class="row g-3">
+                    @csrf @method('PUT')
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Nama</label>
+                        <input name="name" type="text" required value="{{ old('name', auth()->user()->name) }}" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Username</label>
+                        <input name="username" type="text" required value="{{ old('username', auth()->user()->username) }}" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input name="email" type="email" required value="{{ old('email', auth()->user()->email) }}" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Simpan Perubahan</button>
+                    </div>
+                </form>
             </div>
-        @endif
-        <form method="POST" action="{{ route('profile.update') }}" class="space-y-4">
-            @csrf
-            @method('PUT')
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
-                <input id="name" name="name" type="text" required
-                    value="{{ old('name', auth()->user()->name) }}"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-            <div>
-                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                <input id="username" name="username" type="text" required
-                    value="{{ old('username', auth()->user()->username) }}"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input id="email" name="email" type="email" required
-                    value="{{ old('email', auth()->user()->email) }}"
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-            <button type="submit"
-                class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium">
-                Simpan Perubahan
-            </button>
-        </form>
+        </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">Ganti Password</h2>
-        @if ($errors->changePassword->any())
-            <div class="mb-4 px-4 py-3 rounded bg-red-100 border border-red-300 text-red-800">
-                @foreach ($errors->changePassword->all() as $err)
-                    <div>{{ $err }}</div>
-                @endforeach
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="fas fa-key me-2"></i>Ganti Password</h6>
+                @if ($errors->changePassword->any())
+                    <div class="alert alert-danger small">@foreach ($errors->changePassword->all() as $e)<div>{{ $e }}</div>@endforeach</div>
+                @endif
+                <form method="POST" action="{{ route('profile.password') }}" class="row g-3">
+                    @csrf @method('PUT')
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Password Lama</label>
+                        <input name="current_password" type="password" required class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Password Baru</label>
+                        <input name="password" type="password" required class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Konfirmasi Password</label>
+                        <input name="password_confirmation" type="password" required class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Ganti Password</button>
+                    </div>
+                </form>
             </div>
-        @endif
-        <form method="POST" action="{{ route('profile.password') }}" class="space-y-4">
-            @csrf
-            @method('PUT')
-            <div>
-                <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Password Lama</label>
-                <input id="current_password" name="current_password" type="password" required
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-            <div>
-                <label for="new_password" class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
-                <input id="new_password" name="password" type="password" required
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-            <div>
-                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" required
-                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-            </div>
-            <button type="submit"
-                class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium">
-                Ganti Password
-            </button>
-        </form>
+        </div>
     </div>
 </div>
 @endsection

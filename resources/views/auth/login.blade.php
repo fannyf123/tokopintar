@@ -1,42 +1,39 @@
 @extends('layouts.guest')
-
 @section('title', 'Login')
-
 @section('content')
-<div class="bg-white rounded-lg shadow p-8">
-    <h1 class="text-2xl font-bold text-center text-indigo-600 mb-1">TOKOPINTAR</h1>
-    <p class="text-center text-sm text-gray-500 mb-6">Sistem Manajemen Toko UMKM</p>
-
-    <x-flash />
-
-    @if ($errors->any())
-        <div class="mb-4 px-4 py-3 rounded bg-red-100 border border-red-300 text-red-800">
-            @foreach ($errors->all() as $err)
-                <div>{{ $err }}</div>
-            @endforeach
+<div class="card login-card mt-5">
+    <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+            <i class="fas fa-store" style="font-size:2.5rem;color:#4361ee;"></i>
+            <h3 class="fw-bold mt-3 mb-1">TOKOPINTAR</h3>
+            <p class="text-muted small mb-0">Sistem Manajemen Toko UMKM</p>
         </div>
-    @endif
-
-    <form method="POST" action="{{ route('login.attempt') }}" class="space-y-4">
-        @csrf
-        <div>
-            <label for="login" class="block text-sm font-medium text-gray-700 mb-1">Username atau Email</label>
-            <input id="login" name="login" type="text" value="{{ old('login') }}" autofocus required
-                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        </div>
-        <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input id="password" name="password" type="password" required
-                class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-        </div>
-        <div class="flex items-center">
-            <input id="remember" name="remember" type="checkbox" value="1" class="mr-2">
-            <label for="remember" class="text-sm text-gray-700">Ingat saya</label>
-        </div>
-        <button type="submit"
-            class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 font-medium">
-            Login
-        </button>
-    </form>
+        @if ($errors->any())
+            <div class="alert alert-danger small">{{ $errors->first() }}</div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger small">{{ session('error') }}</div>
+        @endif
+        <form method="POST" action="{{ route('login.attempt') }}">
+            @csrf
+            <div class="mb-3">
+                <label for="login" class="form-label small fw-semibold">Username atau Email</label>
+                <input id="login" name="login" type="text" value="{{ old('login') }}" required autofocus
+                    class="form-control @error('login') is-invalid @enderror">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label small fw-semibold">Password</label>
+                <input id="password" name="password" type="password" required
+                    class="form-control @error('password') is-invalid @enderror">
+            </div>
+            <div class="form-check mb-3">
+                <input id="remember" name="remember" type="checkbox" value="1" class="form-check-input">
+                <label for="remember" class="form-check-label small">Ingat saya</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                <i class="fas fa-sign-in-alt me-1"></i> Login
+            </button>
+        </form>
+    </div>
 </div>
 @endsection

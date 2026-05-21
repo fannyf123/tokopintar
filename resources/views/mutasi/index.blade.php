@@ -1,47 +1,60 @@
 @extends('layouts.app')
-@section('title', 'Mutasi Stok')
-@section('breadcrumb', 'Inventory / Mutasi')
+@section('title', 'Mutasi Stok - TOKOPINTAR')
+@section('page_title', 'Mutasi Stok')
 @section('content')
-<div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold">Mutasi Stok</h1>
-    <a href="{{ route('mutasi.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded">+ Mutasi</a>
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-2 align-items-end">
+            <div class="col-12 col-md-3">
+                <label class="form-label small fw-semibold mb-1">Jenis</label>
+                <select name="jenis" class="form-select form-select-sm">
+                    <option value="">Semua</option>
+                    @foreach ($jenisList as $j)<option value="{{ $j }}" @selected(request('jenis') === $j)>{{ $j }}</option>@endforeach
+                </select>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-sm btn-secondary"><i class="fas fa-filter me-1"></i> Filter</button>
+            </div>
+        </form>
+    </div>
 </div>
-<form method="GET" class="bg-white rounded shadow p-3 mb-4 flex gap-2">
-    <select name="jenis" class="border rounded px-3 py-2">
-        <option value="">Semua jenis</option>
-        @foreach ($jenisList as $j)<option value="{{ $j }}" @selected(request('jenis') === $j)>{{ $j }}</option>@endforeach
-    </select>
-    <button class="bg-gray-700 text-white px-4 rounded">Filter</button>
-</form>
-<div class="bg-white rounded-lg shadow overflow-x-auto">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-xs uppercase">
-            <tr>
-                <th class="text-left px-3 py-3">Tanggal</th>
-                <th class="text-left px-3 py-3">Barang</th>
-                <th class="text-left px-3 py-3">Jenis</th>
-                <th class="text-right px-3 py-3">Qty</th>
-                <th class="text-left px-3 py-3">Alasan</th>
-                <th class="text-left px-3 py-3">Oleh</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($items as $m)
-                <tr class="border-t">
-                    <td class="px-3 py-2 text-xs">{{ $m->created_at->format('Y-m-d H:i') }}</td>
-                    <td class="px-3 py-2">{{ $m->barang?->nama }}</td>
-                    <td class="px-3 py-2 text-xs">{{ $m->jenis }}</td>
-                    <td class="px-3 py-2 text-right font-semibold {{ $m->qty_signed < 0 ? 'text-red-600' : 'text-green-600' }}">
-                        {{ $m->qty_signed > 0 ? '+' : '' }}{{ $m->qty_signed }}
-                    </td>
-                    <td class="px-3 py-2 text-gray-600">{{ $m->alasan }}</td>
-                    <td class="px-3 py-2 text-xs">{{ $m->user?->name }}</td>
-                </tr>
-            @empty
-                <tr><td colspan="6" class="px-4 py-6 text-center text-gray-400">Belum ada mutasi.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h6 class="fw-bold mb-0">Riwayat Mutasi</h6>
+            <a href="{{ route('mutasi.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Mutasi Baru</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Barang</th>
+                        <th>Jenis</th>
+                        <th class="text-end">Qty</th>
+                        <th>Alasan</th>
+                        <th>Oleh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($items as $m)
+                        <tr>
+                            <td class="small">{{ $m->created_at->format('Y-m-d H:i') }}</td>
+                            <td class="fw-semibold">{{ $m->barang?->nama }}</td>
+                            <td><span class="badge bg-light text-dark">{{ $m->jenis }}</span></td>
+                            <td class="text-end fw-bold {{ $m->qty_signed < 0 ? 'text-danger' : 'text-success' }}">
+                                {{ $m->qty_signed > 0 ? '+' : '' }}{{ $m->qty_signed }}
+                            </td>
+                            <td class="text-muted small">{{ $m->alasan }}</td>
+                            <td class="small">{{ $m->user?->name }}</td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada mutasi.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        {{ $items->links() }}
+    </div>
 </div>
-<div class="mt-3">{{ $items->links() }}</div>
 @endsection

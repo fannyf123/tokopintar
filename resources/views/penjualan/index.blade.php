@@ -1,42 +1,46 @@
 @extends('layouts.app')
-@section('title', 'Riwayat Penjualan')
-@section('breadcrumb', 'Penjualan')
+@section('title', 'Riwayat Penjualan - TOKOPINTAR')
+@section('page_title', 'Riwayat Penjualan')
 @section('content')
-<div class="flex items-center justify-between mb-4">
-    <h1 class="text-2xl font-bold">Riwayat Penjualan</h1>
-    <a href="{{ route('pos.index') }}" class="bg-indigo-600 text-white px-4 py-2 rounded">+ POS Baru</a>
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h6 class="fw-bold mb-0">Daftar Transaksi</h6>
+            <a href="{{ route('pos.index') }}" class="btn btn-sm btn-primary"><i class="fas fa-cash-register me-1"></i> POS Baru</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:60px;">#</th>
+                        <th>Nomor</th>
+                        <th>Tanggal</th>
+                        <th>Kasir</th>
+                        <th>Pelanggan</th>
+                        <th class="text-end">Grand Total</th>
+                        <th class="text-center">Metode</th>
+                        <th style="width:100px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($items as $i => $p)
+                        <tr>
+                            <td>{{ $items->firstItem() + $i }}</td>
+                            <td><code>{{ $p->nomor }}</code></td>
+                            <td>{{ format_tanggal_id($p->tanggal, true) }}</td>
+                            <td>{{ $p->kasir?->name }}</td>
+                            <td>{{ $p->pelanggan?->nama ?? '-' }}</td>
+                            <td class="text-end fw-semibold">{{ format_rupiah($p->grand_total) }}</td>
+                            <td class="text-center"><span class="badge bg-info">{{ strtoupper($p->metode_bayar) }}</span></td>
+                            <td><a href="{{ route('penjualan.show', $p) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="8" class="text-center text-muted py-4">Belum ada transaksi.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        {{ $items->links() }}
+    </div>
 </div>
-<div class="bg-white rounded-lg shadow overflow-x-auto">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-xs uppercase text-gray-600">
-            <tr>
-                <th class="text-left px-3 py-3">Nomor</th>
-                <th class="text-left px-3 py-3">Tanggal</th>
-                <th class="text-left px-3 py-3">Kasir</th>
-                <th class="text-left px-3 py-3">Pelanggan</th>
-                <th class="text-right px-3 py-3">Grand Total</th>
-                <th class="text-center px-3 py-3">Metode</th>
-                <th class="px-3 py-3 w-24">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($items as $p)
-                <tr class="border-t">
-                    <td class="px-3 py-2 font-mono text-xs">{{ $p->nomor }}</td>
-                    <td class="px-3 py-2">{{ format_tanggal_id($p->tanggal, true) }}</td>
-                    <td class="px-3 py-2">{{ $p->kasir?->name }}</td>
-                    <td class="px-3 py-2">{{ $p->pelanggan?->nama ?? '-' }}</td>
-                    <td class="px-3 py-2 text-right font-semibold">{{ format_rupiah($p->grand_total) }}</td>
-                    <td class="px-3 py-2 text-center">{{ strtoupper($p->metode_bayar) }}</td>
-                    <td class="px-3 py-2 text-right">
-                        <a href="{{ route('penjualan.show', $p) }}" class="text-indigo-600">Detail</a>
-                    </td>
-                </tr>
-            @empty
-                <tr><td colspan="7" class="px-4 py-6 text-center text-gray-400">Belum ada transaksi.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
-<div class="mt-3">{{ $items->links() }}</div>
 @endsection
