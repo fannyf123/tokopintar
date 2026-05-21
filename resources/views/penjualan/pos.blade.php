@@ -8,6 +8,10 @@
 .pos-results .item { cursor:pointer; padding:8px 12px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; }
 .pos-results .item:hover { background:#eef2ff; }
 #scanner { background:#000; min-height:220px; }
+@media (max-width:991.98px) {
+    #scanner { min-height:260px; max-width:100%; }
+    .pos-summary-mobile { position:sticky; bottom:0; z-index:20; }
+}
 </style>
 @endpush
 

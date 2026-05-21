@@ -38,7 +38,32 @@
         .stat-card .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; opacity:.85; }
         .stat-card .stat-value { font-size:1.5rem; font-weight:700; margin-top:6px; }
         .sidebar-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:1030; display:none; opacity:0; transition:opacity .3s; }
-        @media (max-width:991.98px) { .sidebar { transform:translateX(-100%); } .sidebar.show { transform:translateX(0); } .main-content { margin-left:0; padding:15px; } .sidebar-overlay.show { display:block; opacity:1; } }
+        @media (max-width:991.98px) {
+            .sidebar { transform:translateX(-100%); width:80%; max-width:300px; }
+            .sidebar.show { transform:translateX(0); }
+            .main-content { margin-left:0; padding:12px; }
+            .sidebar-overlay.show { display:block; opacity:1; }
+            .navbar { margin-bottom:14px !important; padding:10px 14px !important; border-radius:10px; }
+            .card-body { padding:14px; }
+            body { font-size:13px; }
+            h1, h2, h3, h4, h5 { font-size:1.15rem !important; }
+            .table { font-size:12.5px; }
+            .table thead th, table.dataTable thead th { padding:10px 6px !important; font-size:10.5px; letter-spacing:.3px; }
+            .table tbody td, table.dataTable tbody td { padding:10px 6px !important; }
+            .btn { padding:8px 12px; font-size:12.5px; }
+            .btn-sm { padding:6px 10px; font-size:11.5px; }
+            .stat-card .stat-value { font-size:1.15rem; }
+            .stat-card .stat-label { font-size:10px; }
+            .form-control, .form-select { font-size:14px; }
+            .form-control-sm, .form-select-sm { font-size:13px; }
+        }
+        @media (max-width:575.98px) {
+            .main-content { padding:8px; }
+            .card { border-radius:10px; }
+            .card-body { padding:12px; }
+            .navbar-brand { font-size:.95rem; }
+            .stat-card .card-body { padding:14px; }
+        }
         .alert { border-radius:10px; }
     </style>
     @stack('styles')
