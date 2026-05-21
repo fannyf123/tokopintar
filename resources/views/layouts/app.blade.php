@@ -185,6 +185,9 @@
         <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.*') ? 'active' : '' }}">
             <i class="fas fa-user"></i> Profil
         </a>
+        <a href="#" id="themeToggle" role="button">
+            <i class="fas fa-moon" id="themeIcon"></i> <span id="themeLabel">Mode Gelap</span>
+        </a>
         <a href="#" class="text-danger mt-1" id="logoutBtn">
             <i class="fas fa-sign-out-alt"></i> Logout
         </a>
@@ -200,9 +203,6 @@
                 <span class="navbar-brand mb-0 fw-bold d-none d-sm-block">@yield('page_title', 'Dashboard')</span>
             </div>
             <div class="d-flex align-items-center">
-                <button class="btn btn-light btn-sm me-2 shadow-sm border-0" id="themeToggle" aria-label="Toggle dark mode" title="Mode Gelap/Terang" style="border-radius:8px;">
-                    <i class="fas fa-moon" id="themeIcon"></i>
-                </button>
                 <div class="d-flex align-items-center text-end">
                     <div class="me-2 d-none d-md-block">
                         <span class="d-block fw-bold text-dark" style="font-size:13px;line-height:1;">{{ $u->name }}</span>
@@ -236,9 +236,11 @@
         function applyThemeIcon() {
             const t = document.documentElement.getAttribute('data-bs-theme');
             $('#themeIcon').attr('class', t === 'dark' ? 'fas fa-sun' : 'fas fa-moon');
+            $('#themeLabel').text(t === 'dark' ? 'Mode Terang' : 'Mode Gelap');
         }
         applyThemeIcon();
-        $('#themeToggle').on('click', function () {
+        $('#themeToggle').on('click', function (e) {
+            e.preventDefault();
             const cur = document.documentElement.getAttribute('data-bs-theme') || 'light';
             const next = cur === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-bs-theme', next);

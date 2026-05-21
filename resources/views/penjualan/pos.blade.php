@@ -83,7 +83,7 @@
                 <div class="d-flex justify-content-between fs-5 fw-bold mb-3"><span>Total Bayar</span><span id="grandTotal" class="text-primary">Rp 0</span></div>
                 <div class="mb-2">
                     <label class="form-label small fw-semibold">Uang Diterima</label>
-                    <input id="dibayar" type="number" min="0" value="0" class="form-control form-control-lg">
+                    <input id="dibayar" type="text" inputmode="numeric" value="0" class="form-control form-control-lg money-input">
                 </div>
                 <div class="d-flex justify-content-between small mb-3"><span class="text-muted">Kembalian</span><span id="kembalian" class="fw-semibold text-success">Rp 0</span></div>
                 <button id="bayar" class="btn btn-success btn-lg w-100" disabled><i class="fas fa-credit-card me-2"></i>Selesaikan Bayar</button>
