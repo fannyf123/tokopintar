@@ -180,7 +180,7 @@
             </a>
         @endif
 
-        <hr class="text-secondary mt-5 mx-3" style="opacity:.2;">
+        <hr class="text-secondary mt-3 mx-3" style="opacity:.2;">
 
         <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.*') ? 'active' : '' }}">
             <i class="fas fa-user"></i> Profil

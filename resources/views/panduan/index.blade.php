@@ -16,36 +16,39 @@
 @endpush
 
 @section('content')
+@php
+    $u = auth()->user();
+    $roles = [
+        'admin' => ['mulai', 'barang', 'masuk', 'kasir', 'stok', 'laporan', 'saran', 'faq'],
+        'kasir' => ['mulai', 'kasir', 'faq'],
+        'gudang' => ['mulai', 'barang', 'masuk', 'stok', 'faq'],
+    ];
+    $allow = $roles[$u->role] ?? $roles['admin'];
+    $tabs = [
+        'mulai' => ['Memulai', 'fa-play-circle'],
+        'barang' => ['Atur Barang', 'fa-box'],
+        'masuk' => ['Barang Masuk', 'fa-truck-loading'],
+        'kasir' => ['Cara Jualan', 'fa-cash-register'],
+        'stok' => ['Atur Stok', 'fa-exchange-alt'],
+        'laporan' => ['Lihat Untung', 'fa-chart-line'],
+        'saran' => ['Saran Toko', 'fa-brain'],
+        'faq' => ['FAQ', 'fa-question-circle'],
+    ];
+@endphp
 <div class="row g-3">
     <div class="col-lg-3">
         <div class="card sticky-top" style="top:90px;">
             <div class="card-body">
+                <div class="alert alert-info small mb-3 py-2">
+                    <i class="fas fa-user me-1"></i> Panduan untuk role <strong>{{ ucfirst($u->role) }}</strong>
+                </div>
                 <h6 class="fw-bold mb-3">Topik Panduan</h6>
                 <div class="nav nav-pills flex-column" id="panduanTab" role="tablist">
-                    <button class="nav-link active text-start mb-1" data-bs-toggle="pill" data-bs-target="#tab-mulai">
-                        <i class="fas fa-play-circle me-2"></i> Memulai
-                    </button>
-                    <button class="nav-link text-start mb-1" data-bs-toggle="pill" data-bs-target="#tab-barang">
-                        <i class="fas fa-box me-2"></i> Atur Barang
-                    </button>
-                    <button class="nav-link text-start mb-1" data-bs-toggle="pill" data-bs-target="#tab-masuk">
-                        <i class="fas fa-truck-loading me-2"></i> Barang Masuk
-                    </button>
-                    <button class="nav-link text-start mb-1" data-bs-toggle="pill" data-bs-target="#tab-kasir">
-                        <i class="fas fa-cash-register me-2"></i> Cara Jualan
-                    </button>
-                    <button class="nav-link text-start mb-1" data-bs-toggle="pill" data-bs-target="#tab-stok">
-                        <i class="fas fa-exchange-alt me-2"></i> Atur Stok
-                    </button>
-                    <button class="nav-link text-start mb-1" data-bs-toggle="pill" data-bs-target="#tab-laporan">
-                        <i class="fas fa-chart-line me-2"></i> Lihat Untung
-                    </button>
-                    <button class="nav-link text-start mb-1" data-bs-toggle="pill" data-bs-target="#tab-saran">
-                        <i class="fas fa-brain me-2"></i> Saran Toko
-                    </button>
-                    <button class="nav-link text-start" data-bs-toggle="pill" data-bs-target="#tab-faq">
-                        <i class="fas fa-question-circle me-2"></i> FAQ
-                    </button>
+                    @foreach ($allow as $i => $key)
+                        <button class="nav-link {{ $i === 0 ? 'active' : '' }} text-start mb-1" data-bs-toggle="pill" data-bs-target="#tab-{{ $key }}">
+                            <i class="fas {{ $tabs[$key][1] }} me-2"></i> {{ $tabs[$key][0] }}
+                        </button>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -55,14 +58,9 @@
         <div class="card">
             <div class="card-body">
                 <div class="tab-content">
-                    @include('panduan._mulai')
-                    @include('panduan._barang')
-                    @include('panduan._masuk')
-                    @include('panduan._kasir')
-                    @include('panduan._stok')
-                    @include('panduan._laporan')
-                    @include('panduan._saran')
-                    @include('panduan._faq')
+                    @foreach ($allow as $key)
+                        @include('panduan._' . $key)
+                    @endforeach
                 </div>
             </div>
         </div>

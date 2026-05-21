@@ -54,10 +54,11 @@
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label small fw-semibold">Pelanggan</label>
-                    <select id="pelanggan" class="form-select form-select-sm">
-                        <option value="">Pembeli Umum</option>
-                        @foreach ($pelanggans as $p)<option value="{{ $p->id }}">{{ $p->nama }}</option>@endforeach
-                    </select>
+                    <div class="position-relative">
+                        <input type="text" id="pelangganSearch" placeholder="Pembeli Umum (klik untuk cari pelanggan)" class="form-control form-control-sm" autocomplete="off">
+                        <input type="hidden" id="pelanggan" value="">
+                        <div id="pelangganList" class="d-none position-absolute w-100 border rounded mt-1 bg-white shadow-sm" style="z-index:50;max-height:200px;overflow-y:auto;"></div>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-semibold">Cara Bayar</label>
@@ -70,11 +71,17 @@
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label small fw-semibold">Potongan (Rp)</label>
+                        <label class="form-label small fw-semibold d-flex justify-content-between align-items-center">
+                            <span>Potongan</span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" id="diskonModeBtn" style="font-size:10px;" data-mode="rp">Rp</button>
+                        </label>
                         <input id="diskon" type="text" inputmode="numeric" value="0" class="form-control form-control-sm money-input">
                     </div>
                     <div class="col-6">
-                        <label class="form-label small fw-semibold">Pajak (Rp)</label>
+                        <label class="form-label small fw-semibold d-flex justify-content-between align-items-center">
+                            <span>Pajak</span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" id="pajakModeBtn" style="font-size:10px;" data-mode="rp">Rp</button>
+                        </label>
                         <input id="pajak" type="text" inputmode="numeric" value="0" class="form-control form-control-sm money-input">
                     </div>
                 </div>
@@ -154,14 +161,20 @@ function render() {
 
 function recalc() {
     const sub = cart.reduce((s, x) => s + x.qty * x.harga - x.diskon, 0);
-    const d = parseMoney($g('diskon').value);
-    const p = parseMoney($g('pajak').value);
+    const dRaw = parseMoney($g('diskon').value);
+    const pRaw = parseMoney($g('pajak').value);
+    const dMode = $g('diskonModeBtn')?.dataset.mode || 'rp';
+    const pMode = $g('pajakModeBtn')?.dataset.mode || 'rp';
+    const d = dMode === 'pct' ? Math.round(sub * Math.min(dRaw, 100) / 100) : dRaw;
+    const p = pMode === 'pct' ? Math.round(sub * Math.min(pRaw, 100) / 100) : pRaw;
     const grand = Math.max(0, sub - d + p);
     $g('subTotal').textContent = fmt(sub);
     $g('grandTotal').textContent = fmt(grand);
     const dibayar = parseMoney($g('dibayar').value);
     $g('kembalian').textContent = fmt(Math.max(0, dibayar - grand));
     $g('bayar').disabled = !cart.length || dibayar < grand;
+    window._diskonRp = d;
+    window._pajakRp = p;
 }
 
 function parseMoney(v) { return +String(v).replace(/[^\d]/g, '') || 0; }
@@ -180,14 +193,68 @@ function attachMoneyInput(el) {
     el.addEventListener('blur', () => { if (el.value === '') el.value = '0'; });
 }
 document.querySelectorAll('.money-input').forEach(attachMoneyInput);
+
+['diskonModeBtn', 'pajakModeBtn'].forEach(id => {
+    const btn = $g(id);
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+        const cur = btn.dataset.mode;
+        const next = cur === 'rp' ? 'pct' : 'rp';
+        btn.dataset.mode = next;
+        btn.textContent = next === 'pct' ? '%' : 'Rp';
+        btn.classList.toggle('btn-outline-secondary', next === 'rp');
+        btn.classList.toggle('btn-warning', next === 'pct');
+        recalc();
+    });
+});
+
+@php
+    $plgData = $pelanggans->map(function ($p) {
+        return ['id' => $p->id, 'nama' => $p->nama, 'no_hp' => $p->no_hp ?? '', 'tipe' => $p->tipe ?? 'umum'];
+    })->values()->all();
+@endphp
+const PELANGGAN = {!! json_encode($plgData) !!};
+const plgSearch = $g('pelangganSearch'), plgList = $g('pelangganList'), plgInput = $g('pelanggan');
+function renderPelanggan(q) {
+    const ql = (q || '').toLowerCase();
+    const items = [{id: '', nama: 'Pembeli Umum', no_hp: '', tipe: ''}, ...PELANGGAN]
+        .filter(p => !ql || p.nama.toLowerCase().includes(ql) || p.no_hp.toLowerCase().includes(ql));
+    if (!items.length) { plgList.innerHTML = '<div class="px-3 py-2 text-muted small">Tidak ditemukan</div>'; return; }
+    plgList.innerHTML = items.slice(0, 50).map(p =>
+        `<div class="px-3 py-2 border-bottom" style="cursor:pointer" data-id="${p.id}" data-nm="${p.nama}">
+            <strong>${p.nama}</strong> ${p.tipe === 'member' ? '<span class="badge bg-primary ms-1" style="font-size:9px">MEMBER</span>' : ''}
+            ${p.no_hp ? `<small class="text-muted ms-2">${p.no_hp}</small>` : ''}
+        </div>`).join('');
+    plgList.querySelectorAll('[data-id]').forEach(el => el.onclick = () => {
+        plgInput.value = el.dataset.id;
+        plgSearch.value = el.dataset.nm;
+        plgList.classList.add('d-none');
+        applyMemberDiscount(el.dataset.id);
+    });
+}
+plgSearch.addEventListener('focus', () => { renderPelanggan(plgSearch.value); plgList.classList.remove('d-none'); });
+plgSearch.addEventListener('input', () => { renderPelanggan(plgSearch.value); plgList.classList.remove('d-none'); });
+document.addEventListener('click', (e) => { if (!plgSearch.contains(e.target) && !plgList.contains(e.target)) plgList.classList.add('d-none'); });
+
+function applyMemberDiscount(pid) {
+    if (!pid) return;
+    const p = PELANGGAN.find(x => String(x.id) === String(pid));
+    if (p?.tipe === 'member') {
+        $g('diskon').value = '5';
+        const btn = $g('diskonModeBtn');
+        btn.dataset.mode = 'pct'; btn.textContent = '%';
+        btn.classList.remove('btn-outline-secondary'); btn.classList.add('btn-warning');
+        recalc();
+    }
+}
 ['diskon','pajak','dibayar'].forEach(id => $g(id).addEventListener('input', recalc));
 
 $g('bayar').addEventListener('click', async () => {
     const payload = {
         pelanggan_id: $g('pelanggan').value || null,
         metode_bayar: $g('metode').value,
-        diskon: parseMoney($g('diskon').value),
-        pajak: parseMoney($g('pajak').value),
+        diskon: window._diskonRp ?? parseMoney($g('diskon').value),
+        pajak: window._pajakRp ?? parseMoney($g('pajak').value),
         dibayar: parseMoney($g('dibayar').value),
         items: cart.map(x => ({barang_id: x.id, qty: x.qty, diskon_item: x.diskon || 0})),
     };
