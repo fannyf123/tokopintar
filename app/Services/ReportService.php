@@ -78,19 +78,25 @@ class ReportService
     private function bucketExpression(string $granularity, string $col = 'tanggal'): string
     {
         $driver = config('database.default');
-        return match ($granularity) {
-            'weekly' => $driver === 'sqlite'
-                ? "strftime('%Y-W%W', $col)"
-                : "DATE_FORMAT($col, '%x-W%v')",
-            'monthly' => $driver === 'sqlite'
-                ? "strftime('%Y-%m', $col)"
-                : "DATE_FORMAT($col, '%Y-%m')",
-            'yearly' => $driver === 'sqlite'
-                ? "strftime('%Y', $col)"
-                : "DATE_FORMAT($col, '%Y')",
-            default => $driver === 'sqlite'
-                ? "strftime('%Y-%m-%d', $col)"
-                : "DATE_FORMAT($col, '%Y-%m-%d')",
+        return match ($driver) {
+            'sqlite' => match ($granularity) {
+                'weekly' => "strftime('%Y-W%W', $col)",
+                'monthly' => "strftime('%Y-%m', $col)",
+                'yearly' => "strftime('%Y', $col)",
+                default => "strftime('%Y-%m-%d', $col)",
+            },
+            'pgsql' => match ($granularity) {
+                'weekly' => "to_char($col, 'IYYY-\"W\"IW')",
+                'monthly' => "to_char($col, 'YYYY-MM')",
+                'yearly' => "to_char($col, 'YYYY')",
+                default => "to_char($col, 'YYYY-MM-DD')",
+            },
+            default => match ($granularity) {
+                'weekly' => "DATE_FORMAT($col, '%x-W%v')",
+                'monthly' => "DATE_FORMAT($col, '%Y-%m')",
+                'yearly' => "DATE_FORMAT($col, '%Y')",
+                default => "DATE_FORMAT($col, '%Y-%m-%d')",
+            },
         };
     }
 }
