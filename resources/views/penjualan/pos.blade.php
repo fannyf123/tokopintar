@@ -294,10 +294,13 @@ async function handleScan(code) {
     else { alert('Barcode tidak ditemukan: ' + code); }
 }
 $g('scanBtn').addEventListener('click', async () => {
-    if (!window.Html5Qrcode) { alert('Scanner belum siap'); return; }
+    if (!window.Html5Qrcode) { alert('Scanner belum siap. Coba refresh halaman.'); return; }
     if (scanner?.isScanning) { return; }
     $g('scannerWrap').classList.remove('d-none');
-    if (!scanner) scanner = new Html5Qrcode('scanner');
+    if (!scanner) {
+        try { scanner = new Html5Qrcode('scanner'); }
+        catch (e) { alert('Scanner gagal init: ' + (e?.message || e)); $g('scannerWrap').classList.add('d-none'); return; }
+    }
     try {
         await scanner.start({facingMode: 'environment'}, {fps: 10, qrbox: {width: 250, height: 150}},
             async (text) => {
@@ -306,7 +309,22 @@ $g('scanBtn').addEventListener('click', async () => {
                 handleScan(text.trim());
             }, () => {});
     } catch (e) {
-        alert('Tidak bisa buka kamera: ' + (e?.message || e?.name || 'kamera mungkin sudah terbuka di tab lain'));
+        const name = e?.name || '';
+        const msg = e?.message || String(e);
+        let saran = '';
+        if (name === 'NotAllowedError' || /permission|denied/i.test(msg)) {
+            saran = '🔒 Akses kamera ditolak. Cara fix:\n\n1. Klik ikon gembok di address bar\n2. Cari "Camera" atau "Kamera"\n3. Ubah jadi "Allow / Izinkan"\n4. Refresh halaman\n\nDi HP: buka Settings > Apps > Browser > Permissions > Camera = Allow.';
+        } else if (name === 'NotFoundError' || /no camera|tidak ada/i.test(msg)) {
+            saran = '📷 Tidak terdeteksi kamera. Pastikan HP/laptop kamu punya kamera dan tidak rusak.';
+        } else if (name === 'NotReadableError' || /track start|in use|busy/i.test(msg)) {
+            saran = '⚠️ Kamera sedang dipakai aplikasi lain. Tutup dulu: aplikasi Kamera/WhatsApp/Zoom/Meet/tab browser lain yang pakai kamera, lalu coba lagi.';
+        } else if (/secure|https/i.test(msg)) {
+            saran = '🔐 Kamera butuh HTTPS. Pastikan URL mulai dengan https:// (bukan http://).';
+        } else {
+            saran = '❓ Error tidak dikenali: ' + msg + '\n\nCoba: refresh halaman, atau ganti browser (Chrome paling stabil).';
+        }
+        alert(saran);
+        scanner = null;
         $g('scannerWrap').classList.add('d-none');
     }
 });
