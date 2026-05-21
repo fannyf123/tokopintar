@@ -12,7 +12,7 @@
 @endpush
 
 @section('content')
-<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8"></script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <div class="row g-3">
     <div class="col-lg-8">
         <div class="card">
