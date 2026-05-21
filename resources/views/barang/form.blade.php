@@ -16,7 +16,15 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-semibold">Barcode</label>
-                <input name="barcode" value="{{ old('barcode', $barang->barcode) }}" class="form-control">
+                <div class="input-group">
+                    <input id="barcode" name="barcode" value="{{ old('barcode', $barang->barcode) }}" class="form-control">
+                    <button type="button" id="scanBtn" class="btn btn-success"><i class="fas fa-camera me-1"></i> Scan</button>
+                </div>
+                <div id="scannerWrap" class="d-none mt-2">
+                    <div id="scanner" class="rounded mx-auto" style="max-width:360px;background:#000;min-height:220px;"></div>
+                    <div class="text-center mt-2"><button type="button" id="stopScan" class="btn btn-sm btn-link text-danger">Tutup Scanner</button></div>
+                    <p class="text-center text-muted small mb-0">Arahkan kamera HP ke barcode produk.</p>
+                </div>
             </div>
             <div class="col-12">
                 <label class="form-label fw-semibold">Nama</label>
@@ -71,3 +79,37 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+let scanner = null;
+const $sb = document.getElementById('scanBtn');
+const $bc = document.getElementById('barcode');
+const $sw = document.getElementById('scannerWrap');
+const $ss = document.getElementById('stopScan');
+
+$sb?.addEventListener('click', async () => {
+    if (!window.Html5Qrcode) { alert('Scanner belum siap'); return; }
+    $sw.classList.remove('d-none');
+    if (!scanner) scanner = new Html5Qrcode('scanner');
+    try {
+        await scanner.start({facingMode: 'environment'}, {fps: 10, qrbox: {width: 250, height: 150}},
+            async (text) => {
+                await scanner.stop();
+                $sw.classList.add('d-none');
+                $bc.value = text.trim();
+                navigator.vibrate?.(80);
+                $bc.dispatchEvent(new Event('change'));
+            }, () => {});
+    } catch (e) {
+        alert('Tidak bisa buka kamera: ' + e.message);
+        $sw.classList.add('d-none');
+    }
+});
+$ss?.addEventListener('click', async () => {
+    if (scanner?.isScanning) await scanner.stop();
+    $sw.classList.add('d-none');
+});
+</script>
+@endpush
