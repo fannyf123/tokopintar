@@ -40,6 +40,9 @@ class DashboardController extends Controller
             ->whereDate('tanggal_kadaluarsa', '<=', now()->addDays(30))
             ->count();
 
+        $criticalAnomalies = \App\Models\StockAnomaly::where('severity', 'critical')->where('resolved', false)->count();
+        $churnRiskCount = \App\Models\CustomerInsight::where('churn_risk', true)->count();
+
         $omzetSeries = $this->buildOmzet30Series();
 
         $topBarang = PenjualanDetail::join('penjualans', 'penjualans.id', '=', 'penjualan_details.penjualan_id')

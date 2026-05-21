@@ -89,6 +89,25 @@ Route::middleware(['auth', 'aktif'])->group(function () {
             Route::post('regenerate', [InsightController::class, 'regenerate'])->name('regenerate');
         });
 
+        Route::prefix('customer-insight')->name('customer-insight.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\CustomerInsightController::class, 'index'])->name('index');
+            Route::post('regenerate', [\App\Http\Controllers\CustomerInsightController::class, 'regenerate'])->name('regenerate');
+        });
+
+        Route::prefix('anomaly')->name('anomaly.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\AnomalyController::class, 'index'])->name('index');
+            Route::post('detect', [\App\Http\Controllers\AnomalyController::class, 'detect'])->name('detect');
+            Route::post('{anomaly}/resolve', [\App\Http\Controllers\AnomalyController::class, 'resolve'])->name('resolve');
+        });
+
+        Route::prefix('advanced')->name('advanced.')->group(function () {
+            Route::get('association-rules', [\App\Http\Controllers\AdvancedInsightController::class, 'associationRules'])->name('rules.index');
+            Route::post('association-rules/regenerate', [\App\Http\Controllers\AdvancedInsightController::class, 'regenerateRules'])->name('rules.regenerate');
+            Route::get('optimal-stock', [\App\Http\Controllers\AdvancedInsightController::class, 'optimalStock'])->name('stock');
+            Route::get('cannibalization', [\App\Http\Controllers\AdvancedInsightController::class, 'cannibalization'])->name('cannibal');
+            Route::get('pareto', [\App\Http\Controllers\AdvancedInsightController::class, 'pareto'])->name('pareto');
+        });
+
         Route::prefix('laporan/laba')->name('laporan.laba.')->group(function () {
             Route::get('/', [LaporanLabaController::class, 'index'])->name('index');
             Route::get('pdf', [LaporanLabaController::class, 'pdf'])->name('pdf');

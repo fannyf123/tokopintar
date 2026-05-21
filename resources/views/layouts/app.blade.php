@@ -204,6 +204,24 @@
             <a href="{{ route('insight.index') }}" class="{{ request()->routeIs('insight.*') ? 'active' : '' }}">
                 <i class="fas fa-brain"></i> Saran Toko
             </a>
+            <a href="{{ route('customer-insight.index') }}" class="{{ request()->routeIs('customer-insight.*') ? 'active' : '' }}">
+                <i class="fas fa-users"></i> Analisa Pelanggan
+            </a>
+            <a href="{{ route('anomaly.index') }}" class="{{ request()->routeIs('anomaly.*') ? 'active' : '' }}">
+                <i class="fas fa-shield-alt"></i> Deteksi Anomali
+            </a>
+            <a href="{{ route('advanced.rules.index') }}" class="{{ request()->routeIs('advanced.rules.*') ? 'active' : '' }}">
+                <i class="fas fa-link"></i> Aturan Asosiasi
+            </a>
+            <a href="{{ route('advanced.stock') }}" class="{{ request()->routeIs('advanced.stock') ? 'active' : '' }}">
+                <i class="fas fa-magic-wand-sparkles"></i> Optimal Stock
+            </a>
+            <a href="{{ route('advanced.cannibal') }}" class="{{ request()->routeIs('advanced.cannibal') ? 'active' : '' }}">
+                <i class="fas fa-exchange-alt"></i> Kanibalisasi
+            </a>
+            <a href="{{ route('advanced.pareto') }}" class="{{ request()->routeIs('advanced.pareto') ? 'active' : '' }}">
+                <i class="fas fa-trophy"></i> Pareto Monitor
+            </a>
             <a href="{{ route('laporan.laba.index') }}" class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
                 <i class="fas fa-chart-line"></i> Laporan Untung
             </a>

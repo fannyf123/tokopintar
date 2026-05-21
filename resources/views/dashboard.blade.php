@@ -67,6 +67,43 @@
     </div>
 </div>
 
+@if (auth()->user()->isAdmin() && (($criticalAnomalies ?? 0) > 0 || ($churnRiskCount ?? 0) > 0))
+<div class="row g-3 mb-3">
+    @if (($criticalAnomalies ?? 0) > 0)
+    <div class="col-md-6">
+        <a href="{{ route('anomaly.index') }}?severity=critical" class="text-decoration-none">
+            <div class="card border-danger" style="border-width:2px;">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-uppercase text-danger fw-bold"><i class="fas fa-exclamation-triangle me-1"></i> Alert Kritis</small>
+                        <div class="fs-4 fw-bold text-danger">{{ $criticalAnomalies }} masalah perlu cek</div>
+                        <small class="text-muted">Klik untuk lihat detail anomali</small>
+                    </div>
+                    <i class="fas fa-shield-alt fs-1 text-danger opacity-25"></i>
+                </div>
+            </div>
+        </a>
+    </div>
+    @endif
+    @if (($churnRiskCount ?? 0) > 0)
+    <div class="col-md-6">
+        <a href="{{ route('customer-insight.index') }}?churn=1" class="text-decoration-none">
+            <div class="card border-warning" style="border-width:2px;">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-uppercase text-warning fw-bold"><i class="fas fa-user-clock me-1"></i> Pelanggan Pergi</small>
+                        <div class="fs-4 fw-bold text-warning">{{ $churnRiskCount }} pelanggan beresiko hilang</div>
+                        <small class="text-muted">Klik untuk lihat dan hubungi mereka</small>
+                    </div>
+                    <i class="fas fa-users fs-1 text-warning opacity-25"></i>
+                </div>
+            </div>
+        </a>
+    </div>
+    @endif
+</div>
+@endif
+
 <div class="row g-3 mb-3">
     <div class="col-lg-8">
         <div class="card">
