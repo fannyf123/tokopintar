@@ -9,18 +9,18 @@
         <li>Pelanggan <strong>retur</strong> barang (kembalikan)</li>
         <li>Anda <strong>retur ke pemasok</strong> (kirim balik barang yang salah)</li>
         <li>Barang <strong>kadaluarsa</strong> dan harus dibuang</li>
-        <li><strong>Koreksi</strong> stok kalau hitung manual ≠ stok di sistem</li>
+        <li><strong>Koreksi</strong> stok kalau hitung manual berbeda dengan stok di sistem</li>
     </ul>
 
     <h6 class="fw-bold mt-4 mb-2">Cara Pakai</h6>
     <div class="panduan-step">
-        <span class="step-num">1</span> Buka <strong>Stok Barang → Penyesuaian Stok → + Mutasi Baru</strong>
+        <span class="step-num">1</span> Buka <strong>Stok Barang &gt; Penyesuaian Stok &gt; + Mutasi Baru</strong>
     </div>
     <div class="panduan-step">
         <span class="step-num">2</span> <strong>Pilih Barang</strong> - sistem tampilkan stok sekarang.
     </div>
     <div class="panduan-step">
-        <span class="step-num">3</span> <strong>Pilih Alasan:</strong>
+        <span class="step-num">3</span> <strong>Pilih Alasan</strong> (dropdown sudah pakai bahasa awam):
         <ul class="mt-2 mb-0 small">
             <li><strong>Tambah stok (penyesuaian)</strong> - koreksi nambah</li>
             <li><strong>Kurangi stok (penyesuaian)</strong> - koreksi kurang</li>
@@ -32,13 +32,16 @@
         </ul>
     </div>
     <div class="panduan-step">
-        <span class="step-num">4</span> Isi <strong>Jumlah</strong> dan <strong>Catatan</strong> (contoh: "2 botol pecah saat bongkar muat")
+        <span class="step-num">4</span> Isi <strong>Jumlah</strong> dan <strong>Catatan / Keterangan</strong> (contoh: "2 botol pecah saat bongkar muat")
     </div>
     <div class="panduan-step">
-        <span class="step-num">5</span> Klik <strong>Simpan</strong> → stok auto-update + tercatat permanen di histori (tidak bisa dihapus, sebagai bukti audit).
+        <span class="step-num">5</span> <strong>Batch Tertentu</strong> (opsional) - kalau perlu koreksi batch spesifik dari sebuah barang. Kosongkan untuk pengurangan dari batch terdepan otomatis.
+    </div>
+    <div class="panduan-step">
+        <span class="step-num">6</span> Klik <strong>Simpan</strong> &gt; stok auto-update + tercatat permanen di histori (tidak bisa dihapus, sebagai bukti audit).
     </div>
 
     <div class="panduan-tip">
-        💡 Setiap penyesuaian stok WAJIB ada catatan/alasan. Ini biar nanti kalau dilihat ulang, jelas kenapa stoknya berubah. Semua tercatat permanen - anti penipuan.
+        💡 Setiap penyesuaian stok WAJIB ada catatan/alasan. Ini biar nanti kalau dilihat ulang, jelas kenapa stoknya berubah. Semua tercatat permanen - anti penipuan, anti tuduhan kasir.
     </div>
 </div>

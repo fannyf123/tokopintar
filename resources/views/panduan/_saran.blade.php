@@ -4,10 +4,10 @@
 
     <h6 class="fw-bold mt-4 mb-2">Cara Pakai</h6>
     <div class="panduan-step">
-        <span class="step-num">1</span> Buka <strong>Pengaturan → Saran Toko</strong>
+        <span class="step-num">1</span> Buka <strong>Pengaturan &gt; Saran Toko</strong>
     </div>
     <div class="panduan-step">
-        <span class="step-num">2</span> Klik <strong>Hitung Ulang Sekarang</strong> kalau data belum muncul (perlu data jualan minimal 14 hari biar akurat).
+        <span class="step-num">2</span> Klik <strong>Hitung Ulang Sekarang</strong> kalau data belum muncul. Sistem perlu data jualan minimal 14 hari biar akurat.
     </div>
 
     <h6 class="fw-bold mt-4 mb-2">Yang Bisa Dilihat</h6>
@@ -38,10 +38,10 @@
     <h6 class="fw-bold mt-4 mb-2">🎯 Strategi Cross-Subsidy (Subsidi Silang)</h6>
     <p class="small text-muted">Sistem otomatis kelompokkan barang berdasar margin keuntungan:</p>
     <div class="panduan-step">
-        <span class="badge bg-warning">LOSS_LEADER</span> margin ≤ 5% - barang pemikat (dijual pas modal/tipis untuk tarik pelanggan masuk toko)
+        <span class="badge bg-warning">LOSS_LEADER</span> margin &le; 5% - barang pemikat (dijual pas modal/tipis untuk tarik pelanggan masuk toko)
     </div>
     <div class="panduan-step">
-        <span class="badge bg-success">PROFIT_DRIVER</span> margin ≥ 25% - penyumbang untung utama
+        <span class="badge bg-success">PROFIT_DRIVER</span> margin &ge; 25% - penyumbang untung utama
     </div>
     <div class="panduan-step">
         <span class="badge bg-info">BALANCED</span> margin 5-25% - wajar
