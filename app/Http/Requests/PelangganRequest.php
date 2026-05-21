@@ -24,6 +24,7 @@ class PelangganRequest extends FormRequest
             ],
             'alamat' => ['nullable', 'string', 'max:255'],
             'tipe' => ['required', Rule::in(['umum', 'member'])],
+            'diskon_persen' => ['nullable', 'integer', 'min:0', 'max:50'],
         ];
     }
 

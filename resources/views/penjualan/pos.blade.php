@@ -210,7 +210,7 @@ document.querySelectorAll('.money-input').forEach(attachMoneyInput);
 
 @php
     $plgData = $pelanggans->map(function ($p) {
-        return ['id' => $p->id, 'nama' => $p->nama, 'no_hp' => $p->no_hp ?? '', 'tipe' => $p->tipe ?? 'umum'];
+        return ['id' => $p->id, 'nama' => $p->nama, 'no_hp' => $p->no_hp ?? '', 'tipe' => $p->tipe ?? 'umum', 'diskon_persen' => $p->diskon_persen ?? 0];
     })->values()->all();
 @endphp
 const PELANGGAN = {!! json_encode($plgData) !!};
@@ -240,7 +240,8 @@ function applyMemberDiscount(pid) {
     if (!pid) return;
     const p = PELANGGAN.find(x => String(x.id) === String(pid));
     if (p?.tipe === 'member') {
-        $g('diskon').value = '5';
+        const persen = (p.diskon_persen && p.diskon_persen > 0) ? p.diskon_persen : 5;
+        $g('diskon').value = String(persen);
         const btn = $g('diskonModeBtn');
         btn.dataset.mode = 'pct'; btn.textContent = '%';
         btn.classList.remove('btn-outline-secondary'); btn.classList.add('btn-warning');
@@ -294,18 +295,23 @@ async function handleScan(code) {
 }
 $g('scanBtn').addEventListener('click', async () => {
     if (!window.Html5Qrcode) { alert('Scanner belum siap'); return; }
+    if (scanner?.isScanning) { return; }
     $g('scannerWrap').classList.remove('d-none');
     if (!scanner) scanner = new Html5Qrcode('scanner');
     try {
         await scanner.start({facingMode: 'environment'}, {fps: 10, qrbox: {width: 250, height: 150}},
-            async (text) => { await scanner.stop(); $g('scannerWrap').classList.add('d-none'); handleScan(text.trim()); }, () => {});
+            async (text) => {
+                try { if (scanner.isScanning) await scanner.stop(); } catch (e) {}
+                $g('scannerWrap').classList.add('d-none');
+                handleScan(text.trim());
+            }, () => {});
     } catch (e) {
-        alert('Tidak bisa buka kamera: ' + e.message);
+        alert('Tidak bisa buka kamera: ' + (e?.message || e?.name || 'kamera mungkin sudah terbuka di tab lain'));
         $g('scannerWrap').classList.add('d-none');
     }
 });
 $g('stopScan').addEventListener('click', async () => {
-    if (scanner?.isScanning) await scanner.stop();
+    try { if (scanner?.isScanning) await scanner.stop(); } catch (e) {}
     $g('scannerWrap').classList.add('d-none');
 });
 </script>

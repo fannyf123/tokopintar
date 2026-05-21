@@ -44,6 +44,15 @@
         .stat-card .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; opacity:.85; }
         .stat-card .stat-value { font-size:1.5rem; font-weight:700; margin-top:6px; }
         .sidebar-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:1030; display:none; opacity:0; transition:opacity .3s; }
+
+        .sidebar.collapsed { width:70px; }
+        .sidebar.collapsed .menu-label, .sidebar.collapsed a span:not(.brand), .sidebar.collapsed #themeLabel, .sidebar.collapsed .sidebar-brand-full { display:none !important; }
+        .sidebar.collapsed .sidebar-brand-mini { display:inline !important; }
+        .sidebar.collapsed a { justify-content:center; padding:12px 8px; }
+        .sidebar.collapsed a i { width:auto; margin-right:0; }
+        .sidebar.collapsed #collapseSidebar { transform:rotate(180deg); }
+        .sidebar.collapsed ~ .main-content { margin-left:70px; }
+        .sidebar.collapsed hr { margin-left:.5rem !important; margin-right:.5rem !important; }
         @media (max-width:991.98px) {
             .sidebar { transform:translateX(-100%); width:80%; max-width:300px; }
             .sidebar.show { transform:translateX(0); }
@@ -62,6 +71,12 @@
             .stat-card .stat-label { font-size:10px; }
             .form-control, .form-select { font-size:14px; }
             .form-control-sm, .form-select-sm { font-size:13px; }
+            .row.g-3 > [class*="col-"], .row.g-2 > [class*="col-"] { padding-top:.25rem; padding-bottom:.25rem; }
+            .text-end { text-align:right !important; }
+            .form-label { margin-bottom:.25rem; font-size:12px; }
+            .input-group .btn { padding:6px 10px; }
+            .card-body > h6, .card-body > h1, .card-body > h2 { word-break:break-word; }
+            .table-responsive { -webkit-overflow-scrolling: touch; }
         }
         @media (max-width:575.98px) {
             .main-content { padding:8px; }
@@ -105,6 +120,13 @@
         [data-bs-theme="dark"] .pos-results { background:#1a1f2e; }
         [data-bs-theme="dark"] .pos-results .item { border-color:#334155; }
         [data-bs-theme="dark"] .pos-results .item:hover { background:#243144; }
+        [data-bs-theme="dark"] #pelangganList { background:#1a1f2e !important; color:#cbd5e1; border-color:#334155 !important; }
+        [data-bs-theme="dark"] #pelangganList > div { color:#cbd5e1 !important; border-color:#334155 !important; }
+        [data-bs-theme="dark"] #pelangganList > div:hover { background:#243144; }
+        [data-bs-theme="dark"] #lookupResults { background:#1a1f2e !important; color:#cbd5e1; border-color:#334155 !important; }
+        [data-bs-theme="dark"] #lookupResults > div { color:#cbd5e1 !important; border-color:#334155 !important; }
+        [data-bs-theme="dark"] #lookupResults > div:hover { background:#243144; }
+        [data-bs-theme="dark"] #searchResults { background:#1a1f2e !important; color:#cbd5e1; border-color:#334155 !important; }
     </style>
     @stack('styles')
 </head>
@@ -119,9 +141,11 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="sidebar px-3" id="sidebar">
-        <div class="text-center mb-5 mt-4 d-flex justify-content-between align-items-center px-2">
-            <span class="brand text-white mx-auto"><i class="fas fa-store text-primary me-2"></i> TOKOPINTAR</span>
+        <div class="text-center mb-4 mt-3 d-flex justify-content-between align-items-center px-2">
+            <span class="brand text-white sidebar-brand-full"><i class="fas fa-store text-primary me-2"></i> TOKOPINTAR</span>
+            <span class="brand text-white sidebar-brand-mini d-none"><i class="fas fa-store text-primary"></i></span>
             <i class="fas fa-times d-lg-none text-secondary" id="closeSidebar" style="cursor:pointer;font-size:1.2rem;"></i>
+            <i class="fas fa-angles-left d-none d-lg-inline text-secondary" id="collapseSidebar" style="cursor:pointer;font-size:1rem;" title="Sembunyikan menu"></i>
         </div>
 
         <p class="menu-label text-uppercase">Main</p>
@@ -180,7 +204,7 @@
             </a>
         @endif
 
-        <hr class="text-secondary mt-3 mx-3" style="opacity:.2;">
+        <hr class="text-secondary mt-2 mx-3" style="opacity:.2;">
 
         <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.*') ? 'active' : '' }}">
             <i class="fas fa-user"></i> Profil
@@ -232,6 +256,14 @@
         $('#logoutBtn').on('click', function (e) {
             e.preventDefault();
             if (confirm('Yakin keluar dari TOKOPINTAR?')) document.getElementById('logout-form').submit();
+        });
+
+        if (localStorage.getItem('sidebarCollapsed') === '1') {
+            $('#sidebar').addClass('collapsed');
+        }
+        $('#collapseSidebar').on('click', function () {
+            $('#sidebar').toggleClass('collapsed');
+            localStorage.setItem('sidebarCollapsed', $('#sidebar').hasClass('collapsed') ? '1' : '0');
         });
         function applyThemeIcon() {
             const t = document.documentElement.getAttribute('data-bs-theme');

@@ -18,19 +18,19 @@
 
     <h6 class="fw-bold mt-4 mb-2">Yang Bisa Dilihat</h6>
     <ul>
-        <li><strong>Penjualan (Omzet)</strong> — total uang masuk dari jualan</li>
-        <li><strong>HPP (Harga Pokok Penjualan)</strong> — total modal barang yang sudah terjual</li>
+        <li><strong>Penjualan (Omzet)</strong> - total uang masuk dari jualan</li>
+        <li><strong>HPP (Harga Pokok Penjualan)</strong> - total modal barang yang sudah terjual</li>
         <li><strong>Laba Kotor</strong> = Omzet - HPP (untung kotor)</li>
-        <li><strong>Biaya</strong> — biaya operasional (sewa, listrik, gaji) di periode itu</li>
+        <li><strong>Biaya</strong> - biaya operasional (sewa, listrik, gaji) di periode itu</li>
         <li><strong>Laba Bersih</strong> = Laba Kotor - Biaya (untung bersih, ini yang masuk kantong)</li>
     </ul>
 
     <h6 class="fw-bold mt-4 mb-2">Ekspor Laporan</h6>
     <div class="panduan-step">
-        <span class="step-num">📄</span><strong>PDF</strong> — untuk dicetak / dilampirkan ke laporan pajak
+        <span class="step-num">📄</span><strong>PDF</strong> - untuk dicetak / dilampirkan ke laporan pajak
     </div>
     <div class="panduan-step">
-        <span class="step-num">📊</span><strong>CSV</strong> — buka di Excel kalau mau analisis tambahan
+        <span class="step-num">📊</span><strong>CSV</strong> - buka di Excel kalau mau analisis tambahan
     </div>
 
     <h6 class="fw-bold mt-4 mb-2">Catat Biaya Operasional</h6>

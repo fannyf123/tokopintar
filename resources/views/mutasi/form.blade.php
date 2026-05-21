@@ -12,7 +12,7 @@
             <div class="col-12 col-md-6">
                 <label class="form-label fw-semibold">Pilih Barang</label>
                 <select name="barang_id" required id="barang" class="form-select">
-                    <option value="">— pilih barang —</option>
+                    <option value="">- pilih barang -</option>
                     @foreach ($barangs as $b)<option value="{{ $b->id }}" @selected(old('barang_id') == $b->id)>{{ $b->nama }} (stok sekarang: {{ $b->stok_current }})</option>@endforeach
                 </select>
             </div>
@@ -38,7 +38,7 @@
             <div class="col-12 col-md-6">
                 <label class="form-label fw-semibold">Batch Tertentu <small class="text-muted">(opsional)</small></label>
                 <select name="batch_id" id="batch" class="form-select">
-                    <option value="">— semua batch / tanpa batch —</option>
+                    <option value="">- semua batch / tanpa batch -</option>
                 </select>
             </div>
             <div class="col-12">
@@ -58,7 +58,7 @@
 document.getElementById('barang').addEventListener('change', async (e) => {
     const id = e.target.value;
     const sel = document.getElementById('batch');
-    sel.innerHTML = '<option value="">— tanpa batch —</option>';
+    sel.innerHTML = '<option value="">- tanpa batch -</option>';
     if (!id) return;
     const res = await fetch(`/mutasi/batches/${id}`);
     const data = await res.json();

@@ -12,15 +12,15 @@
     <div class="panduan-step">
         <span class="step-num">3</span> Isi form:
         <ul class="mt-2 mb-0 small">
-            <li><strong>Kode Barang</strong> — kosongkan saja, otomatis dibuat sistem</li>
-            <li><strong>Barcode</strong> — scan kemasan pakai tombol 📷, atau cari online dengan tombol 🔍, atau ketik manual</li>
-            <li><strong>Nama</strong> — contoh "Indomie Goreng 85g"</li>
-            <li><strong>Kategori</strong> — pilih (Mie Instan / Air Mineral / dll)</li>
-            <li><strong>Pemasok</strong> — pilih dari mana barang ini biasa dibeli</li>
-            <li><strong>Satuan</strong> — pcs, kg, liter, botol, dll</li>
-            <li><strong>Modal Beli</strong> — harga modal per satuan (Rp)</li>
-            <li><strong>Harga Jual</strong> — harga ke pelanggan (Rp)</li>
-            <li><strong>Stok Minimal</strong> — kalau stok ≤ angka ini, akan keluar notifikasi "Stok Menipis" di Dashboard</li>
+            <li><strong>Kode Barang</strong> - kosongkan saja, otomatis dibuat sistem</li>
+            <li><strong>Barcode</strong> - scan kemasan pakai tombol 📷, atau cari online dengan tombol 🔍, atau ketik manual</li>
+            <li><strong>Nama</strong> - contoh "Indomie Goreng 85g"</li>
+            <li><strong>Kategori</strong> - pilih (Mie Instan / Air Mineral / dll)</li>
+            <li><strong>Pemasok</strong> - pilih dari mana barang ini biasa dibeli</li>
+            <li><strong>Satuan</strong> - pcs, kg, liter, botol, dll</li>
+            <li><strong>Modal Beli</strong> - harga modal per satuan (Rp)</li>
+            <li><strong>Harga Jual</strong> - harga ke pelanggan (Rp)</li>
+            <li><strong>Stok Minimal</strong> - kalau stok ≤ angka ini, akan keluar notifikasi "Stok Menipis" di Dashboard</li>
         </ul>
     </div>
     <div class="panduan-step">

@@ -11,19 +11,19 @@
     <div class="panduan-step">
         <span class="step-num">3</span> Isi header:
         <ul class="mt-2 mb-0 small">
-            <li><strong>Tanggal Masuk</strong> — tanggal barang sampai</li>
-            <li><strong>Pemasok</strong> — pilih dari mana barangnya</li>
-            <li><strong>Cara Bayar</strong> — Tunai / Transfer / Hutang</li>
+            <li><strong>Tanggal Masuk</strong> - tanggal barang sampai</li>
+            <li><strong>Pemasok</strong> - pilih dari mana barangnya</li>
+            <li><strong>Cara Bayar</strong> - Tunai / Transfer / Hutang</li>
         </ul>
     </div>
     <div class="panduan-step">
         <span class="step-num">4</span> Klik <strong>+ Tambah Baris</strong> untuk setiap barang yang datang. Isi:
         <ul class="mt-2 mb-0 small">
-            <li><strong>Barang</strong> — pilih dari daftar</li>
-            <li><strong>Qty</strong> — jumlah yang masuk</li>
-            <li><strong>Harga Beli</strong> — modal per satuan (otomatis terisi, bisa diubah)</li>
-            <li><strong>No Batch</strong> (opsional) — kode batch dari pemasok</li>
-            <li><strong>Tgl Kadaluarsa</strong> — <span class="text-danger">PENTING untuk produk yang punya tanggal expired</span> (susu, makanan, obat). Sistem otomatis akan jual barang yang lebih cepat expired duluan (FEFO).</li>
+            <li><strong>Barang</strong> - pilih dari daftar</li>
+            <li><strong>Qty</strong> - jumlah yang masuk</li>
+            <li><strong>Harga Beli</strong> - modal per satuan (otomatis terisi, bisa diubah)</li>
+            <li><strong>No Batch</strong> (opsional) - kode batch dari pemasok</li>
+            <li><strong>Tgl Kadaluarsa</strong> - <span class="text-danger">PENTING untuk produk yang punya tanggal expired</span> (susu, makanan, obat). Sistem otomatis akan jual barang yang lebih cepat expired duluan (FEFO).</li>
         </ul>
     </div>
     <div class="panduan-step">

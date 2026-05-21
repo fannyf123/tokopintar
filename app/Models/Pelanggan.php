@@ -10,10 +10,11 @@ class Pelanggan extends Model
     public const TIPE_UMUM = 'umum';
     public const TIPE_MEMBER = 'member';
 
-    protected $fillable = ['nama', 'no_hp', 'alamat', 'tipe', 'total_belanja'];
+    protected $fillable = ['nama', 'no_hp', 'alamat', 'tipe', 'diskon_persen', 'total_belanja'];
 
     protected $casts = [
         'total_belanja' => 'integer',
+        'diskon_persen' => 'integer',
     ];
 
     public function penjualans(): HasMany

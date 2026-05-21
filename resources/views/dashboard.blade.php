@@ -106,7 +106,7 @@
                 <table class="table table-sm mb-0">
                     @forelse ($fastMovers as $i)
                         <tr><td>{{ $i->barang?->nama }}</td><td class="text-end small text-muted">{{ number_format($i->velocity_30, 2) }}/hari</td></tr>
-                    @empty <tr><td class="text-muted">Belum ada data — perlu beberapa transaksi dulu.</td></tr> @endforelse
+                    @empty <tr><td class="text-muted">Belum ada data - perlu beberapa transaksi dulu.</td></tr> @endforelse
                 </table>
             </div>
         </div>

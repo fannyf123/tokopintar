@@ -4,10 +4,10 @@
 
     <h6 class="fw-bold mt-4 mb-2">A. Tambah Barang ke Keranjang</h6>
     <div class="panduan-step">
-        <span class="step-num">1</span><strong>Cara 1 — Cari Manual:</strong> Ketik nama barang di kotak pencarian (contoh: "indomie") → klik dari hasil yang muncul → masuk keranjang.
+        <span class="step-num">1</span><strong>Cara 1 - Cari Manual:</strong> Ketik nama barang di kotak pencarian (contoh: "indomie") → klik dari hasil yang muncul → masuk keranjang.
     </div>
     <div class="panduan-step">
-        <span class="step-num">2</span><strong>Cara 2 — Scan Barcode pakai HP:</strong> Klik tombol hijau <strong>📷 Scan</strong> → kamera HP terbuka → arahkan ke barcode pada kemasan → barang otomatis masuk keranjang. Cocok untuk yang sibuk dan banyak antrian.
+        <span class="step-num">2</span><strong>Cara 2 - Scan Barcode pakai HP:</strong> Klik tombol hijau <strong>📷 Scan</strong> → kamera HP terbuka → arahkan ke barcode pada kemasan → barang otomatis masuk keranjang. Cocok untuk yang sibuk dan banyak antrian.
     </div>
     <div class="panduan-step">
         <span class="step-num">3</span><strong>Ubah Jumlah:</strong> Di kolom Qty, ubah angka untuk beli lebih dari 1.
@@ -18,7 +18,7 @@
 
     <h6 class="fw-bold mt-4 mb-2">B. Pembayaran</h6>
     <div class="panduan-step">
-        <span class="step-num">1</span><strong>Pilih Pelanggan</strong> (opsional) — kalau pelanggan member, pilih dari daftar untuk catat history belanjanya.
+        <span class="step-num">1</span><strong>Pilih Pelanggan</strong> (opsional) - kalau pelanggan member, pilih dari daftar untuk catat history belanjanya.
     </div>
     <div class="panduan-step">
         <span class="step-num">2</span><strong>Pilih Cara Bayar:</strong> Tunai / Transfer / QRIS / Kartu.
@@ -35,9 +35,9 @@
 
     <h6 class="fw-bold mt-4 mb-2">C. Shortcut Keyboard (Bonus)</h6>
     <ul class="small">
-        <li><kbd>F2</kbd> atau <kbd>Ctrl + K</kbd> atau <kbd>/</kbd> — fokus ke kotak pencarian</li>
-        <li><kbd>F4</kbd> atau <kbd>Ctrl + Enter</kbd> — klik tombol Bayar</li>
-        <li><kbd>Esc</kbd> — kosongkan keranjang</li>
+        <li><kbd>F2</kbd> atau <kbd>Ctrl + K</kbd> atau <kbd>/</kbd> - fokus ke kotak pencarian</li>
+        <li><kbd>F4</kbd> atau <kbd>Ctrl + Enter</kbd> - klik tombol Bayar</li>
+        <li><kbd>Esc</kbd> - kosongkan keranjang</li>
     </ul>
 
     <div class="panduan-tip">

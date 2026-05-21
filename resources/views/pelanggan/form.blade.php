@@ -20,11 +20,15 @@
             </div>
             <div class="col-12 col-md-3">
                 <label class="form-label fw-semibold">Tipe</label>
-                <select name="tipe" class="form-select">
+                <select name="tipe" class="form-select" id="tipeSelect">
                     @foreach (['umum' => 'Umum', 'member' => 'Member'] as $v => $l)
                         <option value="{{ $v }}" @selected(old('tipe', $pelanggan->tipe ?? 'umum') === $v)>{{ $l }}</option>
                     @endforeach
                 </select>
+            </div>
+            <div class="col-12 col-md-3" id="diskonPersenWrap">
+                <label class="form-label fw-semibold">Diskon Member <small class="text-muted">(%)</small></label>
+                <input type="number" name="diskon_persen" min="0" max="50" value="{{ old('diskon_persen', $pelanggan->diskon_persen ?? 0) }}" class="form-control" placeholder="0-50">
             </div>
             <div class="col-12">
                 <label class="form-label fw-semibold">Alamat</label>

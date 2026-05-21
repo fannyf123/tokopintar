@@ -107,12 +107,12 @@ class InsightService
 
     /**
      * Classify pricing strategy:
-     * - LOSS_LEADER: margin <= 5% — barang pemikat (dijual mendekati modal untuk narik traffic)
-     * - PROFIT_DRIVER: margin >= 25% — penyumbang profit utama
+     * - LOSS_LEADER: margin <= 5% - barang pemikat (dijual mendekati modal untuk narik traffic)
+     * - PROFIT_DRIVER: margin >= 25% - penyumbang profit utama
      * - BALANCED: di antaranya
      *
      * Untuk LOSS_LEADER, cari "partner" PROFIT_DRIVER yang sering dibeli bareng (basket co-occurrence).
-     * Bisnis: subsidi silang — kerugian/profit tipis di leader ditutup oleh driver yang ikut terjual.
+     * Bisnis: subsidi silang - kerugian/profit tipis di leader ditutup oleh driver yang ikut terjual.
      */
     private function classifyStrategy(Barang $barang, float $marginPct, float $velocity, string $kelas, array $basketMap): array
     {
@@ -142,7 +142,7 @@ class InsightService
         }
 
         if ($kelas === ProductInsight::KELAS_SLOW || $kelas === ProductInsight::KELAS_DEAD) {
-            $text .= ' Slow/Dead — pertimbangkan diskon flash sebagai loss-leader sementara untuk kosongkan stok.';
+            $text .= ' Slow/Dead - pertimbangkan diskon flash sebagai loss-leader sementara untuk kosongkan stok.';
         }
 
         return [$strategy, $partners, $text];
@@ -252,24 +252,24 @@ class InsightService
             ->exists();
 
         if ($expired) {
-            return 'EXPIRED — pisahkan & buang via mutasi expired_dibuang.';
+            return 'EXPIRED - pisahkan & buang via mutasi expired_dibuang.';
         }
         if ($nearExpiry) {
-            return 'Akan kadaluarsa <= 30 hari — diskon agresif atau bundling.';
+            return 'Akan kadaluarsa <= 30 hari - diskon agresif atau bundling.';
         }
         if ($kelas === ProductInsight::KELAS_FAST && $stok <= $min + (int) ceil($forecast7)) {
             $saran = (int) max(1, ceil($forecast7) + $min - $stok);
             return "Reorder segera. Saran qty: {$saran}.";
         }
         if ($kelas === ProductInsight::KELAS_SLOW) {
-            return 'Slow mover — pertimbangkan diskon atau bundling.';
+            return 'Slow mover - pertimbangkan diskon atau bundling.';
         }
         if ($kelas === ProductInsight::KELAS_DEAD) {
-            return 'Dead stock — cuci gudang, retur supplier, atau hapus listing.';
+            return 'Dead stock - cuci gudang, retur supplier, atau hapus listing.';
         }
         if ($kelas === ProductInsight::KELAS_NEW) {
-            return 'Barang baru — kumpulkan data >= 14 hari sebelum dianalisis.';
+            return 'Barang baru - kumpulkan data >= 14 hari sebelum dianalisis.';
         }
-        return 'Normal — pantau berkala.';
+        return 'Normal - pantau berkala.';
     }
 }

@@ -35,14 +35,14 @@
             <div class="col-md-6">
                 <label class="form-label fw-semibold">Kategori</label>
                 <select name="kategori_id" required class="form-select">
-                    <option value="">— pilih —</option>
+                    <option value="">- pilih -</option>
                     @foreach ($kategoris as $k)<option value="{{ $k->id }}" @selected(old('kategori_id', $barang->kategori_id) == $k->id)>{{ $k->nama }}</option>@endforeach
                 </select>
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-semibold">Pemasok <small class="text-muted">(default)</small></label>
                 <select name="supplier_id" class="form-select">
-                    <option value="">— tidak ada —</option>
+                    <option value="">- tidak ada -</option>
                     @foreach ($suppliers as $s)<option value="{{ $s->id }}" @selected(old('supplier_id', $barang->supplier_id) == $s->id)>{{ $s->nama }}</option>@endforeach
                 </select>
             </div>

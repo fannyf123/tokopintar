@@ -17,18 +17,18 @@
         <span class="step-num">1</span> Buka <strong>Stok Barang → Penyesuaian Stok → + Mutasi Baru</strong>
     </div>
     <div class="panduan-step">
-        <span class="step-num">2</span> <strong>Pilih Barang</strong> — sistem tampilkan stok sekarang.
+        <span class="step-num">2</span> <strong>Pilih Barang</strong> - sistem tampilkan stok sekarang.
     </div>
     <div class="panduan-step">
         <span class="step-num">3</span> <strong>Pilih Alasan:</strong>
         <ul class="mt-2 mb-0 small">
-            <li><strong>Tambah stok (penyesuaian)</strong> — koreksi nambah</li>
-            <li><strong>Kurangi stok (penyesuaian)</strong> — koreksi kurang</li>
-            <li><strong>Retur dari pelanggan</strong> — pelanggan kembalikan barang (stok nambah)</li>
-            <li><strong>Retur ke pemasok</strong> — kirim balik ke pemasok (stok kurang)</li>
-            <li><strong>Barang rusak</strong> — pecah/cacat (stok kurang)</li>
-            <li><strong>Barang hilang</strong> — tidak diketahui kemana (stok kurang)</li>
-            <li><strong>Sudah kadaluarsa</strong> — buang produk expired (stok kurang)</li>
+            <li><strong>Tambah stok (penyesuaian)</strong> - koreksi nambah</li>
+            <li><strong>Kurangi stok (penyesuaian)</strong> - koreksi kurang</li>
+            <li><strong>Retur dari pelanggan</strong> - pelanggan kembalikan barang (stok nambah)</li>
+            <li><strong>Retur ke pemasok</strong> - kirim balik ke pemasok (stok kurang)</li>
+            <li><strong>Barang rusak</strong> - pecah/cacat (stok kurang)</li>
+            <li><strong>Barang hilang</strong> - tidak diketahui kemana (stok kurang)</li>
+            <li><strong>Sudah kadaluarsa</strong> - buang produk expired (stok kurang)</li>
         </ul>
     </div>
     <div class="panduan-step">
@@ -39,6 +39,6 @@
     </div>
 
     <div class="panduan-tip">
-        💡 Setiap penyesuaian stok WAJIB ada catatan/alasan. Ini biar nanti kalau dilihat ulang, jelas kenapa stoknya berubah. Semua tercatat permanen — anti penipuan.
+        💡 Setiap penyesuaian stok WAJIB ada catatan/alasan. Ini biar nanti kalau dilihat ulang, jelas kenapa stoknya berubah. Semua tercatat permanen - anti penipuan.
     </div>
 </div>

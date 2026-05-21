@@ -12,7 +12,7 @@ th { background: #f3f4f6; text-align: left; }
 .totals td { font-weight: bold; background: #fafafa; }
 </style></head>
 <body>
-<h1>{{ config('app.name') }} — Laporan Laba</h1>
+<h1>{{ config('app.name') }} - Laporan Laba</h1>
 <div class="muted">Periode: {{ $start->format('Y-m-d') }} s/d {{ $end->format('Y-m-d') }} · {{ $g }}</div>
 <table>
     <thead>

@@ -17,7 +17,7 @@
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Pemasok</label>
                     <select name="supplier_id" required class="form-select">
-                        <option value="">— pilih pemasok —</option>
+                        <option value="">- pilih pemasok -</option>
                         @foreach ($suppliers as $s)<option value="{{ $s->id }}" @selected(old('supplier_id') == $s->id)>{{ $s->nama }}</option>@endforeach
                     </select>
                 </div>
@@ -78,7 +78,7 @@ function addRow() {
     const i = idx++;
     const opts = BARANG.map(b => `<option value="${b.id}" data-h="${b.harga_beli}">${b.nama}</option>`).join('');
     tb.insertAdjacentHTML('beforeend', `<tr data-i="${i}">
-        <td><select name="items[${i}][barang_id]" required class="form-select form-select-sm" onchange="onBarang(${i}, this)"><option value="">—</option>${opts}</select></td>
+        <td><select name="items[${i}][barang_id]" required class="form-select form-select-sm" onchange="onBarang(${i}, this)"><option value="">-</option>${opts}</select></td>
         <td><input type="number" min="1" name="items[${i}][qty]" value="1" required class="form-control form-control-sm" oninput="recalc(${i})"></td>
         <td><input type="number" min="0" name="items[${i}][harga_beli]" value="0" required class="form-control form-control-sm" oninput="recalc(${i})"></td>
         <td><input name="items[${i}][no_batch]" class="form-control form-control-sm"></td>
