@@ -45,14 +45,17 @@
         .stat-card .stat-value { font-size:1.5rem; font-weight:700; margin-top:6px; }
         .sidebar-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:1030; display:none; opacity:0; transition:opacity .3s; }
 
-        .sidebar.collapsed { width:70px; }
+        .sidebar.collapsed { width:70px; padding-left:.5rem !important; padding-right:.5rem !important; }
         .sidebar.collapsed .menu-label, .sidebar.collapsed a span:not(.brand), .sidebar.collapsed #themeLabel, .sidebar.collapsed .sidebar-brand-full { display:none !important; }
-        .sidebar.collapsed .sidebar-brand-mini { display:inline !important; }
-        .sidebar.collapsed a { justify-content:center; padding:12px 8px; }
-        .sidebar.collapsed a i { width:auto; margin-right:0; }
-        .sidebar.collapsed #collapseSidebar { transform:rotate(180deg); }
+        .sidebar.collapsed .sidebar-brand-mini { display:inline !important; font-size:1.5rem; }
+        .sidebar.collapsed .sidebar-header { justify-content:center; flex-direction:column; gap:8px; padding:0 !important; }
+        .sidebar.collapsed #collapseSidebar { margin-top:4px; }
+        .sidebar.collapsed a { justify-content:center; padding:12px 6px; margin-bottom:6px; border-radius:10px; }
+        .sidebar.collapsed a i { width:auto; margin-right:0; font-size:18px; }
+        .sidebar.collapsed a:hover { transform:none; }
+        .sidebar.collapsed a.active { transform:none; }
         .sidebar.collapsed ~ .main-content { margin-left:70px; }
-        .sidebar.collapsed hr { margin-left:.5rem !important; margin-right:.5rem !important; }
+        .sidebar.collapsed hr { margin:.5rem .25rem !important; }
         @media (max-width:991.98px) {
             .sidebar { transform:translateX(-100%); width:80%; max-width:300px; }
             .sidebar.show { transform:translateX(0); }
@@ -141,11 +144,13 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="sidebar px-3" id="sidebar">
-        <div class="text-center mb-4 mt-3 d-flex justify-content-between align-items-center px-2">
+        <div class="sidebar-header text-center mb-3 mt-2 d-flex justify-content-between align-items-center px-2">
             <span class="brand text-white sidebar-brand-full"><i class="fas fa-store text-primary me-2"></i> TOKOPINTAR</span>
             <span class="brand text-white sidebar-brand-mini d-none"><i class="fas fa-store text-primary"></i></span>
             <i class="fas fa-times d-lg-none text-secondary" id="closeSidebar" style="cursor:pointer;font-size:1.2rem;"></i>
-            <i class="fas fa-angles-left d-none d-lg-inline text-secondary" id="collapseSidebar" style="cursor:pointer;font-size:1rem;" title="Sembunyikan menu"></i>
+            <button type="button" class="btn btn-sm p-0 d-none d-lg-inline-flex text-secondary border-0" id="collapseSidebar" style="cursor:pointer;background:transparent;font-size:1.1rem;" title="Sembunyikan menu">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
 
         <p class="menu-label text-uppercase">Main</p>
