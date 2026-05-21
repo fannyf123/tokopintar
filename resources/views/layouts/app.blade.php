@@ -222,6 +222,15 @@
             <a href="{{ route('advanced.pareto') }}" class="{{ request()->routeIs('advanced.pareto') ? 'active' : '' }}">
                 <i class="fas fa-trophy"></i> Pareto Monitor
             </a>
+            <a href="{{ route('pricing.simulator') }}" class="{{ request()->routeIs('pricing.*') ? 'active' : '' }}">
+                <i class="fas fa-calculator"></i> Simulator Harga
+            </a>
+            <a href="{{ route('competitor.index') }}" class="{{ request()->routeIs('competitor.*') ? 'active' : '' }}">
+                <i class="fas fa-balance-scale"></i> Harga Kompetitor
+            </a>
+            <a href="{{ route('bundle.index') }}" class="{{ request()->routeIs('bundle.*') ? 'active' : '' }}">
+                <i class="fas fa-box-open"></i> Bundle Generator
+            </a>
             <a href="{{ route('laporan.laba.index') }}" class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
                 <i class="fas fa-chart-line"></i> Laporan Untung
             </a>

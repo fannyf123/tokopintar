@@ -73,6 +73,7 @@ Route::middleware(['auth', 'aktif'])->group(function () {
         Route::prefix('pos')->name('pos.')->group(function () {
             Route::get('/', [PenjualanController::class, 'pos'])->name('index');
             Route::get('search', [PenjualanController::class, 'searchBarang'])->name('search');
+            Route::get('cross-sell', [PenjualanController::class, 'crossSell'])->name('crosssell');
             Route::post('/', [PenjualanController::class, 'store'])->name('store');
         });
 
@@ -106,6 +107,24 @@ Route::middleware(['auth', 'aktif'])->group(function () {
             Route::get('optimal-stock', [\App\Http\Controllers\AdvancedInsightController::class, 'optimalStock'])->name('stock');
             Route::get('cannibalization', [\App\Http\Controllers\AdvancedInsightController::class, 'cannibalization'])->name('cannibal');
             Route::get('pareto', [\App\Http\Controllers\AdvancedInsightController::class, 'pareto'])->name('pareto');
+        });
+
+        Route::prefix('pricing')->name('pricing.')->group(function () {
+            Route::get('simulator', [\App\Http\Controllers\PricingController::class, 'simulator'])->name('simulator');
+            Route::get('history/{barang}', [\App\Http\Controllers\PricingController::class, 'history'])->name('history');
+        });
+
+        Route::prefix('competitor')->name('competitor.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\CompetitorPriceController::class, 'index'])->name('index');
+            Route::get('create', [\App\Http\Controllers\CompetitorPriceController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\CompetitorPriceController::class, 'store'])->name('store');
+            Route::delete('{competitor}', [\App\Http\Controllers\CompetitorPriceController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('bundle')->name('bundle.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\BundleController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\BundleController::class, 'store'])->name('store');
+            Route::delete('{bundle}', [\App\Http\Controllers\BundleController::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('laporan/laba')->name('laporan.laba.')->group(function () {

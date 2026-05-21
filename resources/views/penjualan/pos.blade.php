@@ -46,6 +46,7 @@
                     </table>
                 </div>
                 <p id="cartEmpty" class="text-center text-muted py-4"><i class="fas fa-shopping-basket fs-1 d-block mb-2 opacity-50"></i>Belum ada barang. Cari atau scan barcode dulu.</p>
+                <div id="crossSellBox" class="d-none border rounded p-3 mt-3 bg-light"></div>
             </div>
         </div>
     </div>
@@ -142,6 +143,26 @@ function addToCart(id, nama, harga, stok) {
     if (ex) { if (ex.qty + 1 > stok) return alert('Stok tidak cukup'); ex.qty++; }
     else cart.push({id, nama, harga, qty: 1, stok, diskon: 0});
     render();
+    fetchCrossSell(id);
+}
+
+async function fetchCrossSell(barangId) {
+    const box = $g('crossSellBox');
+    if (!box) return;
+    try {
+        const res = await fetch('{{ route('pos.crosssell') }}?barang_id=' + barangId);
+        const data = await res.json();
+        if (!data.suggestions?.length) { box.classList.add('d-none'); return; }
+        box.classList.remove('d-none');
+        box.innerHTML = '<div class="small fw-bold mb-2"><i class="fas fa-lightbulb text-warning me-1"></i>Pelanggan biasa juga beli:</div>' +
+            data.suggestions.map(s => `<div class="cs-item d-flex justify-content-between align-items-center py-1" style="cursor:pointer" data-id="${s.id}" data-nama="${s.nama}" data-h="${s.harga_jual}" data-stok="${s.stok_current}">
+                <span><strong>${s.nama}</strong> <small class="text-muted">${fmt(s.harga_jual)}</small></span>
+                <span class="badge bg-success">+ Tambah</span>
+            </div>`).join('');
+        box.querySelectorAll('[data-id]').forEach(el => el.onclick = () => {
+            addToCart(+el.dataset.id, el.dataset.nama, +el.dataset.h, +el.dataset.stok);
+        });
+    } catch (e) {}
 }
 
 function render() {

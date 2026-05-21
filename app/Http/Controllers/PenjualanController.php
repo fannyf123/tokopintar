@@ -30,7 +30,32 @@ class PenjualanController extends Controller
     {
         return view('penjualan.pos', [
             'pelanggans' => Pelanggan::orderBy('nama')->get(),
+            'bundles' => \App\Models\Bundle::with('barangA', 'barangB')->where('aktif', true)->get(),
         ]);
+    }
+
+    public function crossSell(\Illuminate\Http\Request $request): \Illuminate\Http\JsonResponse
+    {
+        $barangId = (int) $request->query('barang_id');
+        if (! $barangId) return response()->json(['suggestions' => []]);
+
+        $rules = \App\Models\AssociationRule::with('consequent')
+            ->where('antecedent_barang_id', $barangId)
+            ->where('lift', '>=', 1.2)
+            ->orderByDesc('lift')
+            ->limit(3)
+            ->get()
+            ->filter(fn ($r) => $r->consequent && $r->consequent->aktif && $r->consequent->stok_current > 0)
+            ->map(fn ($r) => [
+                'id' => $r->consequent->id,
+                'nama' => $r->consequent->nama,
+                'harga_jual' => (int) $r->consequent->harga_jual,
+                'stok_current' => (int) $r->consequent->stok_current,
+                'lift' => round($r->lift, 2),
+                'confidence' => round($r->confidence * 100, 1),
+            ])->values();
+
+        return response()->json(['suggestions' => $rules]);
     }
 
     public function searchBarang(Request $request)

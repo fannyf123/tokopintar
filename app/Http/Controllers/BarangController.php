@@ -68,7 +68,21 @@ class BarangController extends Controller
         $data = $request->validated();
         $data['aktif'] = (bool) ($data['aktif'] ?? false);
         unset($data['stok_current']);
+
+        $hargaLama = (int) $barang->harga_jual;
+        $hargaBaru = (int) ($data['harga_jual'] ?? $hargaLama);
+
         $barang->update($data);
+
+        if ($hargaLama !== $hargaBaru && $hargaLama > 0) {
+            \App\Models\PriceHistory::create([
+                'barang_id' => $barang->id,
+                'harga_jual_lama' => $hargaLama,
+                'harga_jual_baru' => $hargaBaru,
+                'delta_persen' => round((($hargaBaru - $hargaLama) / $hargaLama) * 100, 2),
+                'diubah_oleh' => auth()->id(),
+            ]);
+        }
 
         return redirect()->route('barang.index')->with('success', 'Barang diperbarui.');
     }
