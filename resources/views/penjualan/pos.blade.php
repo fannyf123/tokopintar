@@ -287,7 +287,7 @@ document.addEventListener('keydown', (e) => {
 }, true);
 
 let scanner = null;
-let scanBusy = false;
+let scanState = 'idle';
 async function handleScan(code) {
     const data = await searchBarang(code);
     if (data.length === 1) { addToCart(data[0].id, data[0].nama, data[0].harga_jual, data[0].stok_current); navigator.vibrate?.(80); }
@@ -295,45 +295,49 @@ async function handleScan(code) {
     else { alert('Barcode tidak ditemukan: ' + code); }
 }
 async function closeScanner() {
+    if (scanState !== 'running') return;
+    scanState = 'stopping';
     try { if (scanner?.isScanning) await scanner.stop(); } catch (e) {}
+    try { scanner?.clear?.(); } catch (e) {}
     $g('scannerWrap').classList.add('d-none');
+    scanState = 'idle';
 }
 $g('scanBtn').addEventListener('click', async () => {
-    if (scanBusy) return;
-    scanBusy = true;
+    if (scanState === 'starting' || scanState === 'stopping') return;
+    if (scanState === 'running') { await closeScanner(); return; }
+    if (!window.Html5Qrcode) { alert('Scanner belum siap. Coba refresh halaman.'); return; }
+    scanState = 'starting';
+    $g('scannerWrap').classList.remove('d-none');
+    if (!scanner) {
+        try { scanner = new Html5Qrcode('scanner'); }
+        catch (e) { scanState = 'idle'; alert('Init gagal: ' + (e?.message || e)); $g('scannerWrap').classList.add('d-none'); return; }
+    }
     try {
-        if (!window.Html5Qrcode) { alert('Scanner belum siap. Coba refresh halaman.'); return; }
-        if (scanner?.isScanning) { await closeScanner(); return; }
-        $g('scannerWrap').classList.remove('d-none');
-        if (!scanner) {
-            try { scanner = new Html5Qrcode('scanner'); }
-            catch (e) { alert('Scanner gagal init: ' + (e?.message || e)); $g('scannerWrap').classList.add('d-none'); return; }
+        await scanner.start({facingMode: 'environment'}, {fps: 10, qrbox: {width: 250, height: 150}},
+            async (text) => {
+                await closeScanner();
+                handleScan(text.trim());
+            }, () => {});
+        scanState = 'running';
+    } catch (e) {
+        scanState = 'idle';
+        const name = e?.name || '';
+        const msg = e?.message || String(e);
+        let saran = '';
+        if (name === 'NotAllowedError' || /permission|denied/i.test(msg)) {
+            saran = '🔒 Akses kamera ditolak. Klik ikon gembok di address bar > Camera > Allow > refresh.';
+        } else if (name === 'NotFoundError') {
+            saran = '📷 Tidak terdeteksi kamera di perangkat ini.';
+        } else if (name === 'NotReadableError' || /track start|in use|busy/i.test(msg)) {
+            saran = '⚠️ Kamera dipakai aplikasi lain. Tutup app Kamera/WhatsApp/Zoom yang aktif.';
+        } else if (/scan is ongoing|already.*started|clear/i.test(msg)) {
+            try { scanner = new Html5Qrcode('scanner'); } catch (e) {}
+            saran = 'Scanner sedang sibuk. Tunggu 2 detik lalu coba lagi.';
+        } else {
+            saran = 'Error kamera: ' + msg;
         }
-        try {
-            await scanner.start({facingMode: 'environment'}, {fps: 10, qrbox: {width: 250, height: 150}},
-                async (text) => {
-                    await closeScanner();
-                    handleScan(text.trim());
-                }, () => {});
-        } catch (e) {
-            const name = e?.name || '';
-            const msg = e?.message || String(e);
-            let saran = '';
-            if (name === 'NotAllowedError' || /permission|denied/i.test(msg)) {
-                saran = '🔒 Akses kamera ditolak. Klik ikon gembok di address bar > Camera > Allow > refresh halaman.';
-            } else if (name === 'NotFoundError') {
-                saran = '📷 Tidak terdeteksi kamera di perangkat ini.';
-            } else if (name === 'NotReadableError' || /track start|in use|busy/i.test(msg)) {
-                saran = '⚠️ Kamera dipakai aplikasi lain. Tutup app Kamera/WhatsApp/Zoom yang aktif, lalu coba lagi.';
-            } else {
-                saran = 'Error kamera: ' + msg;
-            }
-            alert(saran);
-            scanner = null;
-            $g('scannerWrap').classList.add('d-none');
-        }
-    } finally {
-        scanBusy = false;
+        alert(saran);
+        $g('scannerWrap').classList.add('d-none');
     }
 });
 $g('stopScan').addEventListener('click', async () => { await closeScanner(); });
