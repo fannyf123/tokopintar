@@ -23,8 +23,13 @@
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label small fw-semibold">Password</label>
-                <input id="password" name="password" type="password" required
-                    class="form-control @error('password') is-invalid @enderror">
+                <div class="input-group">
+                    <input id="password" name="password" type="password" required
+                        class="form-control @error('password') is-invalid @enderror">
+                    <button type="button" class="btn btn-outline-secondary" id="togglePass" tabindex="-1" aria-label="Tampilkan password">
+                        <i class="fas fa-eye" id="togglePassIcon"></i>
+                    </button>
+                </div>
             </div>
             <div class="form-check mb-3">
                 <input id="remember" name="remember" type="checkbox" value="1" class="form-check-input">
@@ -36,4 +41,12 @@
         </form>
     </div>
 </div>
+<script>
+document.getElementById('togglePass')?.addEventListener('click', function() {
+    const inp = document.getElementById('password');
+    const ico = document.getElementById('togglePassIcon');
+    if (inp.type === 'password') { inp.type = 'text'; ico.className = 'fas fa-eye-slash'; }
+    else { inp.type = 'password'; ico.className = 'fas fa-eye'; }
+});
+</script>
 @endsection

@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name', 'TOKOPINTAR'))</title>
+    <script>
+        (function () {
+            const t = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', t);
+        })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,6 +71,40 @@
             .stat-card .card-body { padding:14px; }
         }
         .alert { border-radius:10px; }
+
+        [data-bs-theme="dark"] body { background:#0f1419; color:#cbd5e1; }
+        [data-bs-theme="dark"] .navbar { background:#1a1f2e !important; }
+        [data-bs-theme="dark"] .navbar-brand, [data-bs-theme="dark"] .navbar .text-dark { color:#e2e8f0 !important; }
+        [data-bs-theme="dark"] .card { background:#1a1f2e; color:#cbd5e1; box-shadow:0 4px 15px rgba(0,0,0,.2); }
+        [data-bs-theme="dark"] .table { color:#cbd5e1; --bs-table-bg:transparent; --bs-table-striped-bg:#243144; --bs-table-striped-color:#e2e8f0; }
+        [data-bs-theme="dark"] .table thead th, [data-bs-theme="dark"] table.dataTable thead th { background:#1a1f2e !important; color:#94a3b8; border-bottom-color:#334155 !important; }
+        [data-bs-theme="dark"] .table tbody td, [data-bs-theme="dark"] table.dataTable tbody td { border-bottom-color:#334155 !important; color:#cbd5e1; }
+        [data-bs-theme="dark"] .form-control, [data-bs-theme="dark"] .form-select { background:#0f1419; color:#e2e8f0; border-color:#334155; }
+        [data-bs-theme="dark"] .form-control:focus, [data-bs-theme="dark"] .form-select:focus { background:#0f1419; color:#e2e8f0; }
+        [data-bs-theme="dark"] .form-control::placeholder { color:#64748b; }
+        [data-bs-theme="dark"] .input-group-text { background:#243144; color:#cbd5e1; border-color:#334155; }
+        [data-bs-theme="dark"] .table-light { --bs-table-bg:#243144; --bs-table-color:#e2e8f0; }
+        [data-bs-theme="dark"] .btn-light { background:#243144; color:#e2e8f0; border-color:#334155; }
+        [data-bs-theme="dark"] .btn-light:hover { background:#334155; color:#fff; }
+        [data-bs-theme="dark"] .text-muted { color:#94a3b8 !important; }
+        [data-bs-theme="dark"] code { color:#fbbf24; background:#1e293b; padding:2px 6px; border-radius:4px; }
+        [data-bs-theme="dark"] .alert-success { background:#14532d; color:#86efac; border-color:#166534; }
+        [data-bs-theme="dark"] .alert-danger { background:#7f1d1d; color:#fca5a5; border-color:#991b1b; }
+        [data-bs-theme="dark"] .alert-info { background:#1e3a8a; color:#93c5fd; border-color:#1e40af; }
+        [data-bs-theme="dark"] .alert-light { background:#243144; color:#cbd5e1; border-color:#334155; }
+        [data-bs-theme="dark"] hr { border-color:#334155; }
+        [data-bs-theme="dark"] .page-link { background:#1a1f2e; border-color:#334155; color:#cbd5e1; }
+        [data-bs-theme="dark"] .page-link:hover { background:#243144; color:#fff; }
+        [data-bs-theme="dark"] .page-item.active .page-link { background:#4361ee; border-color:#4361ee; color:#fff; }
+        [data-bs-theme="dark"] .page-item.disabled .page-link { background:#1a1f2e; color:#64748b; }
+        [data-bs-theme="dark"] .border, [data-bs-theme="dark"] .border-top, [data-bs-theme="dark"] .border-bottom { border-color:#334155 !important; }
+        [data-bs-theme="dark"] .badge.bg-light { background:#334155 !important; color:#e2e8f0 !important; }
+        [data-bs-theme="dark"] .badge.bg-secondary { background:#475569 !important; }
+        [data-bs-theme="dark"] .modal-content { background:#1a1f2e; color:#cbd5e1; }
+        [data-bs-theme="dark"] .img-thumbnail { background:#1a1f2e; border-color:#334155; }
+        [data-bs-theme="dark"] .pos-results { background:#1a1f2e; }
+        [data-bs-theme="dark"] .pos-results .item { border-color:#334155; }
+        [data-bs-theme="dark"] .pos-results .item:hover { background:#243144; }
     </style>
     @stack('styles')
 </head>
@@ -157,6 +197,9 @@
                 <span class="navbar-brand mb-0 fw-bold d-none d-sm-block">@yield('page_title', 'Dashboard')</span>
             </div>
             <div class="d-flex align-items-center">
+                <button class="btn btn-light btn-sm me-2 shadow-sm border-0" id="themeToggle" aria-label="Toggle dark mode" title="Mode Gelap/Terang" style="border-radius:8px;">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
                 <div class="d-flex align-items-center text-end">
                     <div class="me-2 d-none d-md-block">
                         <span class="d-block fw-bold text-dark" style="font-size:13px;line-height:1;">{{ $u->name }}</span>
@@ -186,6 +229,18 @@
         $('#logoutBtn').on('click', function (e) {
             e.preventDefault();
             if (confirm('Yakin keluar dari TOKOPINTAR?')) document.getElementById('logout-form').submit();
+        });
+        function applyThemeIcon() {
+            const t = document.documentElement.getAttribute('data-bs-theme');
+            $('#themeIcon').attr('class', t === 'dark' ? 'fas fa-sun' : 'fas fa-moon');
+        }
+        applyThemeIcon();
+        $('#themeToggle').on('click', function () {
+            const cur = document.documentElement.getAttribute('data-bs-theme') || 'light';
+            const next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-bs-theme', next);
+            localStorage.setItem('theme', next);
+            applyThemeIcon();
         });
     });
 </script>
