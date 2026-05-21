@@ -287,47 +287,56 @@ document.addEventListener('keydown', (e) => {
 }, true);
 
 let scanner = null;
+let scanBusy = false;
 async function handleScan(code) {
     const data = await searchBarang(code);
     if (data.length === 1) { addToCart(data[0].id, data[0].nama, data[0].harga_jual, data[0].stok_current); navigator.vibrate?.(80); }
     else if (data.length > 1) { $g('searchInput').value = code; $g('searchInput').dispatchEvent(new Event('input')); }
     else { alert('Barcode tidak ditemukan: ' + code); }
 }
+async function closeScanner() {
+    try { if (scanner?.isScanning) await scanner.stop(); } catch (e) {}
+    $g('scannerWrap').classList.add('d-none');
+}
 $g('scanBtn').addEventListener('click', async () => {
-    if (!window.Html5Qrcode) { alert('Scanner belum siap. Coba refresh halaman.'); return; }
-    if (scanner?.isScanning) { return; }
-    $g('scannerWrap').classList.remove('d-none');
-    if (!scanner) {
-        try { scanner = new Html5Qrcode('scanner'); }
-        catch (e) { alert('Scanner gagal init: ' + (e?.message || e)); $g('scannerWrap').classList.add('d-none'); return; }
-    }
+    if (scanBusy) return;
+    scanBusy = true;
     try {
-        await scanner.start({facingMode: 'environment'}, {fps: 10, qrbox: {width: 250, height: 150}},
-            async (text) => {
-                try { if (scanner.isScanning) await scanner.stop(); } catch (e) {}
-                $g('scannerWrap').classList.add('d-none');
-                handleScan(text.trim());
-            }, () => {});
-    } catch (e) {
-        const name = e?.name || '';
-        const msg = e?.message || String(e);
-        let saran = '';
-        if (name === 'NotAllowedError' || /permission|denied/i.test(msg)) {
-            saran = '🔒 Akses kamera ditolak. Cara fix:\n\n1. Klik ikon gembok di address bar\n2. Cari "Camera" atau "Kamera"\n3. Ubah jadi "Allow / Izinkan"\n4. Refresh halaman\n\nDi HP: buka Settings > Apps > Browser > Permissions > Camera = Allow.';
-        } else if (name === 'NotFoundError' || /no camera|tidak ada/i.test(msg)) {
-            saran = '📷 Tidak terdeteksi kamera. Pastikan HP/laptop kamu punya kamera dan tidak rusak.';
-        } else if (name === 'NotReadableError' || /track start|in use|busy/i.test(msg)) {
-            saran = '⚠️ Kamera sedang dipakai aplikasi lain. Tutup dulu: aplikasi Kamera/WhatsApp/Zoom/Meet/tab browser lain yang pakai kamera, lalu coba lagi.';
-        } else if (/secure|https/i.test(msg)) {
-            saran = '🔐 Kamera butuh HTTPS. Pastikan URL mulai dengan https:// (bukan http://).';
-        } else {
-            saran = '❓ Error tidak dikenali: ' + msg + '\n\nCoba: refresh halaman, atau ganti browser (Chrome paling stabil).';
+        if (!window.Html5Qrcode) { alert('Scanner belum siap. Coba refresh halaman.'); return; }
+        if (scanner?.isScanning) { await closeScanner(); return; }
+        $g('scannerWrap').classList.remove('d-none');
+        if (!scanner) {
+            try { scanner = new Html5Qrcode('scanner'); }
+            catch (e) { alert('Scanner gagal init: ' + (e?.message || e)); $g('scannerWrap').classList.add('d-none'); return; }
         }
-        alert(saran);
-        scanner = null;
-        $g('scannerWrap').classList.add('d-none');
+        try {
+            await scanner.start({facingMode: 'environment'}, {fps: 10, qrbox: {width: 250, height: 150}},
+                async (text) => {
+                    await closeScanner();
+                    handleScan(text.trim());
+                }, () => {});
+        } catch (e) {
+            const name = e?.name || '';
+            const msg = e?.message || String(e);
+            let saran = '';
+            if (name === 'NotAllowedError' || /permission|denied/i.test(msg)) {
+                saran = '🔒 Akses kamera ditolak. Klik ikon gembok di address bar > Camera > Allow > refresh halaman.';
+            } else if (name === 'NotFoundError') {
+                saran = '📷 Tidak terdeteksi kamera di perangkat ini.';
+            } else if (name === 'NotReadableError' || /track start|in use|busy/i.test(msg)) {
+                saran = '⚠️ Kamera dipakai aplikasi lain. Tutup app Kamera/WhatsApp/Zoom yang aktif, lalu coba lagi.';
+            } else {
+                saran = 'Error kamera: ' + msg;
+            }
+            alert(saran);
+            scanner = null;
+            $g('scannerWrap').classList.add('d-none');
+        }
+    } finally {
+        scanBusy = false;
     }
 });
+$g('stopScan').addEventListener('click', async () => { await closeScanner(); });
 $g('stopScan').addEventListener('click', async () => {
     try { if (scanner?.isScanning) await scanner.stop(); } catch (e) {}
     $g('scannerWrap').classList.add('d-none');
