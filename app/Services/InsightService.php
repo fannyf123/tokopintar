@@ -165,8 +165,8 @@ class InsightService
             ->where('p.tanggal', '>=', $sejak)
             ->selectRaw('a.barang_id as src, b.barang_id as dst, COUNT(*) as co')
             ->groupBy('a.barang_id', 'b.barang_id')
-            ->having('co', '>=', 2)
-            ->orderByDesc('co')
+            ->havingRaw('COUNT(*) >= 2')
+            ->orderByRaw('COUNT(*) DESC')
             ->get();
 
         $map = [];
