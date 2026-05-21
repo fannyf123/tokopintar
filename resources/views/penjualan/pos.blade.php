@@ -71,11 +71,11 @@
                 <div class="row g-2 mb-3">
                     <div class="col-6">
                         <label class="form-label small fw-semibold">Potongan (Rp)</label>
-                        <input id="diskon" type="number" min="0" value="0" class="form-control form-control-sm">
+                        <input id="diskon" type="text" inputmode="numeric" value="0" class="form-control form-control-sm money-input">
                     </div>
                     <div class="col-6">
                         <label class="form-label small fw-semibold">Pajak (Rp)</label>
-                        <input id="pajak" type="number" min="0" value="0" class="form-control form-control-sm">
+                        <input id="pajak" type="text" inputmode="numeric" value="0" class="form-control form-control-sm money-input">
                     </div>
                 </div>
                 <hr>
@@ -154,24 +154,41 @@ function render() {
 
 function recalc() {
     const sub = cart.reduce((s, x) => s + x.qty * x.harga - x.diskon, 0);
-    const d = +$g('diskon').value || 0;
-    const p = +$g('pajak').value || 0;
+    const d = parseMoney($g('diskon').value);
+    const p = parseMoney($g('pajak').value);
     const grand = Math.max(0, sub - d + p);
     $g('subTotal').textContent = fmt(sub);
     $g('grandTotal').textContent = fmt(grand);
-    const dibayar = +$g('dibayar').value || 0;
+    const dibayar = parseMoney($g('dibayar').value);
     $g('kembalian').textContent = fmt(Math.max(0, dibayar - grand));
     $g('bayar').disabled = !cart.length || dibayar < grand;
 }
+
+function parseMoney(v) { return +String(v).replace(/[^\d]/g, '') || 0; }
+function formatMoney(n) { return Number(n).toLocaleString('id-ID'); }
+function attachMoneyInput(el) {
+    el.addEventListener('input', () => {
+        const raw = parseMoney(el.value);
+        const pos = el.selectionStart;
+        const prevLen = el.value.length;
+        el.value = raw === 0 ? '0' : formatMoney(raw);
+        const newLen = el.value.length;
+        try { el.setSelectionRange(pos + (newLen - prevLen), pos + (newLen - prevLen)); } catch (e) {}
+        recalc();
+    });
+    el.addEventListener('focus', () => { if (el.value === '0') el.value = ''; });
+    el.addEventListener('blur', () => { if (el.value === '') el.value = '0'; });
+}
+document.querySelectorAll('.money-input').forEach(attachMoneyInput);
 ['diskon','pajak','dibayar'].forEach(id => $g(id).addEventListener('input', recalc));
 
 $g('bayar').addEventListener('click', async () => {
     const payload = {
         pelanggan_id: $g('pelanggan').value || null,
         metode_bayar: $g('metode').value,
-        diskon: +$g('diskon').value || 0,
-        pajak: +$g('pajak').value || 0,
-        dibayar: +$g('dibayar').value || 0,
+        diskon: parseMoney($g('diskon').value),
+        pajak: parseMoney($g('pajak').value),
+        dibayar: parseMoney($g('dibayar').value),
         items: cart.map(x => ({barang_id: x.id, qty: x.qty, diskon_item: x.diskon || 0})),
     };
     const res = await fetch('{{ route('pos.store') }}', {
