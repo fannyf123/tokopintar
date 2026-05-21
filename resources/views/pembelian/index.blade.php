@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Pembelian - TOKOPINTAR')
-@section('page_title', 'Pembelian')
+@section('title', 'Barang Masuk - TOKOPINTAR')
+@section('page_title', 'Barang Masuk dari Pemasok')
 @section('content')
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <h6 class="fw-bold mb-0">Daftar Pembelian</h6>
-            <a href="{{ route('pembelian.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Pembelian Baru</a>
+            <h6 class="fw-bold mb-0">Daftar Barang Masuk</h6>
+            <a href="{{ route('pembelian.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Catat Barang Masuk</a>
         </div>
         <div class="table-responsive">
             <table class="table table-striped">

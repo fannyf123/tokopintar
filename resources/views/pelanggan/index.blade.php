@@ -26,18 +26,18 @@
                             <td>{{ $items->firstItem() + $i }}</td>
                             <td class="fw-semibold">{{ $row->nama }}</td>
                             <td>{{ $row->no_hp ?? '-' }}</td>
-                            <td><span class="badge bg-{{ $row->tipe === 'member' ? 'primary' : 'secondary' }}">{{ ucfirst($row->tipe) }}</span></td>
+                            <td><span class="badge bg-{{ $row->tipe === 'member' ? 'primary' : 'secondary' }}">{{ $row->tipe === 'member' ? 'Member' : 'Umum' }}</span></td>
                             <td class="text-end">{{ format_rupiah($row->total_belanja) }}</td>
                             <td>
                                 <a href="{{ route('pelanggan.edit', $row) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
-                                <form method="POST" action="{{ route('pelanggan.destroy', $row) }}" class="d-inline" onsubmit="return confirm('Hapus?')">
+                                <form method="POST" action="{{ route('pelanggan.destroy', $row) }}" class="d-inline" onsubmit="return confirm('Hapus pelanggan ini?')">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada.</td></tr>
+                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada pelanggan tercatat.</td></tr>
                     @endforelse
                 </tbody>
             </table>

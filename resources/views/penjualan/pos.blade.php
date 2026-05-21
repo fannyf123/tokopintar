@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'POS Kasir - TOKOPINTAR')
-@section('page_title', 'POS / Kasir')
+@section('title', 'Kasir - TOKOPINTAR')
+@section('page_title', 'Kasir')
 
 @push('styles')
 <style>
@@ -22,13 +22,13 @@
         <div class="card">
             <div class="card-body">
                 <div class="input-group mb-3">
-                    <input id="searchInput" placeholder="Scan barcode / cari nama (F2)" autofocus class="form-control">
-                    <button type="button" id="scanBtn" class="btn btn-success"><i class="fas fa-camera me-1"></i> Scan HP</button>
+                    <input id="searchInput" placeholder="Cari nama barang atau scan barcode..." autofocus class="form-control">
+                    <button type="button" id="scanBtn" class="btn btn-success"><i class="fas fa-camera me-1"></i> Scan</button>
                 </div>
                 <div id="scannerWrap" class="d-none mb-3">
                     <div id="scanner" class="rounded mx-auto" style="max-width:360px;"></div>
-                    <div class="text-center mt-2"><button type="button" id="stopScan" class="btn btn-sm btn-link text-danger">Tutup Scanner</button></div>
-                    <p class="text-center text-muted small mb-0">Arahkan kamera HP ke barcode (EAN13 / QR / Code128).</p>
+                    <div class="text-center mt-2"><button type="button" id="stopScan" class="btn btn-sm btn-link text-danger">Tutup Kamera</button></div>
+                    <p class="text-center text-muted small mb-0">Arahkan kamera HP ke barcode pada kemasan.</p>
                 </div>
                 <div id="searchResults" class="pos-results border rounded mb-3 d-none"></div>
                 <div class="table-responsive">
@@ -45,7 +45,7 @@
                         <tbody id="cart"></tbody>
                     </table>
                 </div>
-                <p id="cartEmpty" class="text-center text-muted py-4"><i class="fas fa-shopping-basket fs-1 d-block mb-2 opacity-50"></i>Keranjang kosong. Cari atau scan barang.</p>
+                <p id="cartEmpty" class="text-center text-muted py-4"><i class="fas fa-shopping-basket fs-1 d-block mb-2 opacity-50"></i>Belum ada barang. Cari atau scan barcode dulu.</p>
             </div>
         </div>
     </div>
@@ -55,38 +55,38 @@
                 <div class="mb-3">
                     <label class="form-label small fw-semibold">Pelanggan</label>
                     <select id="pelanggan" class="form-select form-select-sm">
-                        <option value="">Umum</option>
+                        <option value="">Pembeli Umum</option>
                         @foreach ($pelanggans as $p)<option value="{{ $p->id }}">{{ $p->nama }}</option>@endforeach
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label small fw-semibold">Metode Bayar</label>
+                    <label class="form-label small fw-semibold">Cara Bayar</label>
                     <select id="metode" class="form-select form-select-sm">
-                        <option value="cash">Cash</option>
-                        <option value="transfer">Transfer</option>
+                        <option value="cash">Tunai</option>
+                        <option value="transfer">Transfer Bank</option>
                         <option value="qris">QRIS</option>
-                        <option value="kartu">Kartu</option>
+                        <option value="kartu">Kartu Debit/Kredit</option>
                     </select>
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label small fw-semibold">Diskon</label>
+                        <label class="form-label small fw-semibold">Potongan (Rp)</label>
                         <input id="diskon" type="number" min="0" value="0" class="form-control form-control-sm">
                     </div>
                     <div class="col-6">
-                        <label class="form-label small fw-semibold">Pajak</label>
+                        <label class="form-label small fw-semibold">Pajak (Rp)</label>
                         <input id="pajak" type="number" min="0" value="0" class="form-control form-control-sm">
                     </div>
                 </div>
                 <hr>
-                <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Subtotal</span><span id="subTotal">Rp 0</span></div>
-                <div class="d-flex justify-content-between fs-5 fw-bold mb-3"><span>Grand Total</span><span id="grandTotal" class="text-primary">Rp 0</span></div>
+                <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Subtotal Belanja</span><span id="subTotal">Rp 0</span></div>
+                <div class="d-flex justify-content-between fs-5 fw-bold mb-3"><span>Total Bayar</span><span id="grandTotal" class="text-primary">Rp 0</span></div>
                 <div class="mb-2">
-                    <label class="form-label small fw-semibold">Dibayar</label>
+                    <label class="form-label small fw-semibold">Uang Diterima</label>
                     <input id="dibayar" type="number" min="0" value="0" class="form-control form-control-lg">
                 </div>
                 <div class="d-flex justify-content-between small mb-3"><span class="text-muted">Kembalian</span><span id="kembalian" class="fw-semibold text-success">Rp 0</span></div>
-                <button id="bayar" class="btn btn-success btn-lg w-100" disabled><i class="fas fa-credit-card me-2"></i>Bayar (F4)</button>
+                <button id="bayar" class="btn btn-success btn-lg w-100" disabled><i class="fas fa-credit-card me-2"></i>Selesaikan Bayar</button>
             </div>
         </div>
     </div>

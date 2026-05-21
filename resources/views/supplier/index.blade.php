@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Supplier - TOKOPINTAR')
-@section('page_title', 'Supplier')
+@section('title', 'Pemasok - TOKOPINTAR')
+@section('page_title', 'Pemasok / Supplier')
 @section('content')
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <h6 class="fw-bold mb-0">Daftar Supplier</h6>
-            <a href="{{ route('supplier.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Tambah Supplier</a>
+            <h6 class="fw-bold mb-0">Daftar Pemasok Barang</h6>
+            <a href="{{ route('supplier.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Tambah Pemasok</a>
         </div>
         <div class="table-responsive">
             <table class="table table-striped">

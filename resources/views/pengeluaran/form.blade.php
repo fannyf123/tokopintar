@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', $pengeluaran->exists ? 'Edit Pengeluaran - TOKOPINTAR' : 'Pengeluaran Baru - TOKOPINTAR')
-@section('page_title', $pengeluaran->exists ? 'Edit Pengeluaran' : 'Pengeluaran Baru')
+@section('title', $pengeluaran->exists ? 'Edit Biaya - TOKOPINTAR' : 'Catat Biaya Baru - TOKOPINTAR')
+@section('page_title', $pengeluaran->exists ? 'Ubah Biaya' : 'Catat Biaya Baru')
 @section('content')
 <div class="card">
     <div class="card-body">
@@ -13,10 +13,11 @@
             @csrf
             @if ($pengeluaran->exists) @method('PUT') @endif
             <div class="col-md-4">
-                <label class="form-label fw-semibold">Kategori</label>
+                <label class="form-label fw-semibold">Jenis Biaya</label>
                 <select name="kategori" required class="form-select">
-                    @foreach (['sewa', 'listrik', 'gaji', 'lainnya'] as $k)
-                        <option value="{{ $k }}" @selected(old('kategori', $pengeluaran->kategori) === $k)>{{ ucfirst($k) }}</option>
+                    @php $kat = ['sewa' => 'Sewa Tempat', 'listrik' => 'Listrik & Air', 'gaji' => 'Gaji Karyawan', 'lainnya' => 'Lainnya']; @endphp
+                    @foreach ($kat as $k => $l)
+                        <option value="{{ $k }}" @selected(old('kategori', $pengeluaran->kategori) === $k)>{{ $l }}</option>
                     @endforeach
                 </select>
             </div>
@@ -25,15 +26,15 @@
                 <input type="date" name="tanggal" required value="{{ old('tanggal', optional($pengeluaran->tanggal)->toDateString() ?? now()->toDateString()) }}" class="form-control">
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-semibold">Jumlah</label>
+                <label class="form-label fw-semibold">Jumlah (Rp)</label>
                 <input type="number" min="0" name="jumlah" value="{{ old('jumlah', $pengeluaran->jumlah) }}" required class="form-control">
             </div>
             <div class="col-12">
-                <label class="form-label fw-semibold">Catatan</label>
-                <textarea name="catatan" rows="2" class="form-control">{{ old('catatan', $pengeluaran->catatan) }}</textarea>
+                <label class="form-label fw-semibold">Keterangan</label>
+                <textarea name="catatan" rows="2" class="form-control" placeholder="Misal: bayar listrik bulan Mei">{{ old('catatan', $pengeluaran->catatan) }}</textarea>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold">Bukti <small class="text-muted">(gambar, opsional)</small></label>
+                <label class="form-label fw-semibold">Foto Bukti <small class="text-muted">(opsional, boleh dikosongkan)</small></label>
                 <input type="file" name="bukti" accept="image/*" class="form-control">
             </div>
             <div class="col-12 d-flex gap-2">

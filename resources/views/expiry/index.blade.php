@@ -1,10 +1,11 @@
 @extends('layouts.app')
-@section('title', 'Manajemen Kadaluarsa - TOKOPINTAR')
-@section('page_title', 'Manajemen Kadaluarsa (FEFO)')
+@section('title', 'Cek Kadaluarsa - TOKOPINTAR')
+@section('page_title', 'Cek Tanggal Kadaluarsa')
 @section('content')
 <div class="card">
     <div class="card-body">
-        <h6 class="fw-bold mb-3">Daftar Batch dengan Tanggal Kadaluarsa</h6>
+        <h6 class="fw-bold mb-3">Daftar Stok Berdasarkan Tanggal Kadaluarsa</h6>
+        <p class="text-muted small">Yang merah sudah kadaluarsa, kuning hampir kadaluarsa (≤30 hari), hijau masih aman.</p>
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
@@ -35,7 +36,7 @@
                             <td class="text-center"><span class="badge bg-{{ $badge }}">{{ $lbl }}</span></td>
                             <td>
                                 @if ($hari < 0)
-                                    <form method="POST" action="{{ route('expiry.buang', $b) }}" onsubmit="return confirm('Buang stok kadaluarsa? Tercatat di mutasi.')" class="d-inline">
+                                    <form method="POST" action="{{ route('expiry.buang', $b) }}" onsubmit="return confirm('Buang stok kadaluarsa? Akan tercatat di Penyesuaian Stok.')" class="d-inline">
                                         @csrf
                                         <button class="btn btn-sm btn-danger"><i class="fas fa-trash me-1"></i> Buang</button>
                                     </form>
@@ -43,7 +44,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="text-center text-muted py-4">Tidak ada batch dengan tanggal kadaluarsa.</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-4">Tidak ada barang yang punya tanggal kadaluarsa.</td></tr>
                     @endforelse
                 </tbody>
             </table>

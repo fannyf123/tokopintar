@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', $barang->exists ? 'Edit Barang - TOKOPINTAR' : 'Barang Baru - TOKOPINTAR')
-@section('page_title', $barang->exists ? 'Edit Barang' : 'Barang Baru')
+@section('page_title', $barang->exists ? 'Ubah Data Barang' : 'Tambah Barang Baru')
 @section('content')
 <div class="card">
     <div class="card-body">
@@ -11,14 +11,14 @@
             @csrf
             @if ($barang->exists) @method('PUT') @endif
             <div class="col-md-6">
-                <label class="form-label fw-semibold">Kode <small class="text-muted">(kosongkan untuk auto)</small></label>
+                <label class="form-label fw-semibold">Kode Barang <small class="text-muted">(kosongkan agar dibuat otomatis)</small></label>
                 <input name="kode" value="{{ old('kode', $barang->kode) }}" class="form-control">
             </div>
             <div class="col-md-6">
                 <label class="form-label fw-semibold">Barcode</label>
                 <div class="input-group">
-                    <input id="barcode" name="barcode" value="{{ old('barcode', $barang->barcode) }}" class="form-control">
-                    <button type="button" id="scanBtn" class="btn btn-success"><i class="fas fa-camera"></i></button>
+                    <input id="barcode" name="barcode" value="{{ old('barcode', $barang->barcode) }}" class="form-control" placeholder="Scan atau cari online">
+                    <button type="button" id="scanBtn" class="btn btn-success" title="Scan barcode pakai kamera"><i class="fas fa-camera"></i></button>
                     <button type="button" id="lookupBtn" class="btn btn-info text-white" title="Cari barcode online dari nama produk"><i class="fas fa-search"></i></button>
                 </div>
                 <div id="lookupResults" class="border rounded mt-2 d-none" style="max-height:240px;overflow-y:auto;"></div>
@@ -40,37 +40,37 @@
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold">Supplier <small class="text-muted">(default)</small></label>
+                <label class="form-label fw-semibold">Pemasok <small class="text-muted">(default)</small></label>
                 <select name="supplier_id" class="form-select">
                     <option value="">— tidak ada —</option>
                     @foreach ($suppliers as $s)<option value="{{ $s->id }}" @selected(old('supplier_id', $barang->supplier_id) == $s->id)>{{ $s->nama }}</option>@endforeach
                 </select>
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-semibold">Satuan</label>
+                <label class="form-label fw-semibold">Satuan <small class="text-muted">(pcs/kg/liter/dll)</small></label>
                 <input name="satuan" value="{{ old('satuan', $barang->satuan ?? 'pcs') }}" required class="form-control">
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-semibold">Harga Beli</label>
+                <label class="form-label fw-semibold">Modal Beli <small class="text-muted">(per satuan)</small></label>
                 <input type="number" min="0" name="harga_beli" value="{{ old('harga_beli', $barang->harga_beli) }}" required class="form-control">
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-semibold">Harga Jual</label>
+                <label class="form-label fw-semibold">Harga Jual <small class="text-muted">(per satuan)</small></label>
                 <input type="number" min="0" name="harga_jual" value="{{ old('harga_jual', $barang->harga_jual) }}" required class="form-control">
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-semibold">Stok Min</label>
+                <label class="form-label fw-semibold">Stok Minimal <small class="text-muted">(alert)</small></label>
                 <input type="number" min="0" name="stok_min" value="{{ old('stok_min', $barang->stok_min) }}" required class="form-control">
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-semibold">Stok Max</label>
+                <label class="form-label fw-semibold">Stok Maksimal</label>
                 <input type="number" min="0" name="stok_max" value="{{ old('stok_max', $barang->stok_max) }}" required class="form-control">
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-semibold">Status</label>
+                <label class="form-label fw-semibold">Status Barang</label>
                 <select name="aktif" class="form-select">
-                    <option value="1" @selected(old('aktif', $barang->aktif ? 1 : 0) == 1)>Aktif</option>
-                    <option value="0" @selected(old('aktif', $barang->aktif ? 1 : 0) == 0)>Tidak Aktif</option>
+                    <option value="1" @selected(old('aktif', $barang->aktif ? 1 : 0) == 1)>Dijual</option>
+                    <option value="0" @selected(old('aktif', $barang->aktif ? 1 : 0) == 0)>Disembunyikan</option>
                 </select>
             </div>
             <div class="col-12 d-flex gap-2">

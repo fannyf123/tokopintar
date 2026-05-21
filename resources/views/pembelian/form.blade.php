@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Pembelian Baru - TOKOPINTAR')
-@section('page_title', 'Pembelian Baru')
+@section('title', 'Catat Barang Masuk - TOKOPINTAR')
+@section('page_title', 'Catat Barang Masuk dari Pemasok')
 @section('content')
 <div class="card">
     <div class="card-body">
@@ -11,25 +11,25 @@
             @csrf
             <div class="row g-3 mb-3">
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold">Tanggal</label>
+                    <label class="form-label fw-semibold">Tanggal Masuk</label>
                     <input type="date" name="tanggal" value="{{ old('tanggal', now()->toDateString()) }}" required class="form-control">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold">Supplier</label>
+                    <label class="form-label fw-semibold">Pemasok</label>
                     <select name="supplier_id" required class="form-select">
-                        <option value="">— pilih —</option>
+                        <option value="">— pilih pemasok —</option>
                         @foreach ($suppliers as $s)<option value="{{ $s->id }}" @selected(old('supplier_id') == $s->id)>{{ $s->nama }}</option>@endforeach
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label fw-semibold">Metode Bayar</label>
+                    <label class="form-label fw-semibold">Cara Bayar ke Pemasok</label>
                     <select name="metode_bayar" class="form-select">
-                        <option value="cash">Cash</option><option value="transfer">Transfer</option><option value="tempo">Tempo</option>
+                        <option value="cash">Tunai</option><option value="transfer">Transfer Bank</option><option value="tempo">Hutang / Tempo</option>
                     </select>
                 </div>
                 <div class="col-12">
-                    <label class="form-label fw-semibold">Catatan</label>
-                    <input name="catatan" class="form-control">
+                    <label class="form-label fw-semibold">Catatan <small class="text-muted">(opsional)</small></label>
+                    <input name="catatan" class="form-control" placeholder="Misal: kiriman bulan Mei, faktur No.123">
                 </div>
             </div>
 

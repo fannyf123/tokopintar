@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', $kategori->exists ? 'Edit Kategori - TOKOPINTAR' : 'Kategori Baru - TOKOPINTAR')
-@section('page_title', $kategori->exists ? 'Edit Kategori' : 'Kategori Baru')
+@section('page_title', $kategori->exists ? 'Ubah Kategori' : 'Tambah Kategori Baru')
 @section('content')
 <div class="card">
     <div class="card-body">

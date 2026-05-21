@@ -92,10 +92,10 @@
         @if ($isAdmin || $isKasir)
             <p class="menu-label text-uppercase mt-3">Penjualan</p>
             <a href="{{ route('pos.index') }}" class="{{ request()->routeIs('pos.*') ? 'active' : '' }}">
-                <i class="fas fa-cash-register"></i> POS / Kasir
+                <i class="fas fa-cash-register"></i> Kasir
             </a>
             <a href="{{ route('penjualan.index') }}" class="{{ request()->routeIs('penjualan.*') ? 'active' : '' }}">
-                <i class="fas fa-receipt"></i> Riwayat Penjualan
+                <i class="fas fa-receipt"></i> Riwayat Jualan
             </a>
             <a href="{{ route('pelanggan.index') }}" class="{{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i> Pelanggan
@@ -103,37 +103,37 @@
         @endif
 
         @if ($isAdmin || $isGudang)
-            <p class="menu-label text-uppercase mt-3">Inventory</p>
+            <p class="menu-label text-uppercase mt-3">Stok Barang</p>
             <a href="{{ route('barang.index') }}" class="{{ request()->routeIs('barang.*') ? 'active' : '' }}">
-                <i class="fas fa-box"></i> Barang
+                <i class="fas fa-box"></i> Daftar Barang
             </a>
             <a href="{{ route('supplier.index') }}" class="{{ request()->routeIs('supplier.*') ? 'active' : '' }}">
-                <i class="fas fa-truck"></i> Supplier
+                <i class="fas fa-truck"></i> Pemasok
             </a>
             <a href="{{ route('pembelian.index') }}" class="{{ request()->routeIs('pembelian.*') ? 'active' : '' }}">
-                <i class="fas fa-truck-loading"></i> Pembelian
+                <i class="fas fa-truck-loading"></i> Barang Masuk
             </a>
             <a href="{{ route('mutasi.index') }}" class="{{ request()->routeIs('mutasi.*') ? 'active' : '' }}">
-                <i class="fas fa-exchange-alt"></i> Mutasi Stok
+                <i class="fas fa-exchange-alt"></i> Penyesuaian Stok
             </a>
             <a href="{{ route('expiry.index') }}" class="{{ request()->routeIs('expiry.*') ? 'active' : '' }}">
-                <i class="fas fa-clock"></i> Kadaluarsa
+                <i class="fas fa-clock"></i> Cek Kadaluarsa
             </a>
         @endif
 
         @if ($isAdmin)
-            <p class="menu-label text-uppercase mt-3">Admin</p>
+            <p class="menu-label text-uppercase mt-3">Pengaturan</p>
             <a href="{{ route('kategori.index') }}" class="{{ request()->routeIs('kategori.*') ? 'active' : '' }}">
-                <i class="fas fa-tags"></i> Kategori
+                <i class="fas fa-tags"></i> Kategori Barang
             </a>
             <a href="{{ route('pengeluaran.index') }}" class="{{ request()->routeIs('pengeluaran.*') ? 'active' : '' }}">
-                <i class="fas fa-money-bill-wave"></i> Pengeluaran
+                <i class="fas fa-money-bill-wave"></i> Biaya Operasional
             </a>
             <a href="{{ route('insight.index') }}" class="{{ request()->routeIs('insight.*') ? 'active' : '' }}">
-                <i class="fas fa-brain"></i> Insight AI
+                <i class="fas fa-brain"></i> Saran Toko
             </a>
             <a href="{{ route('laporan.laba.index') }}" class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
-                <i class="fas fa-chart-line"></i> Laporan Laba
+                <i class="fas fa-chart-line"></i> Laporan Untung
             </a>
         @endif
 

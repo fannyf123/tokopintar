@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', $pelanggan->exists ? 'Edit Pelanggan - TOKOPINTAR' : 'Pelanggan Baru - TOKOPINTAR')
-@section('page_title', $pelanggan->exists ? 'Edit Pelanggan' : 'Pelanggan Baru')
+@section('page_title', $pelanggan->exists ? 'Ubah Pelanggan' : 'Tambah Pelanggan Baru')
 @section('content')
 <div class="card">
     <div class="card-body">

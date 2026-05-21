@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', 'Insight AI - TOKOPINTAR')
-@section('page_title', 'Insight AI Lokal')
+@section('title', 'Saran Toko - TOKOPINTAR')
+@section('page_title', 'Saran untuk Toko')
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h6 class="fw-bold mb-0">Cross-Subsidy & Smart Inventory</h6>
+    <h6 class="fw-bold mb-0">Analisa Pintar & Saran Bundling</h6>
     <form method="POST" action="{{ route('insight.regenerate') }}" class="d-inline">@csrf
-        <button class="btn btn-primary"><i class="fas fa-sync-alt me-1"></i> Generate Ulang Sekarang</button>
+        <button class="btn btn-primary"><i class="fas fa-sync-alt me-1"></i> Hitung Ulang Sekarang</button>
     </form>
 </div>
 
@@ -13,13 +13,13 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
-                <h6 class="fw-bold mb-3"><i class="fas fa-rocket text-success me-2"></i>Top 10 Fast Mover</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-rocket text-success me-2"></i>10 Barang Paling Laku</h6>
                 <table class="table table-sm mb-0">
                     <tbody>
                         @forelse ($top as $i)
                             <tr><td class="fw-semibold">{{ $i->barang?->nama }}</td>
-                                <td class="text-end small text-muted">v={{ number_format($i->velocity_30, 2) }} · dos={{ number_format($i->days_of_supply, 1) }}</td></tr>
-                        @empty <tr><td class="text-muted">Belum ada data.</td></tr>
+                                <td class="text-end small text-muted">{{ number_format($i->velocity_30, 2) }}/hari · stok {{ number_format($i->days_of_supply, 1) }} hari</td></tr>
+                        @empty <tr><td class="text-muted">Belum ada data, perlu beberapa transaksi dulu.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -29,12 +29,12 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
-                <h6 class="fw-bold mb-3"><i class="fas fa-ban text-danger me-2"></i>Top 10 Dead Stock</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-ban text-danger me-2"></i>10 Barang Tidak Laku</h6>
                 <table class="table table-sm mb-0">
                     <tbody>
                         @forelse ($dead as $i)
                             <tr><td class="fw-semibold">{{ $i->barang?->nama }}</td>
-                                <td class="text-end small text-muted">dos={{ number_format($i->days_of_supply, 1) }}</td></tr>
+                                <td class="text-end small text-muted">cukup utk {{ number_format($i->days_of_supply, 0) }} hari</td></tr>
                         @empty <tr><td class="text-muted">Belum ada data.</td></tr>
                         @endforelse
                     </tbody>

@@ -6,7 +6,7 @@
     <div class="col-md">
         <div class="card stat-card" style="background:linear-gradient(135deg,#4361ee,#3f37c9);">
             <div class="card-body">
-                <div class="stat-label"><i class="fas fa-cash-register me-1"></i> Omzet Hari Ini</div>
+                <div class="stat-label"><i class="fas fa-cash-register me-1"></i> Penjualan Hari Ini</div>
                 <div class="stat-value">{{ format_rupiah($omzetToday) }}</div>
             </div>
         </div>
@@ -14,7 +14,7 @@
     <div class="col-md">
         <div class="card stat-card" style="background:linear-gradient(135deg,#16a34a,#059669);">
             <div class="card-body">
-                <div class="stat-label"><i class="fas fa-coins me-1"></i> Laba Kotor</div>
+                <div class="stat-label"><i class="fas fa-coins me-1"></i> Untung Hari Ini</div>
                 <div class="stat-value">{{ format_rupiah($omzetToday - $hppToday) }}</div>
             </div>
         </div>
@@ -22,7 +22,7 @@
     <div class="col-md">
         <div class="card stat-card" style="background:linear-gradient(135deg,#0891b2,#0e7490);">
             <div class="card-body">
-                <div class="stat-label"><i class="fas fa-receipt me-1"></i> Transaksi</div>
+                <div class="stat-label"><i class="fas fa-receipt me-1"></i> Jumlah Transaksi</div>
                 <div class="stat-value">{{ $trxToday }}</div>
             </div>
         </div>
@@ -30,7 +30,7 @@
     <div class="col-md">
         <div class="card stat-card" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
             <div class="card-body">
-                <div class="stat-label"><i class="fas fa-exclamation-triangle me-1"></i> Stok Rendah</div>
+                <div class="stat-label"><i class="fas fa-exclamation-triangle me-1"></i> Stok Menipis</div>
                 <div class="stat-value">{{ $stokRendah }}</div>
             </div>
         </div>
@@ -38,7 +38,7 @@
     <div class="col-md">
         <div class="card stat-card" style="background:linear-gradient(135deg,#ea580c,#c2410c);">
             <div class="card-body">
-                <div class="stat-label"><i class="fas fa-clock me-1"></i> Akan Kadaluarsa</div>
+                <div class="stat-label"><i class="fas fa-clock me-1"></i> Hampir Kadaluarsa</div>
                 <div class="stat-value">{{ $nearExpiry }}</div>
             </div>
         </div>
@@ -49,7 +49,7 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-body">
-                <h6 class="fw-bold mb-3">Omzet 30 Hari Terakhir</h6>
+                <h6 class="fw-bold mb-3">Penjualan 30 Hari Terakhir</h6>
                 <canvas id="chartOmzet" height="80"></canvas>
             </div>
         </div>
@@ -57,7 +57,7 @@
     <div class="col-lg-4">
         <div class="card">
             <div class="card-body">
-                <h6 class="fw-bold mb-3">Top 5 Produk Terlaris</h6>
+                <h6 class="fw-bold mb-3">5 Barang Paling Laku</h6>
                 <canvas id="chartTop" height="160"></canvas>
             </div>
         </div>
@@ -68,11 +68,11 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h6 class="fw-bold mb-3"><i class="fas fa-history text-primary me-2"></i>Transaksi Terakhir</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-history text-primary me-2"></i>Transaksi Terbaru</h6>
                 <table class="table table-sm mb-0">
                     @forelse ($lastTrx as $t)
                         <tr><td><code class="small">{{ $t->nomor }}</code></td><td class="text-end fw-semibold">{{ format_rupiah($t->grand_total) }}</td></tr>
-                    @empty <tr><td class="text-muted">Belum ada.</td></tr> @endforelse
+                    @empty <tr><td class="text-muted">Belum ada transaksi.</td></tr> @endforelse
                 </table>
             </div>
         </div>
@@ -80,11 +80,11 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h6 class="fw-bold mb-3"><i class="fas fa-rocket text-success me-2"></i>Fast Mover</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-rocket text-success me-2"></i>Barang Cepat Laku</h6>
                 <table class="table table-sm mb-0">
                     @forelse ($fastMovers as $i)
                         <tr><td>{{ $i->barang?->nama }}</td><td class="text-end small text-muted">{{ number_format($i->velocity_30, 2) }}/hari</td></tr>
-                    @empty <tr><td class="text-muted">Belum ada insight.</td></tr> @endforelse
+                    @empty <tr><td class="text-muted">Belum ada data — perlu beberapa transaksi dulu.</td></tr> @endforelse
                 </table>
             </div>
         </div>
@@ -92,11 +92,11 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h6 class="fw-bold mb-3"><i class="fas fa-ban text-danger me-2"></i>Dead Stock</h6>
+                <h6 class="fw-bold mb-3"><i class="fas fa-ban text-danger me-2"></i>Barang Tidak Laku</h6>
                 <table class="table table-sm mb-0">
                     @forelse ($deadStocks as $i)
-                        <tr><td>{{ $i->barang?->nama }}</td><td class="text-end small text-muted">dos {{ number_format($i->days_of_supply, 0) }}</td></tr>
-                    @empty <tr><td class="text-muted">Belum ada.</td></tr> @endforelse
+                        <tr><td>{{ $i->barang?->nama }}</td><td class="text-end small text-muted">{{ number_format($i->days_of_supply, 0) }} hari</td></tr>
+                    @empty <tr><td class="text-muted">Belum ada data.</td></tr> @endforelse
                 </table>
             </div>
         </div>

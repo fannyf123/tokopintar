@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Pengeluaran - TOKOPINTAR')
-@section('page_title', 'Pengeluaran')
+@section('title', 'Biaya Operasional - TOKOPINTAR')
+@section('page_title', 'Biaya Operasional')
 @section('content')
 <div class="card">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <h6 class="fw-bold mb-0">Daftar Pengeluaran</h6>
-            <a href="{{ route('pengeluaran.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Tambah Pengeluaran</a>
+            <h6 class="fw-bold mb-0">Daftar Biaya Toko</h6>
+            <a href="{{ route('pengeluaran.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Catat Biaya Baru</a>
         </div>
         <div class="table-responsive">
             <table class="table table-striped">
