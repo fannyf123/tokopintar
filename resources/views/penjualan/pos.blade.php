@@ -180,10 +180,22 @@ $g('bayar').addEventListener('click', async () => {
 });
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'F2') { e.preventDefault(); $g('searchInput').focus(); }
-    if (e.key === 'F4') { e.preventDefault(); if (!$g('bayar').disabled) $g('bayar').click(); }
-    if (e.key === 'Escape') { cart = []; render(); }
-});
+    const k = e.key;
+    const ctrl = e.ctrlKey || e.metaKey;
+    if (k === 'F2' || (ctrl && (k === 'k' || k === 'K')) || k === '/') {
+        e.preventDefault(); e.stopPropagation();
+        $g('searchInput').focus(); $g('searchInput').select();
+    }
+    if (k === 'F4' || (ctrl && k === 'Enter')) {
+        e.preventDefault(); e.stopPropagation();
+        if (!$g('bayar').disabled) $g('bayar').click();
+    }
+    if (k === 'Escape') {
+        if (document.activeElement === $g('searchInput')) {
+            $g('searchInput').value = ''; $g('searchInput').blur();
+        } else if (cart.length && confirm('Kosongkan keranjang?')) { cart = []; render(); }
+    }
+}, true);
 
 let scanner = null;
 async function handleScan(code) {
