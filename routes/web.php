@@ -41,6 +41,7 @@ Route::middleware(['auth', 'aktif'])->group(function () {
 
     Route::middleware('role:admin,gudang')->group(function () {
         Route::resource('supplier', SupplierController::class)->except('show');
+        Route::get('barang/lookup-barcode', [BarangController::class, 'lookupBarcode'])->name('barang.lookup-barcode');
         Route::resource('barang', BarangController::class)->except('show');
 
         Route::prefix('pembelian')->name('pembelian.')->group(function () {

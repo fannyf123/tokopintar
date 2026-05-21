@@ -18,8 +18,10 @@
                 <label class="form-label fw-semibold">Barcode</label>
                 <div class="input-group">
                     <input id="barcode" name="barcode" value="{{ old('barcode', $barang->barcode) }}" class="form-control">
-                    <button type="button" id="scanBtn" class="btn btn-success"><i class="fas fa-camera me-1"></i> Scan</button>
+                    <button type="button" id="scanBtn" class="btn btn-success"><i class="fas fa-camera"></i></button>
+                    <button type="button" id="lookupBtn" class="btn btn-info text-white" title="Cari barcode online dari nama produk"><i class="fas fa-search"></i></button>
                 </div>
+                <div id="lookupResults" class="border rounded mt-2 d-none" style="max-height:240px;overflow-y:auto;"></div>
                 <div id="scannerWrap" class="d-none mt-2">
                     <div id="scanner" class="rounded mx-auto" style="max-width:360px;background:#000;min-height:220px;"></div>
                     <div class="text-center mt-2"><button type="button" id="stopScan" class="btn btn-sm btn-link text-danger">Tutup Scanner</button></div>
@@ -110,6 +112,33 @@ $sb?.addEventListener('click', async () => {
 $ss?.addEventListener('click', async () => {
     if (scanner?.isScanning) await scanner.stop();
     $sw.classList.add('d-none');
+});
+
+const $lb = document.getElementById('lookupBtn');
+const $lr = document.getElementById('lookupResults');
+$lb?.addEventListener('click', async () => {
+    const nama = document.querySelector('input[name="nama"]').value.trim();
+    if (!nama) { alert('Isi nama produk dulu sebelum cari barcode online.'); return; }
+    $lr.classList.remove('d-none');
+    $lr.innerHTML = '<div class="p-2 text-muted small"><i class="fas fa-spinner fa-spin me-1"></i> Mencari "' + nama + '" di OpenFoodFacts...</div>';
+    try {
+        const res = await fetch('{{ route('barang.lookup-barcode') }}?q=' + encodeURIComponent(nama));
+        const data = await res.json();
+        if (!data.results?.length) {
+            $lr.innerHTML = '<div class="p-3 text-muted small">Tidak ditemukan. Coba scan kamera, atau ketik manual.</div>';
+            return;
+        }
+        $lr.innerHTML = data.results.map(r => `<div class="p-2 border-bottom" style="cursor:pointer" data-bc="${r.barcode}">
+            <div class="fw-semibold small">${r.nama}</div>
+            <div class="small text-muted">${r.brand || ''} ${r.qty || ''} · <code>${r.barcode}</code> <span class="text-info">${r.source}</span></div>
+        </div>`).join('');
+        $lr.querySelectorAll('[data-bc]').forEach(el => el.onclick = () => {
+            $bc.value = el.dataset.bc;
+            $lr.classList.add('d-none');
+        });
+    } catch (e) {
+        $lr.innerHTML = '<div class="p-3 text-danger small">Gagal: ' + e.message + '</div>';
+    }
 });
 </script>
 @endpush

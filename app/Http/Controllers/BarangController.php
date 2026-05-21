@@ -6,8 +6,10 @@ use App\Http\Requests\BarangRequest;
 use App\Models\Barang;
 use App\Models\Kategori;
 use App\Models\Supplier;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
 class BarangController extends Controller
@@ -79,5 +81,47 @@ class BarangController extends Controller
         }
         $barang->delete();
         return redirect()->route('barang.index')->with('success', 'Barang dihapus.');
+    }
+
+    public function lookupBarcode(Request $request): JsonResponse
+    {
+        $q = trim((string) $request->query('q', ''));
+        if ($q === '') {
+            return response()->json(['results' => []]);
+        }
+
+        $results = [];
+
+        // Try Open Food Facts (free, ~partial Indonesia coverage for food products)
+        try {
+            $resp = Http::timeout(5)->withHeaders([
+                'User-Agent' => 'TOKOPINTAR/1.0 (umkm-pos)',
+            ])->get('https://world.openfoodfacts.org/cgi/search.pl', [
+                'search_terms' => $q,
+                'search_simple' => 1,
+                'action' => 'process',
+                'json' => 1,
+                'page_size' => 10,
+                'fields' => 'code,product_name,brands,quantity,countries_tags',
+            ]);
+            if ($resp->ok()) {
+                foreach ((array) $resp->json('products', []) as $p) {
+                    $code = $p['code'] ?? null;
+                    $name = trim($p['product_name'] ?? '');
+                    if (! $code || $name === '') continue;
+                    $results[] = [
+                        'barcode' => (string) $code,
+                        'nama' => $name,
+                        'brand' => $p['brands'] ?? '',
+                        'qty' => $p['quantity'] ?? '',
+                        'source' => 'OpenFoodFacts',
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {
+            // ignore, fall through to empty
+        }
+
+        return response()->json(['results' => $results]);
     }
 }
