@@ -201,6 +201,11 @@
             <a href="{{ route('pengeluaran.index') }}" class="{{ request()->routeIs('pengeluaran.*') ? 'active' : '' }}">
                 <i class="fas fa-money-bill-wave"></i> Biaya Operasional
             </a>
+            <a href="{{ route('laporan.laba.index') }}" class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
+                <i class="fas fa-chart-line"></i> Laporan Untung
+            </a>
+
+            <p class="menu-label text-uppercase mt-3"><i class="fas fa-robot me-1"></i> Asisten AI</p>
             <a href="{{ route('insight.index') }}" class="{{ request()->routeIs('insight.*') ? 'active' : '' }}">
                 <i class="fas fa-brain"></i> Saran Toko
             </a>
@@ -230,9 +235,6 @@
             </a>
             <a href="{{ route('bundle.index') }}" class="{{ request()->routeIs('bundle.*') ? 'active' : '' }}">
                 <i class="fas fa-box-open"></i> Bundle Generator
-            </a>
-            <a href="{{ route('laporan.laba.index') }}" class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
-                <i class="fas fa-chart-line"></i> Laporan Untung
             </a>
         @endif
 
