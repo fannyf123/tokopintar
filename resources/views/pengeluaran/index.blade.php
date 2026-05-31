@@ -9,7 +9,7 @@
             <a href="{{ route('pengeluaran.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Catat Biaya Baru</a>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th style="width:60px;">#</th>
@@ -23,12 +23,12 @@
                 <tbody>
                     @forelse ($items as $i => $p)
                         <tr>
-                            <td>{{ $items->firstItem() + $i }}</td>
-                            <td>{{ format_tanggal_id($p->tanggal) }}</td>
-                            <td><span class="badge bg-light text-dark">{{ ucfirst($p->kategori) }}</span></td>
-                            <td class="text-end fw-semibold">{{ format_rupiah($p->jumlah) }}</td>
-                            <td class="text-muted small">{{ $p->catatan }}</td>
-                            <td>
+                            <td data-label="#">{{ $items->firstItem() + $i }}</td>
+                            <td data-label="Tanggal">{{ format_tanggal_id($p->tanggal) }}</td>
+                            <td data-label="Kategori"><span class="badge bg-light text-dark">{{ ucfirst($p->kategori) }}</span></td>
+                            <td data-label="Jumlah" class="text-end fw-semibold">{{ format_rupiah($p->jumlah) }}</td>
+                            <td data-label="Catatan" class="text-muted small">{{ $p->catatan }}</td>
+                            <td data-label="Aksi">
                                 <a href="{{ route('pengeluaran.edit', $p) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                 <form method="POST" action="{{ route('pengeluaran.destroy', $p) }}" class="d-inline" onsubmit="return confirm('Hapus?')">
                                     @csrf @method('DELETE')

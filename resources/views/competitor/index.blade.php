@@ -12,7 +12,7 @@
     <div class="card-body">
         <h6 class="fw-bold mb-3"><i class="fas fa-balance-scale text-warning me-2"></i>Gap Harga (Saya vs Kompetitor)</h6>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table table-stack">
                 <thead>
                     <tr>
                         <th>Barang</th>
@@ -25,13 +25,13 @@
                 <tbody>
                     @foreach ($gaps as $g)
                         <tr>
-                            <td><strong>{{ $g['barang']->nama }}</strong></td>
-                            <td class="text-end">{{ format_rupiah($g['barang']->harga_jual) }}</td>
-                            <td class="text-end">{{ format_rupiah($g['competitor']->harga_competitor) }}<br><small class="text-muted">{{ $g['competitor']->competitor_name }}</small></td>
-                            <td class="text-end {{ $g['delta'] > 0 ? 'text-danger' : 'text-success' }} fw-bold">
+                            <td data-label="Barang"><strong>{{ $g['barang']->nama }}</strong></td>
+                            <td data-label="Harga Saya" class="text-end">{{ format_rupiah($g['barang']->harga_jual) }}</td>
+                            <td data-label="Harga Kompetitor" class="text-end">{{ format_rupiah($g['competitor']->harga_competitor) }}<br><small class="text-muted">{{ $g['competitor']->competitor_name }}</small></td>
+                            <td data-label="Selisih" class="text-end {{ $g['delta'] > 0 ? 'text-danger' : 'text-success' }} fw-bold">
                                 {{ $g['delta'] > 0 ? '+' : '' }}{{ $g['delta_pct'] }}%
                             </td>
-                            <td class="small">
+                            <td data-label="Saran" class="small">
                                 @if ($g['delta_pct'] > 10)
                                     <span class="text-danger">Saya {{ $g['delta_pct'] }}% lebih mahal. Pertimbangkan turunkan harga.</span>
                                 @elseif ($g['delta_pct'] < -10)
@@ -53,7 +53,7 @@
     <div class="card-body">
         <h6 class="fw-bold mb-3">Riwayat Catatan Harga Kompetitor</h6>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th>Tanggal</th>
@@ -67,12 +67,12 @@
                 <tbody>
                     @forelse ($items as $i)
                         <tr>
-                            <td>{{ $i->tanggal_observasi->format('d M Y') }}</td>
-                            <td>{{ $i->barang?->nama }}</td>
-                            <td>{{ $i->competitor_name }}</td>
-                            <td class="text-end">{{ format_rupiah($i->harga_competitor) }}</td>
-                            <td class="small text-muted">{{ $i->catatan ?? '-' }}</td>
-                            <td>
+                            <td data-label="Tanggal">{{ $i->tanggal_observasi->format('d M Y') }}</td>
+                            <td data-label="Barang">{{ $i->barang?->nama }}</td>
+                            <td data-label="Kompetitor">{{ $i->competitor_name }}</td>
+                            <td data-label="Harga" class="text-end">{{ format_rupiah($i->harga_competitor) }}</td>
+                            <td data-label="Catatan" class="small text-muted">{{ $i->catatan ?? '-' }}</td>
+                            <td data-label="Aksi">
                                 <form method="POST" action="{{ route('competitor.destroy', $i) }}" class="d-inline" onsubmit="return confirm('Hapus catatan ini?')">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>

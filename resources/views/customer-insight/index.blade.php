@@ -75,7 +75,7 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th>Pelanggan</th>
@@ -91,18 +91,18 @@
                 <tbody>
                     @forelse ($items as $i)
                         <tr>
-                            <td>
+                            <td data-label="Pelanggan">
                                 <strong>{{ $i->pelanggan?->nama }}</strong>
                                 @if ($i->churn_risk)<span class="badge bg-danger ms-1" style="font-size:9px">CHURN</span>@endif
                                 <br><small class="text-muted">{{ $i->pelanggan?->no_hp ?? '-' }}</small>
                             </td>
-                            <td class="text-center"><code>{{ $i->r_score }}/{{ $i->f_score }}/{{ $i->m_score }}</code></td>
-                            <td class="text-center"><span class="badge bg-{{ $segBadge[$i->segment] ?? 'secondary' }}">{{ $i->segment }}</span></td>
-                            <td class="text-end">{{ $i->frequency }}x</td>
-                            <td class="text-end">{{ format_rupiah($i->monetary) }}</td>
-                            <td class="text-end fw-bold">{{ format_rupiah($i->clv_estimate) }}</td>
-                            <td class="text-center">{{ $i->recency_days }} hari lalu</td>
-                            <td class="small text-muted" style="max-width:300px">{{ $i->rekomendasi_text }}</td>
+                            <td data-label="R/F/M" class="text-center"><code>{{ $i->r_score }}/{{ $i->f_score }}/{{ $i->m_score }}</code></td>
+                            <td data-label="Segmen" class="text-center"><span class="badge bg-{{ $segBadge[$i->segment] ?? 'secondary' }}">{{ $i->segment }}</span></td>
+                            <td data-label="Frequency" class="text-end">{{ $i->frequency }}x</td>
+                            <td data-label="Monetary" class="text-end">{{ format_rupiah($i->monetary) }}</td>
+                            <td data-label="CLV 12bln" class="text-end fw-bold">{{ format_rupiah($i->clv_estimate) }}</td>
+                            <td data-label="Recency" class="text-center">{{ $i->recency_days }} hari lalu</td>
+                            <td data-label="Saran Aksi" class="small text-muted" style="max-width:300px">{{ $i->rekomendasi_text }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="8" class="text-center text-muted py-4">Belum ada data, klik "Hitung Ulang Sekarang".</td></tr>

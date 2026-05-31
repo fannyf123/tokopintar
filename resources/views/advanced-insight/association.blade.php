@@ -21,7 +21,7 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th>Pelanggan beli...</th>
@@ -36,17 +36,17 @@
                 <tbody>
                     @forelse ($items as $r)
                         <tr>
-                            <td><strong>{{ $r->antecedent?->nama }}</strong></td>
-                            <td><strong>{{ $r->consequent?->nama }}</strong></td>
-                            <td class="text-end">{{ $r->co_count }}x</td>
-                            <td class="text-end">{{ number_format($r->support * 100, 1) }}%</td>
-                            <td class="text-end">{{ number_format($r->confidence * 100, 1) }}%</td>
-                            <td class="text-end">
+                            <td data-label="Beli..."><strong>{{ $r->antecedent?->nama }}</strong></td>
+                            <td data-label="Juga beli"><strong>{{ $r->consequent?->nama }}</strong></td>
+                            <td data-label="Co-occur" class="text-end">{{ $r->co_count }}x</td>
+                            <td data-label="Support" class="text-end">{{ number_format($r->support * 100, 1) }}%</td>
+                            <td data-label="Confidence" class="text-end">{{ number_format($r->confidence * 100, 1) }}%</td>
+                            <td data-label="Lift" class="text-end">
                                 <span class="badge {{ $r->lift >= 2 ? 'bg-success' : ($r->lift >= 1.5 ? 'bg-info' : 'bg-secondary') }}">
                                     {{ number_format($r->lift, 2) }}
                                 </span>
                             </td>
-                            <td class="small text-muted">
+                            <td data-label="Saran" class="small text-muted">
                                 @if ($r->lift >= 2)
                                     Bundling pasti laku, tampilkan dekat
                                 @elseif ($r->lift >= 1.5)

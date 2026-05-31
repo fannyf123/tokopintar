@@ -71,7 +71,7 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th>Barang</th>
@@ -90,15 +90,15 @@
                     @php $stratBadge = ['LOSS_LEADER'=>'warning','PROFIT_DRIVER'=>'success','BALANCED'=>'info']; @endphp
                     @forelse ($items as $i)
                         <tr>
-                            <td><span class="fw-semibold">{{ $i->barang?->nama }}</span><br><small class="text-muted">{{ $i->barang?->kategori?->nama }}</small></td>
-                            <td class="text-end">{{ number_format($i->velocity_30, 2) }}</td>
-                            <td class="text-end">{{ number_format($i->days_of_supply, 1) }}</td>
-                            <td class="text-center"><span class="badge bg-{{ $kelasBadge[$i->kelas] ?? 'secondary' }}">{{ $i->kelas }}</span></td>
-                            <td class="text-center">{{ $i->abc_class ?? '-' }}</td>
-                            <td class="text-end">{{ number_format($i->forecast_7, 1) }}</td>
-                            <td class="text-end">{{ $i->margin_pct !== null ? number_format($i->margin_pct, 1) . '%' : '-' }}</td>
-                            <td class="text-center">@if($i->strategy)<span class="badge bg-{{ $stratBadge[$i->strategy] ?? 'secondary' }}">{{ $i->strategy }}</span>@else - @endif</td>
-                            <td class="small text-muted">{{ $i->strategy_text ?? $i->rekomendasi_text }}</td>
+                            <td data-label="Barang"><span class="fw-semibold">{{ $i->barang?->nama }}</span><br><small class="text-muted">{{ $i->barang?->kategori?->nama }}</small></td>
+                            <td data-label="Velocity/hari" class="text-end">{{ number_format($i->velocity_30, 2) }}</td>
+                            <td data-label="DoS" class="text-end">{{ number_format($i->days_of_supply, 1) }}</td>
+                            <td data-label="Kelas" class="text-center"><span class="badge bg-{{ $kelasBadge[$i->kelas] ?? 'secondary' }}">{{ $i->kelas }}</span></td>
+                            <td data-label="ABC" class="text-center">{{ $i->abc_class ?? '-' }}</td>
+                            <td data-label="Forecast 7h" class="text-end">{{ number_format($i->forecast_7, 1) }}</td>
+                            <td data-label="Margin" class="text-end">{{ $i->margin_pct !== null ? number_format($i->margin_pct, 1) . '%' : '-' }}</td>
+                            <td data-label="Strategy" class="text-center">@if($i->strategy)<span class="badge bg-{{ $stratBadge[$i->strategy] ?? 'secondary' }}">{{ $i->strategy }}</span>@else - @endif</td>
+                            <td data-label="Rekomendasi" class="small text-muted">{{ $i->strategy_text ?? $i->rekomendasi_text }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="9" class="text-center text-muted py-4">Belum ada insight. Klik "Generate Ulang Sekarang".</td></tr>

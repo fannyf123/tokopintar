@@ -25,7 +25,7 @@
             <a href="{{ route('mutasi.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Mutasi Baru</a>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th>Tanggal</th>
@@ -39,14 +39,14 @@
                 <tbody>
                     @forelse ($items as $m)
                         <tr>
-                            <td class="small">{{ $m->created_at->format('Y-m-d H:i') }}</td>
-                            <td class="fw-semibold">{{ $m->barang?->nama }}</td>
-                            <td><span class="badge bg-light text-dark">{{ $m->jenis }}</span></td>
-                            <td class="text-end fw-bold {{ $m->qty_signed < 0 ? 'text-danger' : 'text-success' }}">
+                            <td data-label="Tanggal" class="small">{{ $m->created_at->format('Y-m-d H:i') }}</td>
+                            <td data-label="Barang" class="fw-semibold">{{ $m->barang?->nama }}</td>
+                            <td data-label="Jenis"><span class="badge bg-light text-dark">{{ $m->jenis }}</span></td>
+                            <td data-label="Qty" class="text-end fw-bold {{ $m->qty_signed < 0 ? 'text-danger' : 'text-success' }}">
                                 {{ $m->qty_signed > 0 ? '+' : '' }}{{ $m->qty_signed }}
                             </td>
-                            <td class="text-muted small">{{ $m->alasan }}</td>
-                            <td class="small">{{ $m->user?->name }}</td>
+                            <td data-label="Alasan" class="text-muted small">{{ $m->alasan }}</td>
+                            <td data-label="Oleh" class="small">{{ $m->user?->name }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="6" class="text-center text-muted py-4">Belum ada mutasi.</td></tr>

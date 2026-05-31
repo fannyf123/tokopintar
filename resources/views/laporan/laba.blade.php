@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th>Periode</th>
@@ -89,12 +89,12 @@
                 <tbody>
                     @forelse ($data['rows'] as $r)
                         <tr>
-                            <td><code>{{ $r['bucket'] }}</code></td>
-                            <td class="text-end">{{ format_rupiah($r['omzet']) }}</td>
-                            <td class="text-end">{{ format_rupiah($r['hpp']) }}</td>
-                            <td class="text-end">{{ format_rupiah($r['laba_kotor']) }}</td>
-                            <td class="text-end">{{ format_rupiah($r['biaya']) }}</td>
-                            <td class="text-end fw-bold {{ $r['laba_bersih'] >= 0 ? 'text-success' : 'text-danger' }}">{{ format_rupiah($r['laba_bersih']) }}</td>
+                            <td data-label="Periode"><code>{{ $r['bucket'] }}</code></td>
+                            <td data-label="Omzet" class="text-end">{{ format_rupiah($r['omzet']) }}</td>
+                            <td data-label="HPP" class="text-end">{{ format_rupiah($r['hpp']) }}</td>
+                            <td data-label="Laba Kotor" class="text-end">{{ format_rupiah($r['laba_kotor']) }}</td>
+                            <td data-label="Biaya" class="text-end">{{ format_rupiah($r['biaya']) }}</td>
+                            <td data-label="Laba Bersih" class="text-end fw-bold {{ $r['laba_bersih'] >= 0 ? 'text-success' : 'text-danger' }}">{{ format_rupiah($r['laba_bersih']) }}</td>
                         </tr>
                     @empty
                         <tr><td colspan="6" class="text-center text-muted py-4">Tidak ada data di rentang ini.</td></tr>

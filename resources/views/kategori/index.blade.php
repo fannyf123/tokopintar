@@ -9,7 +9,7 @@
             <a href="{{ route('kategori.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Tambah Kategori</a>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th style="width:60px;">#</th>
@@ -21,10 +21,10 @@
                 <tbody>
                     @forelse ($items as $i => $row)
                         <tr>
-                            <td>{{ $items->firstItem() + $i }}</td>
-                            <td class="fw-semibold">{{ $row->nama }}</td>
-                            <td class="text-muted">{{ $row->deskripsi }}</td>
-                            <td>
+                            <td data-label="#">{{ $items->firstItem() + $i }}</td>
+                            <td data-label="Nama" class="fw-semibold">{{ $row->nama }}</td>
+                            <td data-label="Deskripsi" class="text-muted">{{ $row->deskripsi }}</td>
+                            <td data-label="Aksi">
                                 <a href="{{ route('kategori.edit', $row) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                 <form method="POST" action="{{ route('kategori.destroy', $row) }}" class="d-inline" onsubmit="return confirm('Hapus kategori?')">
                                     @csrf @method('DELETE')

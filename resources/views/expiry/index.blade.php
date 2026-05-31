@@ -7,7 +7,7 @@
         <h6 class="fw-bold mb-3">Daftar Stok Berdasarkan Tanggal Kadaluarsa</h6>
         <p class="text-muted small">Yang merah sudah kadaluarsa, kuning hampir kadaluarsa (≤30 hari), hijau masih aman.</p>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th>Barang</th>
@@ -28,13 +28,13 @@
                             else { $badge = 'success'; $lbl = "{$hari} hari"; }
                         @endphp
                         <tr>
-                            <td class="fw-semibold">{{ $b->barang?->nama }}</td>
-                            <td><code>{{ $b->no_batch ?? '-' }}</code></td>
-                            <td class="text-end">{{ $b->qty_sisa }}</td>
-                            <td>{{ format_tanggal_id($b->tanggal_masuk) }}</td>
-                            <td>{{ format_tanggal_id($b->tanggal_kadaluarsa) }}</td>
-                            <td class="text-center"><span class="badge bg-{{ $badge }}">{{ $lbl }}</span></td>
-                            <td>
+                            <td data-label="Barang" class="fw-semibold">{{ $b->barang?->nama }}</td>
+                            <td data-label="No Batch"><code>{{ $b->no_batch ?? '-' }}</code></td>
+                            <td data-label="Sisa" class="text-end">{{ $b->qty_sisa }}</td>
+                            <td data-label="Tgl Masuk">{{ format_tanggal_id($b->tanggal_masuk) }}</td>
+                            <td data-label="Tgl Kadaluarsa">{{ format_tanggal_id($b->tanggal_kadaluarsa) }}</td>
+                            <td data-label="Status" class="text-center"><span class="badge bg-{{ $badge }}">{{ $lbl }}</span></td>
+                            <td data-label="Aksi">
                                 @if ($hari < 0)
                                     <form method="POST" action="{{ route('expiry.buang', $b) }}" onsubmit="return confirm('Buang stok kadaluarsa? Akan tercatat di Penyesuaian Stok.')" class="d-inline">
                                         @csrf

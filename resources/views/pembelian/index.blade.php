@@ -9,7 +9,7 @@
             <a href="{{ route('pembelian.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Catat Barang Masuk</a>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th style="width:60px;">#</th>
@@ -25,13 +25,13 @@
                     @php $badge = ['draft' => 'secondary', 'diterima' => 'success', 'batal' => 'danger']; @endphp
                     @forelse ($items as $i => $p)
                         <tr>
-                            <td>{{ $items->firstItem() + $i }}</td>
-                            <td><code>{{ $p->nomor }}</code></td>
-                            <td>{{ format_tanggal_id($p->tanggal) }}</td>
-                            <td>{{ $p->supplier?->nama }}</td>
-                            <td class="text-end">{{ format_rupiah($p->total) }}</td>
-                            <td class="text-center"><span class="badge bg-{{ $badge[$p->status] ?? 'secondary' }}">{{ $p->status }}</span></td>
-                            <td><a href="{{ route('pembelian.show', $p) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
+                            <td data-label="#">{{ $items->firstItem() + $i }}</td>
+                            <td data-label="Nomor"><code>{{ $p->nomor }}</code></td>
+                            <td data-label="Tanggal">{{ format_tanggal_id($p->tanggal) }}</td>
+                            <td data-label="Supplier">{{ $p->supplier?->nama }}</td>
+                            <td data-label="Total" class="text-end">{{ format_rupiah($p->total) }}</td>
+                            <td data-label="Status" class="text-center"><span class="badge bg-{{ $badge[$p->status] ?? 'secondary' }}">{{ $p->status }}</span></td>
+                            <td data-label="Aksi"><a href="{{ route('pembelian.show', $p) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a></td>
                         </tr>
                     @empty
                         <tr><td colspan="7" class="text-center text-muted py-4">Belum ada.</td></tr>
