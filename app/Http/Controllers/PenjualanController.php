@@ -72,7 +72,7 @@ class PenjualanController extends Controller
             })
             ->orderBy('nama')
             ->limit(20)
-            ->get(['id', 'kode', 'barcode', 'nama', 'satuan', 'harga_jual', 'stok_current']);
+            ->get(['id', 'kode', 'barcode', 'nama', 'satuan', 'harga_jual', 'harga_beli', 'stok_current']);
         return response()->json($barangs);
     }
 

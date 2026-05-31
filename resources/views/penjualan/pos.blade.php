@@ -93,6 +93,7 @@
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Subtotal Belanja</span><span id="subTotal">Rp 0</span></div>
+                <div class="d-flex justify-content-between small mb-1 d-none" id="memberDiscRow"><span class="text-warning"><i class="fas fa-id-card me-1"></i>Diskon Member</span><span id="memberDiscVal" class="text-warning fw-semibold">- Rp 0</span></div>
                 <div class="d-flex justify-content-between fs-5 fw-bold mb-3"><span>Total Bayar</span><span id="grandTotal" class="text-primary">Rp 0</span></div>
                 <div class="mb-2">
                     <label class="form-label small fw-semibold">Uang Diterima</label>
@@ -110,6 +111,7 @@
 <script>
 const CSRF = document.querySelector('meta[name="csrf-token"]').content;
 let cart = [];
+let memberPersen = 0; // % diskon member aktif (0 = bukan member / tidak ada diskon)
 const $g = id => document.getElementById(id);
 const fmt = n => 'Rp ' + (Number(n) || 0).toLocaleString('id-ID');
 
@@ -124,13 +126,13 @@ $g('searchInput').addEventListener('input', async (e) => {
     if (!q) { box.classList.add('d-none'); return; }
     const data = await searchBarang(q);
     if (!data.length) { box.classList.add('d-none'); return; }
-    box.innerHTML = data.map(b => `<div class="item" data-id="${b.id}" data-nama="${b.nama}" data-h="${b.harga_jual}" data-stok="${b.stok_current}">
+    box.innerHTML = data.map(b => `<div class="item" data-id="${b.id}" data-nama="${b.nama}" data-h="${b.harga_jual}" data-hb="${b.harga_beli}" data-stok="${b.stok_current}">
         <span><strong>${b.nama}</strong> <small class="text-muted">(${b.kode})</small></span>
         <small>${fmt(b.harga_jual)} · stok ${b.stok_current}</small>
     </div>`).join('');
     box.classList.remove('d-none');
     box.querySelectorAll('[data-id]').forEach(el => el.onclick = () => {
-        addToCart(+el.dataset.id, el.dataset.nama, +el.dataset.h, +el.dataset.stok);
+        addToCart(+el.dataset.id, el.dataset.nama, +el.dataset.h, +el.dataset.stok, +el.dataset.hb);
         $g('searchInput').value = ''; box.classList.add('d-none'); $g('searchInput').focus();
     });
 });
@@ -143,10 +145,10 @@ $g('searchInput').addEventListener('keydown', (e) => {
     }
 });
 
-function addToCart(id, nama, harga, stok) {
+function addToCart(id, nama, harga, stok, hargaBeli) {
     const ex = cart.find(x => x.id === id);
     if (ex) { if (ex.qty + 1 > stok) return alert('Stok tidak cukup'); ex.qty++; }
-    else cart.push({id, nama, harga, qty: 1, stok, diskon: 0});
+    else cart.push({id, nama, harga, qty: 1, stok, diskon: 0, hargaBeli: hargaBeli || 0});
     render();
     fetchCrossSell(id);
 }
@@ -234,12 +236,30 @@ function removeItem(i) {
 
 function recalc() {
     const sub = cart.reduce((s, x) => s + x.qty * x.harga - x.diskon, 0);
+
+    // Diskon member otomatis: HANYA untuk barang margin sehat (>=10%) — lindungi untung
+    let memberDisc = 0;
+    if (memberPersen > 0) {
+        const eligible = cart.reduce((s, x) => {
+            const hb = x.hargaBeli || 0;
+            const margin = x.harga > 0 ? (x.harga - hb) / x.harga * 100 : 0;
+            return (hb > 0 && margin >= 10) ? s + (x.qty * x.harga - x.diskon) : s;
+        }, 0);
+        memberDisc = Math.round(eligible * memberPersen / 100);
+    }
+    const mRow = $g('memberDiscRow');
+    if (mRow) {
+        if (memberDisc > 0) { mRow.classList.remove('d-none'); $g('memberDiscVal').textContent = '- ' + fmt(memberDisc); }
+        else mRow.classList.add('d-none');
+    }
+
     const dRaw = parseMoney($g('diskon').value);
     const pRaw = parseMoney($g('pajak').value);
     const dMode = $g('diskonModeBtn')?.dataset.mode || 'rp';
     const pMode = $g('pajakModeBtn')?.dataset.mode || 'rp';
-    const d = dMode === 'pct' ? Math.round(sub * Math.min(dRaw, 100) / 100) : dRaw;
+    const dManual = dMode === 'pct' ? Math.round(sub * Math.min(dRaw, 100) / 100) : dRaw;
     const p = pMode === 'pct' ? Math.round(sub * Math.min(pRaw, 100) / 100) : pRaw;
+    const d = dManual + memberDisc;
     const grand = Math.max(0, sub - d + p);
     $g('subTotal').textContent = fmt(sub);
     $g('grandTotal').textContent = fmt(grand);
@@ -310,16 +330,14 @@ plgSearch.addEventListener('input', () => { renderPelanggan(plgSearch.value); pl
 document.addEventListener('click', (e) => { if (!plgSearch.contains(e.target) && !plgList.contains(e.target)) plgList.classList.add('d-none'); });
 
 function applyMemberDiscount(pid) {
-    if (!pid) return;
-    const p = PELANGGAN.find(x => String(x.id) === String(pid));
-    if (p?.tipe === 'member') {
-        const persen = (p.diskon_persen && p.diskon_persen > 0) ? p.diskon_persen : 5;
-        $g('diskon').value = String(persen);
-        const btn = $g('diskonModeBtn');
-        btn.dataset.mode = 'pct'; btn.textContent = '%';
-        btn.classList.remove('btn-outline-secondary'); btn.classList.add('btn-warning');
-        recalc();
+    memberPersen = 0;
+    if (pid) {
+        const p = PELANGGAN.find(x => String(x.id) === String(pid));
+        if (p?.tipe === 'member') {
+            memberPersen = (p.diskon_persen && p.diskon_persen > 0) ? p.diskon_persen : 3;
+        }
     }
+    recalc();
 }
 ['diskon','pajak','dibayar'].forEach(id => $g(id).addEventListener('input', recalc));
 
