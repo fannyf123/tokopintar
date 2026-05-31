@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('backup')->name('backup.')->group(function () {
         Route::get('/', [\App\Http\Controllers\BackupController::class, 'index'])->name('index');
         Route::get('download', [\App\Http\Controllers\BackupController::class, 'download'])->name('download');
+        Route::post('upload-r2', [\App\Http\Controllers\BackupController::class, 'uploadR2'])->name('upload-r2');
     });
 
     Route::get('tutup-kasir', [\App\Http\Controllers\TutupKasirController::class, 'index'])->name('tutup-kasir.index');
