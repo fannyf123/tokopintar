@@ -203,6 +203,9 @@
             <a href="{{ route('barang.index') }}" class="{{ request()->routeIs('barang.*') ? 'active' : '' }}">
                 <i class="fas fa-box"></i> Daftar Barang
             </a>
+            <a href="{{ route('catalog.index') }}" class="{{ request()->routeIs('catalog.*') ? 'active' : '' }}">
+                <i class="fas fa-box-open"></i> Katalog Produk
+            </a>
             <a href="{{ route('supplier.index') }}" class="{{ request()->routeIs('supplier.*') ? 'active' : '' }}">
                 <i class="fas fa-truck"></i> Pemasok
             </a>
