@@ -16,6 +16,29 @@
     </div>
 </div>
 
+<div class="card mb-3">
+    <div class="card-body">
+        <h6 class="fw-bold mb-1"><i class="fas fa-file-import text-success me-2"></i>Import Produk dari Excel/CSV</h6>
+        <p class="text-muted small mb-3">Punya daftar produk sendiri? Unggah file CSV. Dari Excel/Google Sheets: <strong>Save As → CSV</strong>. Kolom: nama, kategori, satuan, harga_beli, harga_jual, stok.</p>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <a href="{{ route('catalog.template') }}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-download me-1"></i> Unduh Template CSV</a>
+        </div>
+        <form method="POST" action="{{ route('catalog.import-csv') }}" enctype="multipart/form-data" class="row g-2 align-items-end">
+            @csrf
+            <div class="col-12 col-md-6">
+                <label class="form-label small fw-semibold">Pilih file CSV</label>
+                <input type="file" name="file" accept=".csv,.txt" required class="form-control form-control-sm">
+            </div>
+            <div class="col-12 col-md-auto">
+                <button class="btn btn-success"><i class="fas fa-upload me-1"></i> Unggah & Import</button>
+            </div>
+        </form>
+        <div class="alert alert-info small mt-3 mb-0">
+            <i class="fas fa-lightbulb me-1"></i> Produk dengan <strong>harga jual lebih dari 0</strong> langsung aktif & siap dijual. Nama yang sudah ada akan dilewati (tidak dobel).
+        </div>
+    </div>
+</div>
+
 <div class="row g-3">
     @foreach ($catalog as $kategori => $produk)
     <div class="col-md-6 col-lg-4">

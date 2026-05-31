@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('catalog')->name('catalog.')->group(function () {
         Route::get('/', [\App\Http\Controllers\CatalogController::class, 'index'])->name('index');
         Route::post('import', [\App\Http\Controllers\CatalogController::class, 'import'])->name('import');
+        Route::post('import-csv', [\App\Http\Controllers\CatalogController::class, 'importCsv'])->name('import-csv');
+        Route::get('template', [\App\Http\Controllers\CatalogController::class, 'templateCsv'])->name('template');
     });
 
     Route::prefix('export')->name('export.')->group(function () {
