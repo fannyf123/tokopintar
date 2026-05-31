@@ -29,7 +29,7 @@
             <a href="{{ route('barang.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Tambah Barang Baru</a>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th style="width:60px;">#</th>
@@ -46,19 +46,19 @@
                 <tbody>
                     @forelse ($items as $i => $b)
                         <tr>
-                            <td>{{ $items->firstItem() + $i }}</td>
-                            <td><code>{{ $b->kode }}</code></td>
-                            <td class="fw-semibold">{{ $b->nama }}</td>
-                            <td>{{ $b->kategori?->nama }}</td>
-                            <td class="text-end">{{ format_rupiah($b->harga_beli) }}</td>
-                            <td class="text-end">{{ format_rupiah($b->harga_jual) }}</td>
-                            <td class="text-end {{ $b->stok_current <= $b->stok_min ? 'text-danger fw-bold' : '' }}">
+                            <td data-label="#">{{ $items->firstItem() + $i }}</td>
+                            <td data-label="Kode"><code>{{ $b->kode }}</code></td>
+                            <td data-label="Nama" class="fw-semibold">{{ $b->nama }}</td>
+                            <td data-label="Kategori">{{ $b->kategori?->nama }}</td>
+                            <td data-label="H. Beli" class="text-end">{{ format_rupiah($b->harga_beli) }}</td>
+                            <td data-label="H. Jual" class="text-end">{{ format_rupiah($b->harga_jual) }}</td>
+                            <td data-label="Stok" class="text-end {{ $b->stok_current <= $b->stok_min ? 'text-danger fw-bold' : '' }}">
                                 {{ $b->stok_current }} {{ $b->satuan }}
                             </td>
-                            <td class="text-center">
+                            <td data-label="Status" class="text-center">
                                 @if ($b->aktif)<span class="badge bg-success">aktif</span>@else<span class="badge bg-secondary">tidak</span>@endif
                             </td>
-                            <td>
+                            <td data-label="Aksi">
                                 <a href="{{ route('barang.edit', $b) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                 <form method="POST" action="{{ route('barang.destroy', $b) }}" class="d-inline" onsubmit="return confirm('Hapus / nonaktifkan?')">
                                     @csrf @method('DELETE')

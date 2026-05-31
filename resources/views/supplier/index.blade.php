@@ -9,7 +9,7 @@
             <a href="{{ route('supplier.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus me-1"></i> Tambah Pemasok</a>
         </div>
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-stack">
                 <thead>
                     <tr>
                         <th style="width:60px;">#</th>
@@ -23,12 +23,12 @@
                 <tbody>
                     @forelse ($items as $i => $row)
                         <tr>
-                            <td>{{ $items->firstItem() + $i }}</td>
-                            <td class="fw-semibold">{{ $row->nama }}</td>
-                            <td>{{ $row->kontak }}</td>
-                            <td>{{ $row->no_hp }}</td>
-                            <td>{{ $row->email }}</td>
-                            <td>
+                            <td data-label="#">{{ $items->firstItem() + $i }}</td>
+                            <td data-label="Nama" class="fw-semibold">{{ $row->nama }}</td>
+                            <td data-label="Kontak">{{ $row->kontak }}</td>
+                            <td data-label="No HP">{{ $row->no_hp }}</td>
+                            <td data-label="Email">{{ $row->email }}</td>
+                            <td data-label="Aksi">
                                 <a href="{{ route('supplier.edit', $row) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                                 <form method="POST" action="{{ route('supplier.destroy', $row) }}" class="d-inline" onsubmit="return confirm('Hapus supplier?')">
                                     @csrf @method('DELETE')

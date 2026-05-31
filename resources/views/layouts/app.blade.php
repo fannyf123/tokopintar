@@ -104,6 +104,19 @@
         }
         .alert { border-radius:10px; }
 
+        /* Tabel responsif: di HP, tiap baris jadi kartu bertumpuk (tanpa scroll samping) */
+        @media (max-width:767.98px) {
+            table.table-stack thead { display:none; }
+            table.table-stack, table.table-stack tbody, table.table-stack tr, table.table-stack td { display:block; width:100%; }
+            table.table-stack tr { margin-bottom:12px; border:1px solid #e2e8f0; border-radius:10px; padding:6px 12px; background:#fff; }
+            table.table-stack td { border:none !important; border-bottom:1px solid #f1f5f9 !important; padding:8px 0 !important; display:flex; justify-content:space-between; align-items:center; gap:12px; text-align:right; }
+            table.table-stack td:last-child { border-bottom:none !important; }
+            table.table-stack td::before { content:attr(data-label); font-weight:600; color:#64748b; text-align:left; flex-shrink:0; }
+            table.table-stack td:empty { display:none; }
+            [data-bs-theme="dark"] table.table-stack tr { background:#1a1f2e; border-color:#334155; }
+            [data-bs-theme="dark"] table.table-stack td { border-bottom-color:#334155 !important; }
+        }
+
         [data-bs-theme="dark"] body { background:#0f1419; color:#cbd5e1; }
         [data-bs-theme="dark"] .navbar { background:#1a1f2e !important; }
         [data-bs-theme="dark"] .navbar-brand, [data-bs-theme="dark"] .navbar .text-dark { color:#e2e8f0 !important; }
@@ -180,7 +193,7 @@
                 <i class="fas fa-receipt"></i> Riwayat Jualan
             </a>
             <a href="{{ route('pelanggan.index') }}" class="{{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
-                <i class="fas fa-users"></i> Pelanggan
+                <i class="fas fa-users"></i> Member
             </a>
         <p class="menu-label text-uppercase mt-3">Stok Barang</p>
             <a href="{{ route('barang.index') }}" class="{{ request()->routeIs('barang.*') ? 'active' : '' }}">

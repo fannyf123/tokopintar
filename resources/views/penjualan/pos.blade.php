@@ -56,10 +56,11 @@
                 <div class="mb-3">
                     <label class="form-label small fw-semibold">Pelanggan</label>
                     <div class="position-relative">
-                        <input type="text" id="pelangganSearch" placeholder="Pembeli Umum (klik untuk cari pelanggan)" class="form-control form-control-sm" autocomplete="off">
+                        <input type="text" id="pelangganSearch" placeholder="Pembeli biasa — biarkan kosong" class="form-control form-control-sm" autocomplete="off">
                         <input type="hidden" id="pelanggan" value="">
                         <div id="pelangganList" class="d-none position-absolute w-100 border rounded mt-1 bg-white shadow-sm" style="z-index:50;max-height:200px;overflow-y:auto;"></div>
                     </div>
+                    <small class="text-muted" style="font-size:11px;">Kosongkan untuk pembeli biasa. Ketik nama hanya jika pelanggan member.</small>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-semibold">Cara Bayar</label>
@@ -170,14 +171,61 @@ function render() {
     if (!cart.length) { tb.innerHTML = ''; $g('cartEmpty').style.display = 'block'; }
     else { $g('cartEmpty').style.display = 'none';
         tb.innerHTML = cart.map((x, i) => `<tr>
-            <td class="fw-semibold">${x.nama}</td>
-            <td class="text-center"><input type="number" min="1" max="${x.stok}" value="${x.qty}" class="form-control form-control-sm text-center" oninput="cart[${i}].qty=Math.min(+this.value,${x.stok});render()"></td>
-            <td class="text-end">${fmt(x.harga)}</td>
-            <td class="text-end fw-semibold">${fmt(x.qty*x.harga - x.diskon)}</td>
-            <td class="text-center"><button onclick="cart.splice(${i},1);render()" class="btn btn-sm btn-link text-danger"><i class="fas fa-times"></i></button></td>
+            <td class="fw-semibold" data-label="Barang">${x.nama}</td>
+            <td class="text-center" data-label="Qty">
+                <div class="input-group input-group-sm flex-nowrap qty-stepper mx-auto" style="max-width:130px;">
+                    <button type="button" class="btn btn-outline-secondary px-2 fw-bold" onclick="stepQty(${i},-1)">−</button>
+                    <input type="number" min="1" max="${x.stok}" value="${x.qty}" id="qty-${i}" class="form-control text-center px-1" oninput="setQty(${i},this.value)" onchange="syncQty(${i},this)">
+                    <button type="button" class="btn btn-outline-secondary px-2 fw-bold" onclick="stepQty(${i},1)">+</button>
+                </div>
+            </td>
+            <td class="text-end" data-label="Harga">${fmt(x.harga)}</td>
+            <td class="text-end fw-semibold" id="sub-${i}" data-label="Subtotal">${fmt(x.qty*x.harga - x.diskon)}</td>
+            <td class="text-center"><button onclick="removeItem(${i})" class="btn btn-sm btn-link text-danger"><i class="fas fa-times"></i></button></td>
         </tr>`).join('');
     }
     recalc();
+}
+
+// Update qty saat diketik — TIDAK rebuild tabel (supaya kursor tidak hilang)
+function setQty(i, val) {
+    let q = parseInt(val);
+    if (isNaN(q) || q < 1) q = 1;
+    if (q > cart[i].stok) q = cart[i].stok;
+    cart[i].qty = q;
+    const sub = $g('sub-' + i);
+    if (sub) sub.textContent = fmt(q * cart[i].harga - cart[i].diskon);
+    recalc();
+}
+
+// Saat selesai mengetik (blur/enter): rapikan nilai yang tampil
+function syncQty(i, el) {
+    let q = parseInt(el.value);
+    if (isNaN(q) || q < 1) q = 1;
+    if (q > cart[i].stok) { q = cart[i].stok; alert('Stok ' + cart[i].nama + ' tinggal ' + cart[i].stok); }
+    cart[i].qty = q;
+    el.value = q;
+    const sub = $g('sub-' + i);
+    if (sub) sub.textContent = fmt(q * cart[i].harga - cart[i].diskon);
+    recalc();
+}
+
+// Tombol − / + : ubah qty tanpa rebuild tabel
+function stepQty(i, delta) {
+    let q = cart[i].qty + delta;
+    if (q < 1) q = 1;
+    if (q > cart[i].stok) q = cart[i].stok;
+    cart[i].qty = q;
+    const inp = $g('qty-' + i);
+    if (inp) inp.value = q;
+    const sub = $g('sub-' + i);
+    if (sub) sub.textContent = fmt(q * cart[i].harga - cart[i].diskon);
+    recalc();
+}
+
+function removeItem(i) {
+    cart.splice(i, 1);
+    render();
 }
 
 function recalc() {
