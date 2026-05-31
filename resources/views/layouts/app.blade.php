@@ -222,6 +222,9 @@
             <a href="{{ route('laporan.laba.index') }}" class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
                 <i class="fas fa-chart-line"></i> Laporan Untung
             </a>
+            <a href="{{ route('backup.index') }}" class="{{ request()->routeIs('backup.*') ? 'active' : '' }}">
+                <i class="fas fa-database"></i> Cadangan Data
+            </a>
 
             @php
                 $aiActive = request()->routeIs('insight.*','customer-insight.*','anomaly.*','advanced.*','pricing.*','competitor.*','bundle.*');

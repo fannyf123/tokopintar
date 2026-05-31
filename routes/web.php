@@ -29,6 +29,11 @@ Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('panduan', [\App\Http\Controllers\PanduanController::class, 'index'])->name('panduan.index');
 
+    Route::prefix('backup')->name('backup.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\BackupController::class, 'index'])->name('index');
+        Route::get('download', [\App\Http\Controllers\BackupController::class, 'download'])->name('download');
+    });
+
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');
         Route::put('/', [ProfileController::class, 'update'])->name('update');
