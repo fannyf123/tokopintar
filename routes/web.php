@@ -37,6 +37,11 @@ Route::middleware('auth')->group(function () {
 
     Route::get('tutup-kasir', [\App\Http\Controllers\TutupKasirController::class, 'index'])->name('tutup-kasir.index');
 
+    Route::prefix('export')->name('export.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ExportController::class, 'index'])->name('index');
+        Route::get('{dataset}/{format}', [\App\Http\Controllers\ExportController::class, 'download'])->name('download');
+    });
+
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');
         Route::put('/', [ProfileController::class, 'update'])->name('update');

@@ -228,6 +228,9 @@
             <a href="{{ route('backup.index') }}" class="{{ request()->routeIs('backup.*') ? 'active' : '' }}">
                 <i class="fas fa-database"></i> Cadangan Data
             </a>
+            <a href="{{ route('export.index') }}" class="{{ request()->routeIs('export.*') ? 'active' : '' }}">
+                <i class="fas fa-file-export"></i> Export Data
+            </a>
 
             @php
                 $aiActive = request()->routeIs('insight.*','customer-insight.*','anomaly.*','advanced.*','pricing.*','competitor.*','bundle.*');
