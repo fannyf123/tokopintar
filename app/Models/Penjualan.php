@@ -13,7 +13,7 @@ class Penjualan extends Model
     public const STATUS_HUTANG = 'hutang';
 
     protected $fillable = [
-        'nomor', 'tanggal', 'kasir_id', 'pelanggan_id',
+        'nomor', 'kode_verifikasi', 'tanggal', 'kasir_id', 'pelanggan_id',
         'total', 'diskon', 'pajak', 'grand_total',
         'dibayar', 'kembalian', 'metode_bayar', 'status',
     ];
@@ -58,5 +58,17 @@ class Penjualan extends Model
         $tgl = now()->format('Ymd');
         $count = static::whereDate('created_at', now()->toDateString())->count() + 1;
         return 'TRX-' . $tgl . '-' . str_pad((string) $count, 4, '0', STR_PAD_LEFT);
+    }
+
+    public static function generateKodeVerifikasi(): string
+    {
+        // Kode acak anti-pemalsuan, mis. "K7P2-9XQ4"
+        $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        $code = '';
+        for ($i = 0; $i < 8; $i++) {
+            if ($i === 4) $code .= '-';
+            $code .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+        return $code;
     }
 }

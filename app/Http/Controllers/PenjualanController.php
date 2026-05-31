@@ -138,6 +138,7 @@ class PenjualanController extends Controller
 
             $penjualan = Penjualan::create([
                 'nomor' => Penjualan::generateNomor(),
+                'kode_verifikasi' => Penjualan::generateKodeVerifikasi(),
                 'tanggal' => now(),
                 'kasir_id' => auth()->id(),
                 'pelanggan_id' => $data['pelanggan_id'] ?? null,
