@@ -21,6 +21,10 @@
 
     <style>
         body { background:#f4f7f9; font-family:'Inter',sans-serif; font-size:13.5px; color:#4a5568; overflow-x:hidden; }
+        html { overflow-x:hidden; max-width:100%; }
+        img, svg, video, canvas { max-width:100%; height:auto; }
+        .main-content { max-width:100%; min-width:0; }
+        .row { margin-left:0; margin-right:0; }
         .sidebar { height:100vh; background:#1e222d; color:#fff; padding-top:20px; position:fixed; top:0; left:0; width:260px; box-shadow:2px 0 10px rgba(0,0,0,.05); z-index:1040; transition:transform .3s; overflow-y:auto; }
         .sidebar .brand { font-size:1.2rem; font-weight:700; letter-spacing:1.5px; }
         .sidebar .menu-label { font-size:.7rem; padding-left:20px; color:#6b7280; font-weight:600; letter-spacing:1px; margin-bottom:10px; }
@@ -48,6 +52,9 @@
         .table thead th { border-bottom:2px solid #e2e8f0; background:#fff; color:#64748b; font-size:12px; text-transform:uppercase; letter-spacing:.5px; padding:15px 10px; }
         .table tbody td { border-bottom:1px solid #f1f5f9; padding:14px 10px; vertical-align:middle; color:#475569; }
         .stat-card { border-radius:12px; padding:20px; color:#fff; }
+        a.stat-card { display:block; transition:transform .2s, box-shadow .2s; cursor:pointer; }
+        a.stat-card:hover { transform:translateY(-3px); box-shadow:0 10px 25px rgba(0,0,0,.18); color:#fff; }
+        a.stat-card:active { transform:translateY(-1px); }
         .stat-card .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; opacity:.85; }
         .stat-card .stat-value { font-size:1.5rem; font-weight:700; margin-top:6px; }
         .sidebar-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:1030; display:none; opacity:0; transition:opacity .3s; }
@@ -79,8 +86,8 @@
             .btn-sm { padding:6px 10px; font-size:11.5px; }
             .stat-card .stat-value { font-size:1.15rem; }
             .stat-card .stat-label { font-size:10px; }
-            .form-control, .form-select { font-size:14px; }
-            .form-control-sm, .form-select-sm { font-size:13px; }
+            .form-control, .form-select { font-size:16px; }
+            .form-control-sm, .form-select-sm { font-size:16px; }
             .row.g-3 > [class*="col-"], .row.g-2 > [class*="col-"] { padding-top:.25rem; padding-bottom:.25rem; }
             .text-end { text-align:right !important; }
             .form-label { margin-bottom:.25rem; font-size:12px; }

@@ -22,44 +22,44 @@
 
 <div class="row g-3 mb-3">
     <div class="col-md">
-        <div class="card stat-card" style="background:linear-gradient(135deg,#4361ee,#3f37c9);">
+        <a href="{{ route('penjualan.index') }}" class="card stat-card text-decoration-none" style="background:linear-gradient(135deg,#4361ee,#3f37c9);">
             <div class="card-body">
                 <div class="stat-label"><i class="fas fa-cash-register me-1"></i> Penjualan Hari Ini</div>
                 <div class="stat-value">{{ format_rupiah($omzetToday) }}</div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-md">
-        <div class="card stat-card" style="background:linear-gradient(135deg,#16a34a,#059669);">
+        <a href="{{ route('laporan.laba.index') }}" class="card stat-card text-decoration-none" style="background:linear-gradient(135deg,#16a34a,#059669);">
             <div class="card-body">
                 <div class="stat-label"><i class="fas fa-coins me-1"></i> Untung Hari Ini</div>
                 <div class="stat-value">{{ format_rupiah($omzetToday - $hppToday) }}</div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-md">
-        <div class="card stat-card" style="background:linear-gradient(135deg,#0891b2,#0e7490);">
+        <a href="{{ route('penjualan.index') }}" class="card stat-card text-decoration-none" style="background:linear-gradient(135deg,#0891b2,#0e7490);">
             <div class="card-body">
                 <div class="stat-label"><i class="fas fa-receipt me-1"></i> Jumlah Transaksi</div>
                 <div class="stat-value">{{ $trxToday }}</div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-md">
-        <div class="card stat-card" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
+        <a href="{{ route('barang.index') }}" class="card stat-card text-decoration-none" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
             <div class="card-body">
                 <div class="stat-label"><i class="fas fa-exclamation-triangle me-1"></i> Stok Menipis</div>
                 <div class="stat-value">{{ $stokRendah }}</div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-md">
-        <div class="card stat-card" style="background:linear-gradient(135deg,#ea580c,#c2410c);">
+        <a href="{{ route('expiry.index') }}" class="card stat-card text-decoration-none" style="background:linear-gradient(135deg,#ea580c,#c2410c);">
             <div class="card-body">
                 <div class="stat-label"><i class="fas fa-clock me-1"></i> Hampir Kadaluarsa</div>
                 <div class="stat-value">{{ $nearExpiry }}</div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 

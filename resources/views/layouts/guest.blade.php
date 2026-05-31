@@ -13,7 +13,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        body { background:linear-gradient(135deg,#4361ee 0%,#3f37c9 100%); font-family:'Inter',sans-serif; min-height:100vh; }
+        body { background:linear-gradient(135deg,#4361ee 0%,#3f37c9 100%); font-family:'Inter',sans-serif; min-height:100vh; overflow-x:hidden; }
+        .form-control, .form-select { font-size:16px; }
         .login-card { border:none; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.2); }
         .btn-primary { background:#4361ee; border-color:#4361ee; }
         .btn-primary:hover { background:#3f37c9; border-color:#3f37c9; }
