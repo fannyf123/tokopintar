@@ -98,7 +98,23 @@ class PenjualanController extends Controller
 
             $diskon = (int) ($data['diskon'] ?? 0);
             $pajak = (int) ($data['pajak'] ?? 0);
-            $grand = max(0, $total - $diskon + $pajak);
+            $baseGrand = max(0, $total - $diskon + $pajak);
+
+            // Penukaran poin member: 100 poin = Rp 1.000
+            $tukarPoin = intdiv((int) ($data['tukar_poin'] ?? 0), 100) * 100;
+            $poinValue = 0;
+            if ($tukarPoin > 0 && ($data['pelanggan_id'] ?? null)) {
+                $plg = Pelanggan::lockForUpdate()->find($data['pelanggan_id']);
+                if (! $plg || $plg->poin < $tukarPoin) {
+                    abort(422, 'Poin tidak cukup untuk ditukar.');
+                }
+                // batasi agar nilai poin tidak melebihi tagihan
+                $maxPoin = intdiv($baseGrand, 10);
+                $tukarPoin = min($tukarPoin, intdiv($maxPoin, 100) * 100);
+                $poinValue = $tukarPoin * 10;
+            }
+
+            $grand = max(0, $baseGrand - $poinValue);
             $dibayar = (int) $data['dibayar'];
             if ($dibayar < $grand) {
                 abort(422, 'Pembayaran kurang dari grand total.');
@@ -137,8 +153,11 @@ class PenjualanController extends Controller
             }
 
             if ($penjualan->pelanggan_id) {
+                // Poin didapat: 1 poin per Rp 1.000 dari yang benar-benar dibayar (grand)
+                $poinDidapat = intdiv($grand, 1000);
                 Pelanggan::where('id', $penjualan->pelanggan_id)->update([
                     'total_belanja' => DB::raw('total_belanja + ' . $grand),
+                    'poin' => DB::raw('GREATEST(0, poin - ' . (int) $tukarPoin . ') + ' . $poinDidapat),
                 ]);
             }
 

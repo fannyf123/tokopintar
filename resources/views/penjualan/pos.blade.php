@@ -66,6 +66,14 @@
                     </div>
                     <small class="text-muted" style="font-size:11px;">Kosongkan untuk pembeli biasa. Ketik nama hanya jika pelanggan member.</small>
                 </div>
+                <div class="mb-3 d-none" id="poinBox">
+                    <div class="d-flex justify-content-between align-items-center p-2 rounded" style="background:#fff7ed;border:1px solid #fed7aa;">
+                        <span class="small"><i class="fas fa-star text-warning me-1"></i>Poin: <strong id="poinSaldo">0</strong></span>
+                        <button type="button" id="tukarPoinBtn" class="btn btn-sm btn-warning py-0 px-2" style="font-size:11px;">Tukar Poin</button>
+                    </div>
+                    <input type="hidden" id="tukarPoin" value="0">
+                    <small class="text-muted d-block mt-1" style="font-size:10px;">100 poin = potongan Rp 1.000</small>
+                </div>
                 <div class="mb-3">
                     <label class="form-label small fw-semibold">Cara Bayar</label>
                     <select id="metode" class="form-select form-select-sm">
@@ -94,6 +102,7 @@
                 <hr>
                 <div class="d-flex justify-content-between small mb-1"><span class="text-muted">Subtotal Belanja</span><span id="subTotal">Rp 0</span></div>
                 <div class="d-flex justify-content-between small mb-1 d-none" id="memberDiscRow"><span class="text-warning"><i class="fas fa-id-card me-1"></i>Diskon Member</span><span id="memberDiscVal" class="text-warning fw-semibold">- Rp 0</span></div>
+                <div class="d-flex justify-content-between small mb-1 d-none" id="poinDiscRow"><span class="text-success"><i class="fas fa-star me-1"></i>Tukar Poin</span><span id="poinDiscVal" class="text-success fw-semibold">- Rp 0</span></div>
                 <div class="d-flex justify-content-between fs-5 fw-bold mb-3"><span>Total Bayar</span><span id="grandTotal" class="text-primary">Rp 0</span></div>
                 <div class="mb-2">
                     <label class="form-label small fw-semibold">Uang Diterima</label>
@@ -260,7 +269,19 @@ function recalc() {
     const dManual = dMode === 'pct' ? Math.round(sub * Math.min(dRaw, 100) / 100) : dRaw;
     const p = pMode === 'pct' ? Math.round(sub * Math.min(pRaw, 100) / 100) : pRaw;
     const d = dManual + memberDisc;
-    const grand = Math.max(0, sub - d + p);
+
+    // Potongan dari penukaran poin: 100 poin = Rp 1.000
+    const tukarPoin = parseInt($g('tukarPoin').value) || 0;
+    let poinDisc = Math.floor(tukarPoin / 100) * 1000;
+    const afterDisc = Math.max(0, sub - d + p);
+    if (poinDisc > afterDisc) poinDisc = afterDisc;
+    const pdRow = $g('poinDiscRow');
+    if (pdRow) {
+        if (poinDisc > 0) { pdRow.classList.remove('d-none'); $g('poinDiscVal').textContent = '- ' + fmt(poinDisc); }
+        else pdRow.classList.add('d-none');
+    }
+
+    const grand = Math.max(0, sub - d + p - poinDisc);
     $g('subTotal').textContent = fmt(sub);
     $g('grandTotal').textContent = fmt(grand);
     const dibayar = parseMoney($g('dibayar').value);
@@ -303,7 +324,7 @@ document.querySelectorAll('.money-input').forEach(attachMoneyInput);
 
 @php
     $plgData = $pelanggans->map(function ($p) {
-        return ['id' => $p->id, 'nama' => $p->nama, 'no_hp' => $p->no_hp ?? '', 'tipe' => $p->tipe ?? 'umum', 'diskon_persen' => $p->diskon_persen ?? 0];
+        return ['id' => $p->id, 'nama' => $p->nama, 'no_hp' => $p->no_hp ?? '', 'tipe' => $p->tipe ?? 'umum', 'diskon_persen' => $p->diskon_persen ?? 0, 'poin' => $p->poin ?? 0];
     })->values()->all();
 @endphp
 const PELANGGAN = {!! json_encode($plgData) !!};
@@ -331,15 +352,45 @@ document.addEventListener('click', (e) => { if (!plgSearch.contains(e.target) &&
 
 function applyMemberDiscount(pid) {
     memberPersen = 0;
+    $g('tukarPoin').value = '0';
+    const poinBox = $g('poinBox');
+    poinBox.classList.add('d-none');
     if (pid) {
         const p = PELANGGAN.find(x => String(x.id) === String(pid));
         if (p?.tipe === 'member') {
             memberPersen = (p.diskon_persen && p.diskon_persen > 0) ? p.diskon_persen : 3;
+            if ((p.poin || 0) > 0) {
+                $g('poinSaldo').textContent = p.poin;
+                poinBox.classList.remove('d-none');
+            }
         }
     }
     recalc();
 }
 ['diskon','pajak','dibayar'].forEach(id => $g(id).addEventListener('input', recalc));
+
+$g('tukarPoinBtn').addEventListener('click', () => {
+    const pid = $g('pelanggan').value;
+    const p = PELANGGAN.find(x => String(x.id) === String(pid));
+    if (!p || !(p.poin > 0)) return;
+    const tp = $g('tukarPoin');
+    if (parseInt(tp.value) > 0) {
+        // batal tukar
+        tp.value = '0';
+        $g('tukarPoinBtn').textContent = 'Tukar Poin';
+        $g('tukarPoinBtn').classList.replace('btn-secondary', 'btn-warning');
+    } else {
+        // pakai kelipatan 100 poin, dibatasi saldo & maksimal 10% dari subtotal
+        const sub = cart.reduce((s, x) => s + x.qty * x.harga - x.diskon, 0);
+        const maxByBill = Math.floor(Math.floor(sub * 0.1) / 1000) * 100; // poin senilai <=10% tagihan
+        const pakai = Math.min(Math.floor(p.poin / 100) * 100, maxByBill);
+        if (pakai <= 0) { alert('Belanja belum cukup untuk menukar poin.'); return; }
+        tp.value = String(pakai);
+        $g('tukarPoinBtn').textContent = 'Batal (' + pakai + ' poin)';
+        $g('tukarPoinBtn').classList.replace('btn-warning', 'btn-secondary');
+    }
+    recalc();
+});
 
 $g('bayar').addEventListener('click', async () => {
     const payload = {
@@ -348,6 +399,7 @@ $g('bayar').addEventListener('click', async () => {
         diskon: window._diskonRp ?? parseMoney($g('diskon').value),
         pajak: window._pajakRp ?? parseMoney($g('pajak').value),
         dibayar: parseMoney($g('dibayar').value),
+        tukar_poin: parseInt($g('tukarPoin').value) || 0,
         items: cart.map(x => ({barang_id: x.id, qty: x.qty, diskon_item: x.diskon || 0})),
     };
     const res = await fetch('{{ route('pos.store') }}', {

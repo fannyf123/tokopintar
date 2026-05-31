@@ -19,6 +19,7 @@ class PenjualanRequest extends FormRequest
             'metode_bayar' => ['required', Rule::in(['cash', 'transfer', 'qris', 'kartu'])],
             'diskon' => ['nullable', 'integer', 'min:0'],
             'pajak' => ['nullable', 'integer', 'min:0'],
+            'tukar_poin' => ['nullable', 'integer', 'min:0'],
             'dibayar' => ['required', 'integer', 'min:0'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.barang_id' => ['required', 'exists:barangs,id'],
