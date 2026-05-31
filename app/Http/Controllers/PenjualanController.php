@@ -116,10 +116,25 @@ class PenjualanController extends Controller
 
             $grand = max(0, $baseGrand - $poinValue);
             $dibayar = (int) $data['dibayar'];
-            if ($dibayar < $grand) {
-                abort(422, 'Pembayaran kurang dari grand total.');
+            $isHutang = (bool) ($data['is_hutang'] ?? false);
+
+            if ($isHutang) {
+                // Kasbon: boleh bayar sebagian (termasuk 0), wajib ada pelanggan
+                if (! ($data['pelanggan_id'] ?? null)) {
+                    abort(422, 'Hutang harus atas nama pelanggan/member. Pilih pelanggan dulu.');
+                }
+                if ($dibayar > $grand) {
+                    $dibayar = $grand;
+                }
+                $kembalian = 0;
+                $status = $dibayar >= $grand ? Penjualan::STATUS_LUNAS : Penjualan::STATUS_HUTANG;
+            } else {
+                if ($dibayar < $grand) {
+                    abort(422, 'Pembayaran kurang dari grand total.');
+                }
+                $kembalian = $dibayar - $grand;
+                $status = Penjualan::STATUS_LUNAS;
             }
-            $kembalian = $dibayar - $grand;
 
             $penjualan = Penjualan::create([
                 'nomor' => Penjualan::generateNomor(),
@@ -133,7 +148,7 @@ class PenjualanController extends Controller
                 'dibayar' => $dibayar,
                 'kembalian' => $kembalian,
                 'metode_bayar' => $data['metode_bayar'],
-                'status' => Penjualan::STATUS_LUNAS,
+                'status' => $status,
             ]);
 
             foreach ($detailRows as $r) {
@@ -178,5 +193,34 @@ class PenjualanController extends Controller
     {
         $penjualan->load('kasir', 'pelanggan', 'details.barang');
         return view('penjualan.struk', compact('penjualan'));
+    }
+
+    public function lunasi(Request $request, Penjualan $penjualan): RedirectResponse
+    {
+        if ($penjualan->status !== Penjualan::STATUS_HUTANG) {
+            return back()->with('error', 'Transaksi ini bukan hutang.');
+        }
+
+        $sisa = $penjualan->grand_total - $penjualan->dibayar;
+        $jumlah = (int) $request->input('jumlah', 0);
+
+        if ($jumlah < 1) {
+            return back()->with('error', 'Jumlah pembayaran tidak valid.');
+        }
+        if ($jumlah > $sisa) {
+            $jumlah = $sisa;
+        }
+
+        $dibayarBaru = $penjualan->dibayar + $jumlah;
+        $penjualan->update([
+            'dibayar' => $dibayarBaru,
+            'status' => $dibayarBaru >= $penjualan->grand_total ? Penjualan::STATUS_LUNAS : Penjualan::STATUS_HUTANG,
+        ]);
+
+        $pesan = $penjualan->status === Penjualan::STATUS_LUNAS
+            ? 'Hutang lunas. Terima kasih!'
+            : 'Pembayaran dicatat. Sisa hutang: ' . format_rupiah($penjualan->grand_total - $dibayarBaru);
+
+        return back()->with('success', $pesan);
     }
 }

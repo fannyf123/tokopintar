@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [PenjualanController::class, 'index'])->name('index');
         Route::get('{penjualan}', [PenjualanController::class, 'show'])->name('show');
         Route::get('{penjualan}/struk', [PenjualanController::class, 'struk'])->name('struk');
+        Route::post('{penjualan}/lunasi', [PenjualanController::class, 'lunasi'])->name('lunasi');
     });
 
     Route::prefix('insight')->name('insight.')->group(function () {

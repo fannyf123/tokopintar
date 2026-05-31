@@ -10,6 +10,7 @@ class Penjualan extends Model
 {
     public const STATUS_LUNAS = 'lunas';
     public const STATUS_BATAL = 'batal';
+    public const STATUS_HUTANG = 'hutang';
 
     protected $fillable = [
         'nomor', 'tanggal', 'kasir_id', 'pelanggan_id',
@@ -40,6 +41,16 @@ class Penjualan extends Model
     public function details(): HasMany
     {
         return $this->hasMany(PenjualanDetail::class);
+    }
+
+    public function sisaHutang(): int
+    {
+        return max(0, (int) $this->grand_total - (int) $this->dibayar);
+    }
+
+    public function isHutang(): bool
+    {
+        return $this->status === self::STATUS_HUTANG;
     }
 
     public static function generateNomor(): string

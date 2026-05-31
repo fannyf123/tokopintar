@@ -20,6 +20,7 @@ class PenjualanRequest extends FormRequest
             'diskon' => ['nullable', 'integer', 'min:0'],
             'pajak' => ['nullable', 'integer', 'min:0'],
             'tukar_poin' => ['nullable', 'integer', 'min:0'],
+            'is_hutang' => ['nullable', 'boolean'],
             'dibayar' => ['required', 'integer', 'min:0'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.barang_id' => ['required', 'exists:barangs,id'],

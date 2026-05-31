@@ -109,6 +109,11 @@
                     <input id="dibayar" type="text" inputmode="numeric" value="0" class="form-control form-control-lg money-input">
                 </div>
                 <div class="d-flex justify-content-between small mb-3"><span class="text-muted">Kembalian</span><span id="kembalian" class="fw-semibold text-success">Rp 0</span></div>
+                <div class="form-check form-switch mb-2 d-none" id="hutangWrap">
+                    <input class="form-check-input" type="checkbox" id="isHutang">
+                    <label class="form-check-label small" for="isHutang"><i class="fas fa-hand-holding-usd text-danger me-1"></i>Hutang dulu (kasbon) — boleh bayar sebagian</label>
+                </div>
+                <div class="d-flex justify-content-between small mb-3 d-none" id="sisaHutangRow"><span class="text-danger fw-semibold">Sisa Hutang</span><span id="sisaHutangVal" class="fw-bold text-danger">Rp 0</span></div>
                 <button id="bayar" class="btn btn-success btn-lg w-100" disabled><i class="fas fa-credit-card me-2"></i>Selesaikan Bayar</button>
             </div>
         </div>
@@ -285,8 +290,19 @@ function recalc() {
     $g('subTotal').textContent = fmt(sub);
     $g('grandTotal').textContent = fmt(grand);
     const dibayar = parseMoney($g('dibayar').value);
-    $g('kembalian').textContent = fmt(Math.max(0, dibayar - grand));
-    $g('bayar').disabled = !cart.length || dibayar < grand;
+    const hutangMode = $g('isHutang') && $g('isHutang').checked;
+    if (hutangMode) {
+        const sisa = Math.max(0, grand - dibayar);
+        $g('kembalian').textContent = fmt(0);
+        $g('sisaHutangRow').classList.remove('d-none');
+        $g('sisaHutangVal').textContent = fmt(sisa);
+        // boleh bayar sebagian (bahkan 0), asal ada barang & pelanggan
+        $g('bayar').disabled = !cart.length || !$g('pelanggan').value;
+    } else {
+        $g('kembalian').textContent = fmt(Math.max(0, dibayar - grand));
+        $g('sisaHutangRow').classList.add('d-none');
+        $g('bayar').disabled = !cart.length || dibayar < grand;
+    }
     window._diskonRp = d;
     window._pajakRp = p;
 }
@@ -355,6 +371,14 @@ function applyMemberDiscount(pid) {
     $g('tukarPoin').value = '0';
     const poinBox = $g('poinBox');
     poinBox.classList.add('d-none');
+    // Hutang hanya untuk pelanggan terdaftar (ada nama), bukan pembeli umum
+    const hutangWrap = $g('hutangWrap');
+    if (pid) {
+        hutangWrap.classList.remove('d-none');
+    } else {
+        hutangWrap.classList.add('d-none');
+        $g('isHutang').checked = false;
+    }
     if (pid) {
         const p = PELANGGAN.find(x => String(x.id) === String(pid));
         if (p?.tipe === 'member') {
@@ -368,6 +392,7 @@ function applyMemberDiscount(pid) {
     recalc();
 }
 ['diskon','pajak','dibayar'].forEach(id => $g(id).addEventListener('input', recalc));
+$g('isHutang').addEventListener('change', recalc);
 
 $g('tukarPoinBtn').addEventListener('click', () => {
     const pid = $g('pelanggan').value;
@@ -400,6 +425,7 @@ $g('bayar').addEventListener('click', async () => {
         pajak: window._pajakRp ?? parseMoney($g('pajak').value),
         dibayar: parseMoney($g('dibayar').value),
         tukar_poin: parseInt($g('tukarPoin').value) || 0,
+        is_hutang: $g('isHutang').checked,
         items: cart.map(x => ({barang_id: x.id, qty: x.qty, diskon_item: x.diskon || 0})),
     };
     const res = await fetch('{{ route('pos.store') }}', {
