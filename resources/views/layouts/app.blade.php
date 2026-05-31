@@ -193,6 +193,9 @@
             <a href="{{ route('penjualan.index') }}" class="{{ request()->routeIs('penjualan.*') ? 'active' : '' }}">
                 <i class="fas fa-receipt"></i> Riwayat Jualan
             </a>
+            <a href="{{ route('tutup-kasir.index') }}" class="{{ request()->routeIs('tutup-kasir.*') ? 'active' : '' }}">
+                <i class="fas fa-cash-register"></i> Tutup Kasir
+            </a>
             <a href="{{ route('pelanggan.index') }}" class="{{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i> Member
             </a>

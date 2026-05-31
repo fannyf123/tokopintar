@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
         Route::get('download', [\App\Http\Controllers\BackupController::class, 'download'])->name('download');
     });
 
+    Route::get('tutup-kasir', [\App\Http\Controllers\TutupKasirController::class, 'index'])->name('tutup-kasir.index');
+
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('edit');
         Route::put('/', [ProfileController::class, 'update'])->name('update');
