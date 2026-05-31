@@ -138,4 +138,52 @@ class BarangController extends Controller
 
         return response()->json(['results' => $results]);
     }
+
+    public function lookupByBarcode(Request $request): JsonResponse
+    {
+        $code = trim((string) $request->query('barcode', ''));
+        if ($code === '') {
+            return response()->json(['found' => false]);
+        }
+
+        // Cek dulu di database sendiri (mungkin barang sudah pernah ada)
+        $lokal = Barang::where('barcode', $code)->first();
+        if ($lokal) {
+            return response()->json([
+                'found' => true,
+                'sumber' => 'lokal',
+                'nama' => $lokal->nama,
+                'sudah_ada' => true,
+            ]);
+        }
+
+        // Cari nama produk dari Open Food Facts (endpoint produk langsung by barcode)
+        try {
+            $resp = Http::timeout(6)->withHeaders([
+                'User-Agent' => 'TOKOPINTAR/1.0 (umkm-pos)',
+            ])->get("https://world.openfoodfacts.org/api/v2/product/{$code}.json", [
+                'fields' => 'product_name,product_name_id,brands,quantity',
+            ]);
+            if ($resp->ok() && (int) $resp->json('status') === 1) {
+                $p = (array) $resp->json('product', []);
+                $nama = trim($p['product_name_id'] ?? ($p['product_name'] ?? ''));
+                $brand = trim($p['brands'] ?? '');
+                $qty = trim($p['quantity'] ?? '');
+                if ($nama !== '') {
+                    $full = trim($nama . ' ' . $qty);
+                    return response()->json([
+                        'found' => true,
+                        'sumber' => 'OpenFoodFacts',
+                        'nama' => $full,
+                        'brand' => $brand,
+                        'sudah_ada' => false,
+                    ]);
+                }
+            }
+        } catch (\Throwable $e) {
+            // abaikan, balas not found
+        }
+
+        return response()->json(['found' => false]);
+    }
 }

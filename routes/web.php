@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('supplier', SupplierController::class)->except('show');
     Route::get('barang/lookup-barcode', [BarangController::class, 'lookupBarcode'])->name('barang.lookup-barcode');
+    Route::get('barang/lookup-by-barcode', [BarangController::class, 'lookupByBarcode'])->name('barang.lookup-by-barcode');
     Route::resource('barang', BarangController::class)->except('show');
 
     Route::prefix('pembelian')->name('pembelian.')->group(function () {

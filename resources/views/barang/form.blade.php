@@ -140,5 +140,32 @@ $lb?.addEventListener('click', async () => {
         $lr.innerHTML = '<div class="p-3 text-danger small">Gagal: ' + e.message + '</div>';
     }
 });
+
+// Scan barcode -> isi nama otomatis dari Open Food Facts
+const $nm = document.querySelector('input[name="nama"]');
+$bc?.addEventListener('change', async () => {
+    const code = $bc.value.trim();
+    if (!code || !$nm) return;
+    // Jangan timpa kalau nama sudah diisi pemilik
+    const namaSekarang = $nm.value.trim();
+    $lr.classList.remove('d-none');
+    $lr.innerHTML = '<div class="p-2 text-muted small"><i class="fas fa-spinner fa-spin me-1"></i> Mencari nama produk untuk barcode ' + code + '...</div>';
+    try {
+        const res = await fetch('{{ route('barang.lookup-by-barcode') }}?barcode=' + encodeURIComponent(code));
+        const data = await res.json();
+        if (data.found) {
+            if (data.sudah_ada) {
+                $lr.innerHTML = '<div class="p-2 small text-warning"><i class="fas fa-circle-info me-1"></i> Barcode ini sudah terdaftar sebagai <strong>' + data.nama + '</strong>.</div>';
+            } else {
+                if (!namaSekarang) { $nm.value = data.nama; navigator.vibrate?.(50); }
+                $lr.innerHTML = '<div class="p-2 small text-success"><i class="fas fa-check me-1"></i> Nama terisi otomatis: <strong>' + data.nama + '</strong>' + (namaSekarang ? ' (nama lama dipertahankan)' : '') + '. Tinggal isi harga.</div>';
+            }
+        } else {
+            $lr.innerHTML = '<div class="p-2 small text-muted"><i class="fas fa-circle-info me-1"></i> Produk tidak ada di database online. Ketik nama manual ya.</div>';
+        }
+    } catch (e) {
+        $lr.innerHTML = '<div class="p-2 small text-muted">Tidak bisa cek online. Ketik nama manual.</div>';
+    }
+});
 </script>
 @endpush
