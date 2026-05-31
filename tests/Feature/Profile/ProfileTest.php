@@ -18,8 +18,6 @@ class ProfileTest extends TestCase
             'username' => 'tester',
             'email' => 'tester@example.test',
             'password' => Hash::make('rahasia123'),
-            'role' => User::ROLE_KASIR,
-            'aktif' => true,
         ], $attrs));
     }
 

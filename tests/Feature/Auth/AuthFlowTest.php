@@ -18,8 +18,6 @@ class AuthFlowTest extends TestCase
             'username' => 'tester',
             'email' => 'tester@example.test',
             'password' => Hash::make('rahasia123'),
-            'role' => User::ROLE_KASIR,
-            'aktif' => true,
         ], $attrs));
     }
 
@@ -59,18 +57,6 @@ class AuthFlowTest extends TestCase
         $this->from('/login')->post('/login', [
             'login' => 'tester',
             'password' => 'salah',
-        ])->assertRedirect('/login')->assertSessionHasErrors('login');
-
-        $this->assertGuest();
-    }
-
-    public function test_akun_nonaktif_ditolak(): void
-    {
-        $this->makeUser(['aktif' => false]);
-
-        $this->from('/login')->post('/login', [
-            'login' => 'tester',
-            'password' => 'rahasia123',
         ])->assertRedirect('/login')->assertSessionHasErrors('login');
 
         $this->assertGuest();

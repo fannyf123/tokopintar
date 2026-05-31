@@ -23,7 +23,7 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('login.attempt');
 });
 
-Route::middleware(['auth', 'aktif'])->group(function () {
+Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -35,102 +35,94 @@ Route::middleware(['auth', 'aktif'])->group(function () {
         Route::put('password', [ProfileController::class, 'changePassword'])->name('password');
     });
 
-    Route::middleware('role:admin')->group(function () {
-        Route::resource('kategori', KategoriController::class)->except('show');
-        Route::resource('pengeluaran', PengeluaranController::class);
+    Route::resource('kategori', KategoriController::class)->except('show');
+    Route::resource('pengeluaran', PengeluaranController::class);
+
+    Route::resource('supplier', SupplierController::class)->except('show');
+    Route::get('barang/lookup-barcode', [BarangController::class, 'lookupBarcode'])->name('barang.lookup-barcode');
+    Route::resource('barang', BarangController::class)->except('show');
+
+    Route::prefix('pembelian')->name('pembelian.')->group(function () {
+        Route::get('/', [PembelianController::class, 'index'])->name('index');
+        Route::get('create', [PembelianController::class, 'create'])->name('create');
+        Route::post('/', [PembelianController::class, 'store'])->name('store');
+        Route::get('{pembelian}', [PembelianController::class, 'show'])->name('show');
+        Route::post('{pembelian}/terima', [PembelianController::class, 'terima'])->name('terima');
+        Route::post('{pembelian}/batal', [PembelianController::class, 'batal'])->name('batal');
     });
 
-    Route::middleware('role:admin,gudang')->group(function () {
-        Route::resource('supplier', SupplierController::class)->except('show');
-        Route::get('barang/lookup-barcode', [BarangController::class, 'lookupBarcode'])->name('barang.lookup-barcode');
-        Route::resource('barang', BarangController::class)->except('show');
-
-        Route::prefix('pembelian')->name('pembelian.')->group(function () {
-            Route::get('/', [PembelianController::class, 'index'])->name('index');
-            Route::get('create', [PembelianController::class, 'create'])->name('create');
-            Route::post('/', [PembelianController::class, 'store'])->name('store');
-            Route::get('{pembelian}', [PembelianController::class, 'show'])->name('show');
-            Route::post('{pembelian}/terima', [PembelianController::class, 'terima'])->name('terima');
-            Route::post('{pembelian}/batal', [PembelianController::class, 'batal'])->name('batal');
-        });
-
-        Route::prefix('mutasi')->name('mutasi.')->group(function () {
-            Route::get('/', [MutasiStokController::class, 'index'])->name('index');
-            Route::get('create', [MutasiStokController::class, 'create'])->name('create');
-            Route::post('/', [MutasiStokController::class, 'store'])->name('store');
-            Route::get('batches/{barang}', [MutasiStokController::class, 'batches'])->name('batches');
-        });
-
-        Route::prefix('expiry')->name('expiry.')->group(function () {
-            Route::get('/', [ExpiryController::class, 'index'])->name('index');
-            Route::post('{batch}/buang', [ExpiryController::class, 'buang'])->name('buang');
-        });
+    Route::prefix('mutasi')->name('mutasi.')->group(function () {
+        Route::get('/', [MutasiStokController::class, 'index'])->name('index');
+        Route::get('create', [MutasiStokController::class, 'create'])->name('create');
+        Route::post('/', [MutasiStokController::class, 'store'])->name('store');
+        Route::get('batches/{barang}', [MutasiStokController::class, 'batches'])->name('batches');
     });
 
-    Route::middleware('role:admin,kasir')->group(function () {
-        Route::resource('pelanggan', PelangganController::class)->except('show');
-
-        Route::prefix('pos')->name('pos.')->group(function () {
-            Route::get('/', [PenjualanController::class, 'pos'])->name('index');
-            Route::get('search', [PenjualanController::class, 'searchBarang'])->name('search');
-            Route::get('cross-sell', [PenjualanController::class, 'crossSell'])->name('crosssell');
-            Route::post('/', [PenjualanController::class, 'store'])->name('store');
-        });
-
-        Route::prefix('penjualan')->name('penjualan.')->group(function () {
-            Route::get('/', [PenjualanController::class, 'index'])->name('index');
-            Route::get('{penjualan}', [PenjualanController::class, 'show'])->name('show');
-            Route::get('{penjualan}/struk', [PenjualanController::class, 'struk'])->name('struk');
-        });
+    Route::prefix('expiry')->name('expiry.')->group(function () {
+        Route::get('/', [ExpiryController::class, 'index'])->name('index');
+        Route::post('{batch}/buang', [ExpiryController::class, 'buang'])->name('buang');
     });
 
-    Route::middleware('role:admin')->group(function () {
-        Route::prefix('insight')->name('insight.')->group(function () {
-            Route::get('/', [InsightController::class, 'index'])->name('index');
-            Route::post('regenerate', [InsightController::class, 'regenerate'])->name('regenerate');
-        });
+    Route::resource('pelanggan', PelangganController::class)->except('show');
 
-        Route::prefix('customer-insight')->name('customer-insight.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\CustomerInsightController::class, 'index'])->name('index');
-            Route::post('regenerate', [\App\Http\Controllers\CustomerInsightController::class, 'regenerate'])->name('regenerate');
-        });
+    Route::prefix('pos')->name('pos.')->group(function () {
+        Route::get('/', [PenjualanController::class, 'pos'])->name('index');
+        Route::get('search', [PenjualanController::class, 'searchBarang'])->name('search');
+        Route::get('cross-sell', [PenjualanController::class, 'crossSell'])->name('crosssell');
+        Route::post('/', [PenjualanController::class, 'store'])->name('store');
+    });
 
-        Route::prefix('anomaly')->name('anomaly.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\AnomalyController::class, 'index'])->name('index');
-            Route::post('detect', [\App\Http\Controllers\AnomalyController::class, 'detect'])->name('detect');
-            Route::post('{anomaly}/resolve', [\App\Http\Controllers\AnomalyController::class, 'resolve'])->name('resolve');
-        });
+    Route::prefix('penjualan')->name('penjualan.')->group(function () {
+        Route::get('/', [PenjualanController::class, 'index'])->name('index');
+        Route::get('{penjualan}', [PenjualanController::class, 'show'])->name('show');
+        Route::get('{penjualan}/struk', [PenjualanController::class, 'struk'])->name('struk');
+    });
 
-        Route::prefix('advanced')->name('advanced.')->group(function () {
-            Route::get('association-rules', [\App\Http\Controllers\AdvancedInsightController::class, 'associationRules'])->name('rules.index');
-            Route::post('association-rules/regenerate', [\App\Http\Controllers\AdvancedInsightController::class, 'regenerateRules'])->name('rules.regenerate');
-            Route::get('optimal-stock', [\App\Http\Controllers\AdvancedInsightController::class, 'optimalStock'])->name('stock');
-            Route::get('cannibalization', [\App\Http\Controllers\AdvancedInsightController::class, 'cannibalization'])->name('cannibal');
-            Route::get('pareto', [\App\Http\Controllers\AdvancedInsightController::class, 'pareto'])->name('pareto');
-        });
+    Route::prefix('insight')->name('insight.')->group(function () {
+        Route::get('/', [InsightController::class, 'index'])->name('index');
+        Route::post('regenerate', [InsightController::class, 'regenerate'])->name('regenerate');
+    });
 
-        Route::prefix('pricing')->name('pricing.')->group(function () {
-            Route::get('simulator', [\App\Http\Controllers\PricingController::class, 'simulator'])->name('simulator');
-            Route::get('history/{barang}', [\App\Http\Controllers\PricingController::class, 'history'])->name('history');
-        });
+    Route::prefix('customer-insight')->name('customer-insight.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CustomerInsightController::class, 'index'])->name('index');
+        Route::post('regenerate', [\App\Http\Controllers\CustomerInsightController::class, 'regenerate'])->name('regenerate');
+    });
 
-        Route::prefix('competitor')->name('competitor.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\CompetitorPriceController::class, 'index'])->name('index');
-            Route::get('create', [\App\Http\Controllers\CompetitorPriceController::class, 'create'])->name('create');
-            Route::post('/', [\App\Http\Controllers\CompetitorPriceController::class, 'store'])->name('store');
-            Route::delete('{competitor}', [\App\Http\Controllers\CompetitorPriceController::class, 'destroy'])->name('destroy');
-        });
+    Route::prefix('anomaly')->name('anomaly.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AnomalyController::class, 'index'])->name('index');
+        Route::post('detect', [\App\Http\Controllers\AnomalyController::class, 'detect'])->name('detect');
+        Route::post('{anomaly}/resolve', [\App\Http\Controllers\AnomalyController::class, 'resolve'])->name('resolve');
+    });
 
-        Route::prefix('bundle')->name('bundle.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\BundleController::class, 'index'])->name('index');
-            Route::post('/', [\App\Http\Controllers\BundleController::class, 'store'])->name('store');
-            Route::delete('{bundle}', [\App\Http\Controllers\BundleController::class, 'destroy'])->name('destroy');
-        });
+    Route::prefix('advanced')->name('advanced.')->group(function () {
+        Route::get('association-rules', [\App\Http\Controllers\AdvancedInsightController::class, 'associationRules'])->name('rules.index');
+        Route::post('association-rules/regenerate', [\App\Http\Controllers\AdvancedInsightController::class, 'regenerateRules'])->name('rules.regenerate');
+        Route::get('optimal-stock', [\App\Http\Controllers\AdvancedInsightController::class, 'optimalStock'])->name('stock');
+        Route::get('cannibalization', [\App\Http\Controllers\AdvancedInsightController::class, 'cannibalization'])->name('cannibal');
+        Route::get('pareto', [\App\Http\Controllers\AdvancedInsightController::class, 'pareto'])->name('pareto');
+    });
 
-        Route::prefix('laporan/laba')->name('laporan.laba.')->group(function () {
-            Route::get('/', [LaporanLabaController::class, 'index'])->name('index');
-            Route::get('pdf', [LaporanLabaController::class, 'pdf'])->name('pdf');
-            Route::get('csv', [LaporanLabaController::class, 'csv'])->name('csv');
-        });
+    Route::prefix('pricing')->name('pricing.')->group(function () {
+        Route::get('simulator', [\App\Http\Controllers\PricingController::class, 'simulator'])->name('simulator');
+        Route::get('history/{barang}', [\App\Http\Controllers\PricingController::class, 'history'])->name('history');
+    });
+
+    Route::prefix('competitor')->name('competitor.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CompetitorPriceController::class, 'index'])->name('index');
+        Route::get('create', [\App\Http\Controllers\CompetitorPriceController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\CompetitorPriceController::class, 'store'])->name('store');
+        Route::delete('{competitor}', [\App\Http\Controllers\CompetitorPriceController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('bundle')->name('bundle.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\BundleController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\BundleController::class, 'store'])->name('store');
+        Route::delete('{bundle}', [\App\Http\Controllers\BundleController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('laporan/laba')->name('laporan.laba.')->group(function () {
+        Route::get('/', [LaporanLabaController::class, 'index'])->name('index');
+        Route::get('pdf', [LaporanLabaController::class, 'pdf'])->name('pdf');
+        Route::get('csv', [LaporanLabaController::class, 'csv'])->name('csv');
     });
 });

@@ -34,14 +34,6 @@ class AuthController extends Controller
             ]);
         }
 
-        $user = Auth::user();
-        if (! $user->aktif) {
-            Auth::logout();
-            throw ValidationException::withMessages([
-                'login' => 'Akun Anda dinonaktifkan. Hubungi admin.',
-            ]);
-        }
-
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard'));

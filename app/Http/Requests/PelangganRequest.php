@@ -9,7 +9,7 @@ class PelangganRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole('admin', 'kasir') ?? false;
+        return $this->user() !== null;
     }
 
     public function rules(): array

@@ -9,7 +9,7 @@ class KategoriRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->isAdmin() ?? false;
+        return $this->user() !== null;
     }
 
     public function rules(): array

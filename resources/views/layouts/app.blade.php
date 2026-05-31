@@ -28,6 +28,13 @@
         .sidebar a:hover { background:rgba(255,255,255,.05); color:#fff; transform:translateX(4px); }
         .sidebar a.active { background:#4361ee; color:#fff; box-shadow:0 4px 12px rgba(67,97,238,.3); font-weight:600; }
         .sidebar a i { width:25px; font-size:16px; }
+        .sidebar .menu-group-toggle { cursor:pointer; justify-content:space-between; }
+        .sidebar .menu-group-toggle .caret { transition:transform .25s; font-size:12px; width:auto; }
+        .sidebar .menu-group-toggle.open .caret { transform:rotate(180deg); }
+        .sidebar .menu-group-body { overflow:hidden; max-height:0; transition:max-height .3s ease; }
+        .sidebar .menu-group-body.open { max-height:600px; }
+        .sidebar.collapsed .menu-group-toggle .caret { display:none; }
+        .sidebar.collapsed .menu-group-body { max-height:none; }
         .main-content { margin-left:260px; padding:25px 35px; min-height:100vh; transition:margin .3s; }
         .navbar { border-radius:12px; background:#fff !important; box-shadow:0 2px 10px rgba(0,0,0,.02) !important; margin-bottom:30px !important; }
         .card { border:none; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.03); }
@@ -136,9 +143,6 @@
 <body>
 @php
     $u = auth()->user();
-    $isAdmin = $u?->isAdmin();
-    $isKasir = $u?->isKasir();
-    $isGudang = $u?->isGudang();
 @endphp
 <div class="d-flex">
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -161,8 +165,7 @@
             <i class="fas fa-book-open"></i> Panduan
         </a>
 
-        @if ($isAdmin || $isKasir)
-            <p class="menu-label text-uppercase mt-3">Penjualan</p>
+        <p class="menu-label text-uppercase mt-3">Penjualan</p>
             <a href="{{ route('pos.index') }}" class="{{ request()->routeIs('pos.*') ? 'active' : '' }}">
                 <i class="fas fa-cash-register"></i> Kasir
             </a>
@@ -172,10 +175,7 @@
             <a href="{{ route('pelanggan.index') }}" class="{{ request()->routeIs('pelanggan.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i> Pelanggan
             </a>
-        @endif
-
-        @if ($isAdmin || $isGudang)
-            <p class="menu-label text-uppercase mt-3">Stok Barang</p>
+        <p class="menu-label text-uppercase mt-3">Stok Barang</p>
             <a href="{{ route('barang.index') }}" class="{{ request()->routeIs('barang.*') ? 'active' : '' }}">
                 <i class="fas fa-box"></i> Daftar Barang
             </a>
@@ -191,10 +191,7 @@
             <a href="{{ route('expiry.index') }}" class="{{ request()->routeIs('expiry.*') ? 'active' : '' }}">
                 <i class="fas fa-clock"></i> Cek Kadaluarsa
             </a>
-        @endif
-
-        @if ($isAdmin)
-            <p class="menu-label text-uppercase mt-3">Pengaturan</p>
+        <p class="menu-label text-uppercase mt-3">Pengaturan</p>
             <a href="{{ route('kategori.index') }}" class="{{ request()->routeIs('kategori.*') ? 'active' : '' }}">
                 <i class="fas fa-tags"></i> Kategori Barang
             </a>
@@ -205,7 +202,14 @@
                 <i class="fas fa-chart-line"></i> Laporan Untung
             </a>
 
-            <p class="menu-label text-uppercase mt-3"><i class="fas fa-robot me-1"></i> Asisten AI</p>
+            @php
+                $aiActive = request()->routeIs('insight.*','customer-insight.*','anomaly.*','advanced.*','pricing.*','competitor.*','bundle.*');
+            @endphp
+            <a href="#" class="menu-group-toggle {{ $aiActive ? 'open' : '' }}" id="aiGroupToggle" role="button">
+                <span><i class="fas fa-robot me-1"></i> Asisten AI</span>
+                <i class="fas fa-chevron-down caret"></i>
+            </a>
+            <div class="menu-group-body {{ $aiActive ? 'open' : '' }}" id="aiGroupBody">
             <a href="{{ route('insight.index') }}" class="{{ request()->routeIs('insight.*') ? 'active' : '' }}">
                 <i class="fas fa-brain"></i> Saran Toko
             </a>
@@ -236,7 +240,7 @@
             <a href="{{ route('bundle.index') }}" class="{{ request()->routeIs('bundle.*') ? 'active' : '' }}">
                 <i class="fas fa-box-open"></i> Bundle Generator
             </a>
-        @endif
+            </div>
 
         <hr class="text-secondary mt-2 mx-3" style="opacity:.2;">
 
@@ -264,7 +268,6 @@
                 <div class="d-flex align-items-center text-end">
                     <div class="me-2 d-none d-md-block">
                         <span class="d-block fw-bold text-dark" style="font-size:13px;line-height:1;">{{ $u->name }}</span>
-                        <span class="text-muted text-capitalize" style="font-size:11px;">{{ $u->role }}</span>
                     </div>
                     <img src="https://ui-avatars.com/api/?name={{ urlencode($u->name) }}&background=4361ee&color=fff" class="rounded-circle shadow-sm" width="38" alt="Avatar {{ $u->name }}">
                 </div>
@@ -298,6 +301,12 @@
         $('#collapseSidebar').on('click', function () {
             $('#sidebar').toggleClass('collapsed');
             localStorage.setItem('sidebarCollapsed', $('#sidebar').hasClass('collapsed') ? '1' : '0');
+        });
+
+        $('#aiGroupToggle').on('click', function (e) {
+            e.preventDefault();
+            $(this).toggleClass('open');
+            $('#aiGroupBody').toggleClass('open');
         });
         function applyThemeIcon() {
             const t = document.documentElement.getAttribute('data-bs-theme');

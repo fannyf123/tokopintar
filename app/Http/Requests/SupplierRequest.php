@@ -8,7 +8,7 @@ class SupplierRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->hasRole('admin', 'gudang') ?? false;
+        return $this->user() !== null;
     }
 
     public function rules(): array

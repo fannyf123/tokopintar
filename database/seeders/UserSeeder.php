@@ -10,41 +10,13 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = [
+        User::updateOrCreate(
+            ['username' => 'admin'],
             [
-                'name' => 'Administrator',
-                'username' => 'admin',
+                'name' => 'Pemilik Toko',
                 'email' => 'admin@tokopintar.test',
-                'password' => 'admin123',
-                'role' => User::ROLE_ADMIN,
+                'password' => Hash::make('123'),
             ],
-            [
-                'name' => 'Kasir Demo',
-                'username' => 'kasir',
-                'email' => 'kasir@tokopintar.test',
-                'password' => 'kasir123',
-                'role' => User::ROLE_KASIR,
-            ],
-            [
-                'name' => 'Gudang Demo',
-                'username' => 'gudang',
-                'email' => 'gudang@tokopintar.test',
-                'password' => 'gudang123',
-                'role' => User::ROLE_GUDANG,
-            ],
-        ];
-
-        foreach ($users as $u) {
-            User::updateOrCreate(
-                ['username' => $u['username']],
-                [
-                    'name' => $u['name'],
-                    'email' => $u['email'],
-                    'password' => Hash::make($u['password']),
-                    'role' => $u['role'],
-                    'aktif' => true,
-                ],
-            );
-        }
+        );
     }
 }

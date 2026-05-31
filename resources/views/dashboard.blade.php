@@ -11,12 +11,8 @@
             </div>
             <div class="col-md-5">
                 <div class="d-flex flex-wrap gap-2 justify-content-md-end mt-3 mt-md-0">
-                    @if (auth()->user()->isAdmin() || auth()->user()->isKasir())
-                        <a href="{{ route('pos.index') }}" class="btn btn-light btn-sm fw-semibold"><i class="fas fa-cash-register me-1"></i> Mulai Jualan</a>
-                    @endif
-                    @if (auth()->user()->isAdmin() || auth()->user()->isGudang())
-                        <a href="{{ route('barang.create') }}" class="btn btn-light btn-sm fw-semibold"><i class="fas fa-box me-1"></i> Tambah Barang</a>
-                    @endif
+                    <a href="{{ route('pos.index') }}" class="btn btn-light btn-sm fw-semibold"><i class="fas fa-cash-register me-1"></i> Mulai Jualan</a>
+                    <a href="{{ route('barang.create') }}" class="btn btn-light btn-sm fw-semibold"><i class="fas fa-box me-1"></i> Tambah Barang</a>
                     <a href="{{ route('panduan.index') }}" class="btn btn-outline-light btn-sm fw-semibold"><i class="fas fa-book-open me-1"></i> Panduan</a>
                 </div>
             </div>
@@ -67,7 +63,7 @@
     </div>
 </div>
 
-@if (auth()->user()->isAdmin() && (($criticalAnomalies ?? 0) > 0 || ($churnRiskCount ?? 0) > 0))
+@if ((($criticalAnomalies ?? 0) > 0 || ($churnRiskCount ?? 0) > 0))
 <div class="row g-3 mb-3">
     @if (($criticalAnomalies ?? 0) > 0)
     <div class="col-md-6">
