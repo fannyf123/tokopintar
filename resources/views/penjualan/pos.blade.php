@@ -7,6 +7,10 @@
 .pos-results { max-height: 250px; overflow-y: auto; }
 .pos-results .item { cursor:pointer; padding:8px 12px; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; }
 .pos-results .item:hover { background:#eef2ff; }
+.qty-stepper input[type=number] { -moz-appearance:textfield; appearance:textfield; min-width:44px; font-size:15px; font-weight:600; padding-left:2px; padding-right:2px; }
+.qty-stepper input[type=number]::-webkit-outer-spin-button,
+.qty-stepper input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+.qty-stepper .btn { min-width:32px; line-height:1; }
 #scanner { background:#000; min-height:220px; }
 @media (max-width:991.98px) {
     #scanner { min-height:260px; max-width:100%; }
