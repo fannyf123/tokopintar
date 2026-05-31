@@ -10,8 +10,36 @@
                 <p class="text-muted small mb-0">{{ format_tanggal_id($penjualan->tanggal, true) }} · Kasir: {{ $penjualan->kasir?->name }}</p>
                 <p class="text-muted small mb-0">Pelanggan: {{ $penjualan->pelanggan?->nama ?? 'Umum' }}</p>
             </div>
-            <a href="{{ route('penjualan.struk', $penjualan) }}" target="_blank" class="btn btn-sm btn-primary"><i class="fas fa-print me-1"></i> Cetak Struk</a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('penjualan.struk', $penjualan) }}" target="_blank" class="btn btn-sm btn-primary"><i class="fas fa-print me-1"></i> Cetak Struk</a>
+                @if ($penjualan->status !== 'batal')
+                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="collapse" data-bs-target="#returBox"><i class="fas fa-rotate-left me-1"></i> Retur</button>
+                @endif
+            </div>
         </div>
+
+        @if ($penjualan->status === 'batal')
+            <div class="alert alert-secondary"><i class="fas fa-ban me-1"></i> Transaksi ini sudah <strong>diretur/dibatalkan</strong>. Stok sudah dikembalikan dan tidak dihitung di laporan untung.</div>
+        @else
+        <div class="collapse mb-3" id="returBox">
+            <div class="card border-danger" style="border-width:2px;">
+                <div class="card-body">
+                    <h6 class="fw-bold text-danger mb-2"><i class="fas fa-rotate-left me-1"></i> Retur / Batalkan Transaksi</h6>
+                    <p class="small text-muted mb-3">Semua barang akan dikembalikan ke stok, dan transaksi ini dihapus dari laporan untung. Tindakan ini tidak bisa dibatalkan.</p>
+                    <form method="POST" action="{{ route('penjualan.retur', $penjualan) }}" class="row g-2 align-items-end">
+                        @csrf
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-semibold">Alasan Retur (opsional)</label>
+                            <input type="text" name="alasan" class="form-control" placeholder="mis. barang rusak / salah beli">
+                        </div>
+                        <div class="col-12 col-md-auto">
+                            <button class="btn btn-danger" onclick="return confirm('Yakin retur transaksi ini? Stok dikembalikan & transaksi dibatalkan.')"><i class="fas fa-check me-1"></i> Proses Retur</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @endif
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="table-light">

@@ -224,4 +224,46 @@ class PenjualanController extends Controller
 
         return back()->with('success', $pesan);
     }
+
+    public function retur(Request $request, Penjualan $penjualan): RedirectResponse
+    {
+        if ($penjualan->status === Penjualan::STATUS_BATAL) {
+            return back()->with('error', 'Transaksi ini sudah diretur/dibatalkan.');
+        }
+
+        $alasan = trim((string) $request->input('alasan', '')) ?: 'Retur barang';
+
+        DB::transaction(function () use ($penjualan, $alasan) {
+            $penjualan->load('details.barang');
+
+            foreach ($penjualan->details as $d) {
+                if (! $d->barang) {
+                    continue;
+                }
+                // Kembalikan stok lewat mutasi retur jual (menambah stok)
+                $this->stock->mutasi(
+                    barang: $d->barang,
+                    jenis: \App\Models\StockMovement::JENIS_RETUR_JUAL,
+                    qty: (int) $d->qty,
+                    alasan: $alasan . ' (retur ' . $penjualan->nomor . ')',
+                    referensiType: 'penjualan',
+                    referensiId: $penjualan->id,
+                );
+            }
+
+            // Kembalikan poin yang sempat didapat & batalkan tambahan total_belanja
+            if ($penjualan->pelanggan_id) {
+                $poinDidapat = intdiv((int) $penjualan->dibayar, 1000);
+                Pelanggan::where('id', $penjualan->pelanggan_id)->update([
+                    'total_belanja' => DB::raw('GREATEST(0, total_belanja - ' . (int) $penjualan->grand_total . ')'),
+                    'poin' => DB::raw('GREATEST(0, poin - ' . $poinDidapat . ')'),
+                ]);
+            }
+
+            $penjualan->update(['status' => Penjualan::STATUS_BATAL]);
+        });
+
+        return redirect()->route('penjualan.index')
+            ->with('success', 'Transaksi ' . $penjualan->nomor . ' diretur. Stok dikembalikan & dihapus dari laporan untung.');
+    }
 }
