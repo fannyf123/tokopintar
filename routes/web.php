@@ -98,6 +98,12 @@ Route::middleware('auth')->group(function () {
         Route::post('regenerate', [InsightController::class, 'regenerate'])->name('regenerate');
     });
 
+    Route::prefix('asisten')->name('asisten.')->group(function () {
+        Route::get('ringkasan', [\App\Http\Controllers\AsistenController::class, 'ringkasan'])->name('ringkasan');
+        Route::get('restock', [\App\Http\Controllers\AsistenController::class, 'restock'])->name('restock');
+        Route::get('traffic', [\App\Http\Controllers\AsistenController::class, 'traffic'])->name('traffic');
+    });
+
     Route::prefix('customer-insight')->name('customer-insight.')->group(function () {
         Route::get('/', [\App\Http\Controllers\CustomerInsightController::class, 'index'])->name('index');
         Route::post('regenerate', [\App\Http\Controllers\CustomerInsightController::class, 'regenerate'])->name('regenerate');

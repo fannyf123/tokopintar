@@ -233,13 +233,22 @@
             </a>
 
             @php
-                $aiActive = request()->routeIs('insight.*','customer-insight.*','anomaly.*','advanced.*','pricing.*','competitor.*','bundle.*');
+                $aiActive = request()->routeIs('asisten.*','insight.*','customer-insight.*','anomaly.*','advanced.*','pricing.*','competitor.*','bundle.*');
             @endphp
             <a href="#" class="menu-group-toggle {{ $aiActive ? 'open' : '' }}" id="aiGroupToggle" role="button">
                 <span><i class="fas fa-robot me-1"></i> Asisten AI</span>
                 <i class="fas fa-chevron-down caret"></i>
             </a>
             <div class="menu-group-body {{ $aiActive ? 'open' : '' }}" id="aiGroupBody">
+            <a href="{{ route('asisten.ringkasan') }}" class="{{ request()->routeIs('asisten.ringkasan') ? 'active' : '' }}">
+                <i class="fas fa-comment-dots"></i> Ringkasan Harian
+            </a>
+            <a href="{{ route('asisten.restock') }}" class="{{ request()->routeIs('asisten.restock') ? 'active' : '' }}">
+                <i class="fas fa-cart-plus"></i> Daftar Restock
+            </a>
+            <a href="{{ route('asisten.traffic') }}" class="{{ request()->routeIs('asisten.traffic') ? 'active' : '' }}">
+                <i class="fas fa-clock"></i> Jam & Hari Ramai
+            </a>
             <a href="{{ route('insight.index') }}" class="{{ request()->routeIs('insight.*') ? 'active' : '' }}">
                 <i class="fas fa-brain"></i> Saran Toko
             </a>
