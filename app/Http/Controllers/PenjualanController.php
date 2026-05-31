@@ -65,7 +65,7 @@ class PenjualanController extends Controller
             ->where('stok_current', '>', 0)
             ->when($q !== '', function ($w) use ($q) {
                 $w->where(function ($x) use ($q) {
-                    $x->where('nama', 'like', "%{$q}%")
+                    $x->whereRaw('LOWER(nama) LIKE ?', ['%' . mb_strtolower($q) . '%'])
                       ->orWhere('kode', $q)
                       ->orWhere('barcode', $q);
                 });

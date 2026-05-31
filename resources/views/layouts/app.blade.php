@@ -74,6 +74,7 @@
             .sidebar { transform:translateX(-100%); width:80%; max-width:300px; }
             .sidebar.show { transform:translateX(0); }
             .main-content { margin-left:0; padding:12px; }
+            .sidebar.collapsed ~ .main-content { margin-left:0; }
             .sidebar-overlay.show { display:block; opacity:1; }
             .navbar { margin-bottom:14px !important; padding:10px 14px !important; border-radius:10px; }
             .card-body { padding:14px; }
